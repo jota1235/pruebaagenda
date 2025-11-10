@@ -1,0 +1,154 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Perfil del Negocio</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="editProfile()">
+        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="profile-content">
+
+  <!-- Header con logo y nombre del negocio -->
+  <div class="profile-header">
+    <div class="header-background"></div>
+    <div class="profile-info">
+      <ion-avatar class="business-avatar">
+        <img [src]="businessInfo.logo" [alt]="businessInfo.name">
+      </ion-avatar>
+      <h1 class="business-name">{{ businessInfo.name }}</h1>
+      <p class="business-description">{{ businessInfo.description }}</p>
+      <ion-badge color="success" class="status-badge">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
+        Abierto Ahora
+      </ion-badge>
+    </div>
+  </div>
+
+  <div class="profile-container">
+
+    <!-- Estadísticas -->
+    <ion-card class="stats-card">
+      <ion-card-content>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="6" size-md="3" *ngFor="let stat of stats">
+              <div class="stat-item" [class]="'stat-' + stat.color">
+                <ion-icon [name]="stat.icon"></ion-icon>
+                <div class="stat-value">{{ stat.value }}</div>
+                <div class="stat-label">{{ stat.label }}</div>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Información de Contacto -->
+    <ion-card class="contact-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="call-outline"></ion-icon>
+          Información de Contacto
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list lines="none">
+
+          <!-- Dirección -->
+          <ion-item button detail="false" class="contact-item">
+            <ion-icon slot="start" name="location-outline" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Dirección</h3>
+              <p>{{ businessInfo.address }}</p>
+            </ion-label>
+          </ion-item>
+
+          <!-- Teléfono -->
+          <ion-item button detail="false" class="contact-item" (click)="callBusiness()">
+            <ion-icon slot="start" name="call-outline" color="success"></ion-icon>
+            <ion-label>
+              <h3>Teléfono</h3>
+              <p>{{ businessInfo.phone }}</p>
+            </ion-label>
+          </ion-item>
+
+          <!-- Email -->
+          <ion-item button detail="false" class="contact-item" (click)="emailBusiness()">
+            <ion-icon slot="start" name="mail-outline" color="tertiary"></ion-icon>
+            <ion-label>
+              <h3>Email</h3>
+              <p>{{ businessInfo.email }}</p>
+            </ion-label>
+          </ion-item>
+
+          <!-- Sitio Web -->
+          <ion-item button detail="false" class="contact-item" (click)="openWebsite()">
+            <ion-icon slot="start" name="globe-outline" color="warning"></ion-icon>
+            <ion-label>
+              <h3>Sitio Web</h3>
+              <p>{{ businessInfo.website }}</p>
+            </ion-label>
+          </ion-item>
+
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Horarios de Atención -->
+    <ion-card class="hours-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="time-outline"></ion-icon>
+          Horarios de Atención
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list lines="none">
+          <ion-item *ngFor="let schedule of workingHours" [class.today]="schedule.isToday">
+            <ion-label>
+              <h3>{{ schedule.day }}</h3>
+            </ion-label>
+            <ion-label slot="end" class="hours-label">
+              {{ schedule.hours }}
+            </ion-label>
+            <ion-badge *ngIf="schedule.isToday" color="primary" slot="end">Hoy</ion-badge>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Servicios Destacados -->
+    <ion-card class="services-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="briefcase-outline"></ion-icon>
+          Servicios Destacados
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="services-grid">
+          <ion-chip *ngFor="let service of services" [color]="service.color" class="service-chip">
+            <ion-icon [name]="service.icon"></ion-icon>
+            <ion-label>{{ service.name }}</ion-label>
+          </ion-chip>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Botón de Acción -->
+    <ion-button expand="block" class="action-button" (click)="editProfile()">
+      <ion-icon slot="start" name="create-outline"></ion-icon>
+      Editar Información
+    </ion-button>
+
+  </div>
+
+</ion-content>

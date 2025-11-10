@@ -503,3 +503,47 @@ ion-button.btn-social {
     padding: 2.5rem;
   }
 }
+
+// ============================================
+// PROTECCIÓN DARK MODE - LOGIN SIEMPRE EN CLARO
+// ============================================
+// Sobrescribir los estilos globales de dark mode para que el login siempre se vea en modo claro
+:host-context(body.dark) {
+  // Forzar labels oscuras (sobrescribir el color blanco del global)
+  .form-label {
+    color: #0F172A !important;
+  }
+
+  // Forzar inputs con texto oscuro
+  ion-input {
+    --color: #0F172A !important;
+    --background: #F8FAFC !important;
+    --placeholder-color: #94A3B8 !important;
+  }
+
+  // Forzar botones sociales con texto oscuro
+  ion-button.btn-social {
+    --color: #0F172A !important;
+    --background: white !important;
+
+    ion-icon {
+      color: #0F172A !important;
+    }
+  }
+
+  // Forzar labels de Ionic con texto oscuro (sobrescribir el !important del global)
+  ion-label {
+    color: #0F172A !important;
+
+    p {
+      color: #64748B !important;
+    }
+  }
+
+  // Asegurar que los textos dentro de botones sean visibles
+  ion-button {
+    ion-label {
+      color: #0F172A !important;
+    }
+  }
+}

@@ -1,0 +1,295 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Configuración</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="settings-content">
+
+  <div class="settings-container">
+
+    <!-- ==================== APARIENCIA ==================== -->
+    <ion-card class="settings-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="moon-outline"></ion-icon>
+          Apariencia
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list lines="none">
+
+          <!-- Modo Oscuro -->
+          <ion-item class="setting-item">
+            <ion-icon slot="start" name="moon-outline" color="primary"></ion-icon>
+            <ion-label>
+              <h2>Modo Oscuro</h2>
+              <p>Tema oscuro para reducir el brillo</p>
+            </ion-label>
+            <ion-toggle
+              slot="end"
+              [(ngModel)]="isDarkMode"
+              (ionChange)="toggleDarkMode($event)"
+              color="primary">
+            </ion-toggle>
+          </ion-item>
+
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ==================== NOTIFICACIONES ==================== -->
+    <ion-card class="settings-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="notifications-outline"></ion-icon>
+          Notificaciones
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list lines="none">
+
+          <!-- Push Notifications -->
+          <ion-item class="setting-item">
+            <ion-icon slot="start" name="notifications-outline" color="secondary"></ion-icon>
+            <ion-label>
+              <h2>Notificaciones Push</h2>
+              <p>Recibir alertas en el dispositivo</p>
+            </ion-label>
+            <ion-toggle
+              slot="end"
+              [(ngModel)]="notificationSettings.push"
+              (ionChange)="togglePushNotifications($event)"
+              color="secondary">
+            </ion-toggle>
+          </ion-item>
+
+          <!-- Email Notifications -->
+          <ion-item class="setting-item">
+            <ion-icon slot="start" name="mail-outline" color="tertiary"></ion-icon>
+            <ion-label>
+              <h2>Notificaciones por Email</h2>
+              <p>Recibir resúmenes por correo</p>
+            </ion-label>
+            <ion-toggle
+              slot="end"
+              [(ngModel)]="notificationSettings.email"
+              (ionChange)="toggleEmailNotifications($event)"
+              color="tertiary">
+            </ion-toggle>
+          </ion-item>
+
+          <!-- SMS Notifications -->
+          <ion-item class="setting-item">
+            <ion-icon slot="start" name="mail-outline" color="success"></ion-icon>
+            <ion-label>
+              <h2>Notificaciones SMS</h2>
+              <p>Recordatorios por mensaje de texto</p>
+            </ion-label>
+            <ion-toggle
+              slot="end"
+              [(ngModel)]="notificationSettings.sms"
+              (ionChange)="toggleSmsNotifications($event)"
+              color="success">
+            </ion-toggle>
+          </ion-item>
+
+          <!-- Reminders -->
+          <ion-item class="setting-item">
+            <ion-icon slot="start" name="checkmark-outline" color="warning"></ion-icon>
+            <ion-label>
+              <h2>Recordatorios de Citas</h2>
+              <p>Avisos antes de tus citas</p>
+            </ion-label>
+            <ion-toggle
+              slot="end"
+              [(ngModel)]="notificationSettings.reminders"
+              (ionChange)="toggleReminders($event)"
+              color="warning">
+            </ion-toggle>
+          </ion-item>
+
+          <!-- Volumen -->
+          <ion-item class="setting-item volume-item">
+            <ion-icon slot="start" name="volume-medium-outline" color="primary"></ion-icon>
+            <ion-label>
+              <h2>Volumen de Notificaciones</h2>
+              <p>{{ notificationVolume }}%</p>
+            </ion-label>
+          </ion-item>
+          <div class="volume-slider">
+            <ion-range
+              [(ngModel)]="notificationVolume"
+              (ionChange)="onVolumeChange($event)"
+              min="0"
+              max="100"
+              step="5"
+              pin="true"
+              color="primary">
+            </ion-range>
+          </div>
+
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ==================== IDIOMA Y REGIÓN ==================== -->
+    <ion-card class="settings-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="language-outline"></ion-icon>
+          Idioma y Región
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list lines="none">
+
+          <!-- Idioma -->
+          <ion-item class="setting-item">
+            <ion-icon slot="start" name="language-outline" color="secondary"></ion-icon>
+            <ion-label>
+              <h2>Idioma de la App</h2>
+              <p>Selecciona tu idioma preferido</p>
+            </ion-label>
+            <ion-select
+              [(ngModel)]="selectedLanguage"
+              (ionChange)="onLanguageChange($event)"
+              interface="action-sheet"
+              placeholder="Seleccionar">
+              <ion-select-option value="es">Español</ion-select-option>
+              <ion-select-option value="en">English</ion-select-option>
+              <ion-select-option value="fr">Français</ion-select-option>
+              <ion-select-option value="pt">Português</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ==================== ALMACENAMIENTO ==================== -->
+    <ion-card class="settings-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="download-outline"></ion-icon>
+          Almacenamiento
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list lines="none">
+
+          <!-- Caché -->
+          <ion-item class="setting-item">
+            <ion-icon slot="start" name="download-outline" color="tertiary"></ion-icon>
+            <ion-label>
+              <h2>Caché de la App</h2>
+              <p>{{ cacheSize }}</p>
+            </ion-label>
+            <ion-button
+              slot="end"
+              fill="outline"
+              size="small"
+              (click)="clearCache()">
+              Limpiar
+            </ion-button>
+          </ion-item>
+
+          <!-- Datos Locales -->
+          <ion-item class="setting-item" button (click)="clearLocalData()">
+            <ion-icon slot="start" name="trash-outline" color="danger"></ion-icon>
+            <ion-label>
+              <h2>Borrar Datos Locales</h2>
+              <p>Eliminar toda la información descargada</p>
+            </ion-label>
+          </ion-item>
+
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ==================== PRIVACIDAD Y SEGURIDAD ==================== -->
+    <ion-card class="settings-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="lock-closed-outline"></ion-icon>
+          Privacidad y Seguridad
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list lines="none">
+
+          <!-- Política de Privacidad -->
+          <ion-item class="setting-item" button (click)="viewPrivacyPolicy()">
+            <ion-icon slot="start" name="document-text-outline" color="primary"></ion-icon>
+            <ion-label>
+              <h2>Política de Privacidad</h2>
+              <p>Ver nuestra política de privacidad</p>
+            </ion-label>
+          </ion-item>
+
+          <!-- Términos de Servicio -->
+          <ion-item class="setting-item" button (click)="viewTerms()">
+            <ion-icon slot="start" name="document-text-outline" color="secondary"></ion-icon>
+            <ion-label>
+              <h2>Términos de Servicio</h2>
+              <p>Ver términos y condiciones</p>
+            </ion-label>
+          </ion-item>
+
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ==================== SOPORTE ==================== -->
+    <ion-card class="settings-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="help-circle-outline"></ion-icon>
+          Soporte
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list lines="none">
+
+          <!-- Contactar Soporte -->
+          <ion-item class="setting-item" button (click)="contactSupport()">
+            <ion-icon slot="start" name="mail-outline" color="tertiary"></ion-icon>
+            <ion-label>
+              <h2>Contactar Soporte</h2>
+              <p>¿Necesitas ayuda? Contáctanos</p>
+            </ion-label>
+          </ion-item>
+
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ==================== ACERCA DE ==================== -->
+    <ion-card class="settings-card info-card">
+      <ion-card-content>
+        <div class="app-info">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          <div class="info-text">
+            <h3>SyServ Agenda</h3>
+            <p>Versión {{ appVersion }}</p>
+            <p class="copyright">© 2025 SyServ. Todos los derechos reservados.</p>
+          </div>
+        </div>
+        <ion-button
+          expand="block"
+          fill="outline"
+          (click)="viewAppInfo()"
+          class="info-button">
+          Información de la App
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+  </div>
+
+</ion-content>

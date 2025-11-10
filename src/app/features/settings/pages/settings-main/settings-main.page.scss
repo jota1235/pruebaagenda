@@ -1,0 +1,313 @@
+.settings-content {
+  --background: var(--ion-background-color-step-50);
+}
+
+.settings-container {
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-bottom: 2rem;
+}
+
+// ============================================
+// CARDS DE CONFIGURACIÓN
+// ============================================
+.settings-card {
+  margin-bottom: 1rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  animation: cardSlideUp 0.6s ease-out both;
+
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.3s; }
+  &:nth-child(4) { animation-delay: 0.4s; }
+  &:nth-child(5) { animation-delay: 0.5s; }
+  &:nth-child(6) { animation-delay: 0.6s; }
+  &:nth-child(7) { animation-delay: 0.7s; }
+}
+
+@keyframes cardSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+ion-card-header {
+  padding-bottom: 0.5rem;
+
+  ion-card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--ion-text-color);
+
+    ion-icon {
+      font-size: 1.25rem;
+      color: var(--ion-color-primary);
+    }
+  }
+}
+
+ion-card-content {
+  padding-top: 0.5rem;
+}
+
+// ============================================
+// ITEMS DE CONFIGURACIÓN
+// ============================================
+.setting-item {
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &[button]:hover {
+    background: var(--ion-color-light);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  ion-icon[slot="start"] {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+  }
+
+  ion-label {
+    h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ion-text-color);
+      margin-bottom: 0.25rem;
+    }
+
+    p {
+      font-size: 0.875rem;
+      color: var(--ion-color-medium);
+      margin: 0;
+    }
+  }
+
+  ion-toggle {
+    margin-left: 1rem;
+  }
+
+  ion-select {
+    max-width: 200px;
+    padding: 0.5rem 0.75rem;
+    font-weight: 500;
+  }
+
+  ion-button {
+    --padding-start: 1rem;
+    --padding-end: 1rem;
+    height: 36px;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+}
+
+// ============================================
+// VOLUMEN SLIDER
+// ============================================
+.volume-item {
+  margin-bottom: 0.5rem !important;
+}
+
+.volume-slider {
+  padding: 0 0.5rem 1rem 3.5rem;
+
+  ion-range {
+    --bar-height: 6px;
+    --bar-background: var(--ion-color-light);
+    --bar-background-active: var(--ion-color-primary);
+    --knob-size: 22px;
+    --knob-background: var(--ion-color-primary);
+    --knob-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    --pin-background: var(--ion-color-primary);
+    padding: 0.5rem 0;
+  }
+}
+
+// ============================================
+// CARD DE INFORMACIÓN
+// ============================================
+.info-card {
+  background: linear-gradient(135deg, var(--ion-color-primary-tint) 0%, var(--ion-color-secondary-tint) 100%);
+  border: none;
+
+  ion-card-content {
+    padding: 1.5rem;
+  }
+}
+
+.app-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  ion-icon {
+    font-size: 3rem;
+    color: var(--ion-color-primary);
+    flex-shrink: 0;
+  }
+
+  .info-text {
+    flex: 1;
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--ion-text-color);
+      margin: 0 0 0.25rem 0;
+    }
+
+    p {
+      font-size: 0.875rem;
+      color: var(--ion-color-medium);
+      margin: 0.125rem 0;
+
+      &.copyright {
+        font-size: 0.75rem;
+        margin-top: 0.5rem;
+      }
+    }
+  }
+}
+
+.info-button {
+  --border-radius: 12px;
+  --border-width: 2px;
+  --border-color: var(--ion-color-primary);
+  height: auto;
+  --padding-top: 0.875rem;
+  --padding-bottom: 0.875rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// ============================================
+// TOGGLES PERSONALIZADOS
+// ============================================
+ion-toggle {
+  --handle-width: 26px;
+  --handle-height: 26px;
+  --handle-spacing: 4px;
+
+  &::part(track) {
+    height: 32px;
+    width: 56px;
+  }
+}
+
+// ============================================
+// DARK MODE (adicional al global)
+// ============================================
+:host-context(body.dark) {
+  .info-card {
+    background: linear-gradient(135deg, #1e3a8a 0%, #4c1d95 100%) !important;
+  }
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
+@media (max-width: 575px) {
+  .settings-container {
+    padding: 0.75rem;
+  }
+
+  ion-card-title {
+    font-size: 1rem;
+  }
+
+  .setting-item ion-label h2 {
+    font-size: 0.9375rem;
+  }
+
+  .app-info ion-icon {
+    font-size: 2.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .settings-container {
+    padding: 1.5rem;
+  }
+
+  .settings-card {
+    margin-bottom: 1.5rem;
+  }
+
+  .setting-item {
+    margin-bottom: 1.25rem;
+    padding: 0.5rem;
+  }
+
+  ion-card-content {
+    padding: 1.5rem;
+  }
+}
+
+// ============================================
+// ANIMACIONES ADICIONALES
+// ============================================
+ion-toggle {
+  transition: all 0.3s ease;
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+ion-select {
+  transition: all 0.3s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+ion-range {
+  transition: all 0.3s ease;
+}
+
+// ============================================
+// ESTADOS DE HOVER Y FOCUS
+// ============================================
+.setting-item ion-button {
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}

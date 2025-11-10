@@ -1,0 +1,490 @@
+.profile-content {
+  --background: var(--ion-background-color-step-50);
+}
+
+// ============================================
+// HEADER DEL PERFIL
+// ============================================
+.profile-header {
+  position: relative;
+  text-align: center;
+  padding-bottom: 2rem;
+  margin-bottom: 1rem;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.header-background {
+  height: 140px;
+  background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-secondary) 100%);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(255, 255, 255, 0.05) 10px,
+      rgba(255, 255, 255, 0.05) 20px
+    );
+    animation: slide 20s linear infinite;
+  }
+}
+
+@keyframes slide {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(50px, 50px);
+  }
+}
+
+.profile-info {
+  position: relative;
+  margin-top: -60px;
+  padding: 0 1.5rem;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.business-avatar {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 1rem;
+  border: 5px solid white;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  background: white;
+}
+
+.business-name {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--ion-text-color);
+  margin: 0 0 0.5rem 0;
+}
+
+.business-description {
+  font-size: 0.95rem;
+  color: var(--ion-color-medium);
+  margin: 0 auto 1rem;
+  max-width: 500px;
+  line-height: 1.5;
+}
+
+.status-badge {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+
+  ion-icon {
+    font-size: 1rem;
+  }
+}
+
+// ============================================
+// CONTAINER PRINCIPAL
+// ============================================
+.profile-container {
+  padding: 0 1rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+// ============================================
+// ESTADÍSTICAS
+// ============================================
+.stats-card {
+  margin-bottom: 1rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  animation: cardSlideUp 0.6s ease-out 0.1s both;
+
+  ion-card-content {
+    padding: 1rem 0.5rem;
+  }
+}
+
+@keyframes cardSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stat-item {
+  text-align: center;
+  padding: 1rem 0.5rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  ion-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.8;
+  }
+
+  &.stat-primary ion-icon { color: var(--ion-color-primary); }
+  &.stat-secondary ion-icon { color: var(--ion-color-secondary); }
+  &.stat-tertiary ion-icon { color: var(--ion-color-tertiary); }
+  &.stat-success ion-icon { color: var(--ion-color-success); }
+  &.stat-warning ion-icon { color: var(--ion-color-warning); }
+}
+
+.stat-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--ion-text-color);
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--ion-color-medium);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+// ============================================
+// TARJETAS DE INFORMACIÓN
+// ============================================
+.contact-card,
+.hours-card,
+.services-card {
+  margin-bottom: 1rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  animation: cardSlideUp 0.6s ease-out both;
+}
+
+.contact-card {
+  animation-delay: 0.2s;
+}
+
+.hours-card {
+  animation-delay: 0.3s;
+}
+
+.services-card {
+  animation-delay: 0.4s;
+}
+
+ion-card-header {
+  padding-bottom: 0.5rem;
+
+  ion-card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    ion-icon {
+      font-size: 1.25rem;
+      color: var(--ion-color-primary);
+    }
+  }
+}
+
+ion-card-content {
+  padding-top: 0.5rem;
+}
+
+// ============================================
+// ITEMS DE CONTACTO
+// ============================================
+.contact-item {
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+  margin-bottom: 0.75rem;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: var(--ion-color-light);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  ion-icon {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+  }
+
+  ion-label {
+    h3 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--ion-text-color);
+      margin-bottom: 0.25rem;
+    }
+
+    p {
+      font-size: 0.875rem;
+      color: var(--ion-color-medium);
+    }
+  }
+}
+
+// ============================================
+// HORARIOS
+// ============================================
+ion-item.today {
+  --background: var(--ion-color-primary-tint);
+  border-radius: 8px;
+  margin: 0.25rem 0;
+  font-weight: 600;
+
+  ion-label h3 {
+    color: var(--ion-color-primary);
+    font-weight: 700;
+  }
+
+  .hours-label {
+    color: var(--ion-color-primary);
+    font-weight: 600;
+  }
+}
+
+.hours-label {
+  font-size: 0.875rem;
+  text-align: right;
+  color: var(--ion-color-medium);
+}
+
+// ============================================
+// SERVICIOS
+// ============================================
+.services-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.service-chip {
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  height: auto;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  ion-icon {
+    font-size: 1.125rem;
+    margin-right: 0.25rem;
+  }
+
+  ion-label {
+    margin: 0;
+  }
+}
+
+// ============================================
+// BOTÓN DE ACCIÓN
+// ============================================
+.action-button {
+  --border-radius: 12px;
+  --padding-top: 1rem;
+  --padding-bottom: 1rem;
+  margin: 1.5rem 0 1rem;
+  height: auto;
+  font-weight: 600;
+  font-size: 1rem;
+  animation: fadeIn 0.6s ease-out 0.5s both;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  ion-icon {
+    font-size: 1.25rem;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
+@media (max-width: 575px) {
+  .business-name {
+    font-size: 1.5rem;
+  }
+
+  .business-description {
+    font-size: 0.875rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .profile-container {
+    padding: 0 2rem 2rem;
+  }
+
+  .stats-card ion-card-content {
+    padding: 1.5rem;
+  }
+
+  .stat-item {
+    padding: 1.5rem;
+
+    ion-icon {
+      font-size: 2.5rem;
+    }
+  }
+
+  .stat-value {
+    font-size: 2rem;
+  }
+}
+
+// ============================================
+// DARK MODE
+// ============================================
+:host-context(body.dark) {
+  .profile-content {
+    --background: #121212;
+  }
+
+  .profile-header {
+    background: #1e1e1e;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  }
+
+  .header-background {
+    background: linear-gradient(135deg, #1e3a8a 0%, #4c1d95 100%);
+  }
+
+  .business-name {
+    color: #ffffff;
+  }
+
+  .business-description {
+    color: #a0a0a0;
+  }
+
+  .stats-card,
+  .contact-card,
+  .hours-card,
+  .services-card {
+    background: #1e1e1e;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  }
+
+  ion-card-title {
+    color: #ffffff !important;
+  }
+
+  .stat-value {
+    color: #ffffff;
+  }
+
+  .stat-label {
+    color: #a0a0a0;
+  }
+
+  .contact-item {
+    &:hover {
+      background: #2a2a2a;
+    }
+
+    ion-label h3 {
+      color: #ffffff !important;
+    }
+
+    ion-label p {
+      color: #a0a0a0 !important;
+    }
+  }
+
+  ion-item.today {
+    --background: #1e3a5a;
+
+    ion-label h3 {
+      color: #38bdf8 !important;
+    }
+
+    .hours-label {
+      color: #38bdf8 !important;
+    }
+  }
+
+  .hours-label {
+    color: #a0a0a0;
+  }
+
+  .service-chip {
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  .action-button {
+    --border-color: var(--ion-color-primary);
+  }
+
+  .info-card {
+    background: linear-gradient(135deg, #1e3a8a 0%, #4c1d95 100%);
+  }
+}

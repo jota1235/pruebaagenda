@@ -25,6 +25,18 @@ export const routes: Routes = [
     loadComponent: () => import('./features/agenda/pages/agenda-main/agenda-main.page').then((m) => m.AgendaMainPage),
   },
 
+  // Perfil del negocio
+  {
+    path: 'profile',
+    loadComponent: () => import('./features/profile/pages/profile-main/profile-main.page').then((m) => m.ProfileMainPage),
+  },
+
+  // Configuración
+  {
+    path: 'settings',
+    loadComponent: () => import('./features/settings/pages/settings-main/settings-main.page').then((m) => m.SettingsMainPage),
+  },
+
   // Alias para home (mantener compatibilidad)
   {
     path: 'home',

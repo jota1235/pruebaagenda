@@ -139,8 +139,189 @@
 }
 
 // ============================================
-// DARK MODE - DESACTIVADO TEMPORALMENTE
+// DARK MODE - MANUAL TOGGLE
 // ============================================
-// @media (prefers-color-scheme: dark) {
-//   Modo oscuro desactivado por solicitud del usuario
-// }
+body.dark {
+  // Colores de fondo
+  --ion-background-color: #121212;
+  --ion-background-color-rgb: 18, 18, 18;
+  --ion-background-color-step-50: #1e1e1e;
+  --ion-background-color-step-100: #2a2a2a;
+  --ion-background-color-step-150: #363636;
+  --ion-background-color-step-200: #424242;
+  --ion-background-color-step-250: #4e4e4e;
+  --ion-background-color-step-300: #5a5a5a;
+  --ion-background-color-step-350: #666666;
+  --ion-background-color-step-400: #727272;
+  --ion-background-color-step-450: #7e7e7e;
+  --ion-background-color-step-500: #8a8a8a;
+
+  // Textos
+  --ion-text-color: #ffffff;
+  --ion-text-color-rgb: 255, 255, 255;
+  --ion-text-color-step-50: #f0f0f0;
+  --ion-text-color-step-100: #e0e0e0;
+  --ion-text-color-step-150: #d0d0d0;
+  --ion-text-color-step-200: #c0c0c0;
+  --ion-text-color-step-250: #b0b0b0;
+  --ion-text-color-step-300: #a0a0a0;
+  --ion-text-color-step-350: #909090;
+  --ion-text-color-step-400: #808080;
+  --ion-text-color-step-450: #707070;
+  --ion-text-color-step-500: #606060;
+
+  // Colores neutros
+  --ion-color-light: #2a2a2a;
+  --ion-color-light-rgb: 42, 42, 42;
+  --ion-color-light-contrast: #ffffff;
+  --ion-color-light-contrast-rgb: 255, 255, 255;
+  --ion-color-light-shade: #1e1e1e;
+  --ion-color-light-tint: #363636;
+
+  --ion-color-medium: #a0a0a0;
+  --ion-color-medium-rgb: 160, 160, 160;
+  --ion-color-medium-contrast: #000000;
+  --ion-color-medium-contrast-rgb: 0, 0, 0;
+  --ion-color-medium-shade: #8a8a8a;
+  --ion-color-medium-tint: #b0b0b0;
+
+  --ion-color-dark: #f0f0f0;
+  --ion-color-dark-rgb: 240, 240, 240;
+  --ion-color-dark-contrast: #000000;
+  --ion-color-dark-contrast-rgb: 0, 0, 0;
+  --ion-color-dark-shade: #d0d0d0;
+  --ion-color-dark-tint: #f5f5f5;
+
+  // Toolbar
+  --ion-toolbar-background: #1e1e1e;
+  --ion-toolbar-border-color: #363636;
+  --ion-toolbar-color: #ffffff;
+  --ion-toolbar-segment-color: #ffffff;
+  --ion-toolbar-segment-color-checked: #0EA5E9;
+
+  // Item
+  --ion-item-background: #1e1e1e;
+  --ion-item-border-color: #363636;
+  --ion-item-color: #ffffff;
+
+  // Card
+  --ion-card-background: #1e1e1e;
+  --ion-card-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px -1px rgba(0, 0, 0, 0.5);
+
+  // Borders
+  --ion-border-color: #363636;
+
+  // Ajustar colores primarios para mejor contraste en oscuro
+  --ion-color-primary-tint: #38bdf8;
+  --ion-color-secondary-tint: #94a3b8;
+  --ion-color-tertiary-tint: #a78bfa;
+}
+
+// Estilos adicionales para modo oscuro
+body.dark {
+  // Cards en modo oscuro
+  ion-card {
+    --background: #1e1e1e;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  }
+
+  // Headers
+  ion-header ion-toolbar {
+    --background: #1e1e1e;
+    --color: #ffffff;
+    --border-color: #363636;
+  }
+
+  // Content
+  ion-content {
+    --background: #121212;
+  }
+
+  // Lists
+  ion-list {
+    background: transparent;
+  }
+
+  ion-item {
+    --background: transparent;
+    --color: #ffffff;
+    --border-color: #363636;
+  }
+
+  // Inputs
+  ion-input,
+  ion-textarea {
+    --color: #ffffff;
+    --placeholder-color: #a0a0a0;
+    --background: #2a2a2a;
+  }
+
+  // Buttons
+  ion-button {
+    --color: #ffffff;
+  }
+
+  // Labels
+  ion-label {
+    color: #ffffff !important;
+
+    p {
+      color: #a0a0a0 !important;
+    }
+  }
+
+  // Títulos de cards
+  ion-card-title {
+    color: #ffffff;
+  }
+
+  ion-card-subtitle {
+    color: #a0a0a0;
+  }
+
+  // Badges
+  ion-badge {
+    --background: #2a2a2a;
+    --color: #ffffff;
+  }
+
+  // Chips
+  ion-chip {
+    --background: #2a2a2a;
+    --color: #ffffff;
+  }
+
+  // Select
+  ion-select {
+    --placeholder-color: #a0a0a0;
+    color: #ffffff;
+  }
+
+  // Toggle
+  ion-toggle {
+    --background: #2a2a2a;
+    --background-checked: var(--ion-color-primary);
+    --handle-background: #ffffff;
+    --handle-background-checked: #ffffff;
+  }
+
+  // Range
+  ion-range {
+    --bar-background: #2a2a2a;
+    --bar-background-active: var(--ion-color-primary);
+    --knob-background: #ffffff;
+    --pin-background: var(--ion-color-primary);
+  }
+
+  // Notas
+  ion-note {
+    color: #a0a0a0;
+  }
+
+  // Dividers
+  ion-item-divider {
+    --background: #1e1e1e;
+    --color: #ffffff;
+    border-color: #363636;
+  }
+}

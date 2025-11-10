@@ -215,3 +215,51 @@
     padding: 1rem;
   }
 }
+
+// ============================================
+// DARK MODE
+// ============================================
+:host-context(body.dark) {
+  .menu-content {
+    --background: #121212;
+  }
+
+  .welcome-title {
+    color: #ffffff;
+  }
+
+  .welcome-subtitle {
+    color: #a0a0a0;
+  }
+
+  .menu-card {
+    background: #1e1e1e;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+
+    &:hover {
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  ion-card-title {
+    color: #ffffff !important;
+  }
+
+  ion-card-content {
+    color: #a0a0a0 !important;
+  }
+
+  .logout-button {
+    --border-color: #ef4444;
+    --color: #ef4444;
+  }
+
+  .temp-info {
+    background: #1e1e1e;
+    border-color: #363636;
+  }
+
+  .info-text {
+    color: #a0a0a0;
+  }
+}

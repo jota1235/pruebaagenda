@@ -9,6 +9,18 @@ import {
   IonFabButton,
   IonBadge,
   IonSpinner,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonAvatar,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonChip,
   ActionSheetController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -24,7 +36,20 @@ import {
   homeOutline,
   settingsOutline,
   helpCircleOutline,
-  closeOutline
+  closeOutline,
+  locationOutline,
+  callOutline,
+  mailOutline,
+  globeOutline,
+  checkmarkCircleOutline,
+  starOutline,
+  cashOutline,
+  cutOutline,
+  colorPaletteOutline,
+  handLeftOutline,
+  footstepsOutline,
+  happyOutline,
+  brushOutline
 } from 'ionicons/icons';
 
 interface TimeSlot {
@@ -52,7 +77,19 @@ interface DayOption {
     IonFab,
     IonFabButton,
     IonBadge,
-    IonSpinner
+    IonSpinner,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardContent,
+    IonList,
+    IonItem,
+    IonLabel,
+    IonAvatar,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonChip
   ]
 })
 export class AgendaMainPage implements OnInit {
@@ -84,6 +121,44 @@ export class AgendaMainPage implements OnInit {
   // Tab activo en bottom navigation
   activeTab = 'appointments';
 
+  // Datos del negocio (mismo contenido que profile)
+  businessInfo = {
+    name: 'Salón Belleza & Estilo',
+    logo: 'https://via.placeholder.com/150/3B82F6/FFFFFF?text=BE',
+    description: 'Tu salón de confianza con más de 10 años de experiencia ofreciendo servicios de belleza y estética de la más alta calidad.',
+    address: 'Av. Principal 123, Col. Centro, Ciudad de México',
+    phone: '+52 55 1234 5678',
+    email: 'contacto@bellezaestilo.com',
+    website: 'www.bellezaestilo.com',
+    status: 'Abierto ahora'
+  };
+
+  stats = [
+    { icon: 'calendar-outline', value: '245', label: 'Citas este mes', color: 'primary' },
+    { icon: 'people-outline', value: '128', label: 'Clientes activos', color: 'secondary' },
+    { icon: 'star-outline', value: '4.8', label: 'Calificación', color: 'warning' },
+    { icon: 'cash-outline', value: '$45K', label: 'Ingresos del mes', color: 'success' }
+  ];
+
+  businessHours = [
+    { day: 'Lunes', hours: '9:00 a.m. - 8:00 p.m.', isToday: false },
+    { day: 'Martes', hours: '9:00 a.m. - 8:00 p.m.', isToday: false },
+    { day: 'Miércoles', hours: '9:00 a.m. - 8:00 p.m.', isToday: false },
+    { day: 'Jueves', hours: '9:00 a.m. - 8:00 p.m.', isToday: false },
+    { day: 'Viernes', hours: '9:00 a.m. - 8:00 p.m.', isToday: true },
+    { day: 'Sábado', hours: '10:00 a.m. - 6:00 p.m.', isToday: false },
+    { day: 'Domingo', hours: 'Cerrado', isToday: false }
+  ];
+
+  services = [
+    { name: 'Corte de Cabello', icon: 'cut-outline' },
+    { name: 'Tinte y Color', icon: 'color-palette-outline' },
+    { name: 'Manicure', icon: 'hand-left-outline' },
+    { name: 'Pedicure', icon: 'footsteps-outline' },
+    { name: 'Tratamientos Faciales', icon: 'happy-outline' },
+    { name: 'Maquillaje', icon: 'brush-outline' }
+  ];
+
   constructor(
     private router: Router,
     private actionSheetController: ActionSheetController
@@ -101,7 +176,20 @@ export class AgendaMainPage implements OnInit {
       homeOutline,
       settingsOutline,
       helpCircleOutline,
-      closeOutline
+      closeOutline,
+      locationOutline,
+      callOutline,
+      mailOutline,
+      globeOutline,
+      checkmarkCircleOutline,
+      starOutline,
+      cashOutline,
+      cutOutline,
+      colorPaletteOutline,
+      handLeftOutline,
+      footstepsOutline,
+      happyOutline,
+      brushOutline
     });
   }
 

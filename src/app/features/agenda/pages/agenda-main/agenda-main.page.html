@@ -12,16 +12,16 @@
 <!-- Main Content -->
 <ion-content [fullscreen]="true" class="agenda-content" *ngIf="!isLoading" [class.show]="showContent">
 
-  <!-- Banner Superior -->
-  <div class="top-banner">
+  <!-- Banner Superior (solo en appointments) -->
+  <div class="top-banner" *ngIf="activeTab === 'appointments'">
     <p class="banner-text">¿Listo para organizar tu día?</p>
     <ion-button size="small" color="dark" class="banner-button">
       Empezar
     </ion-button>
   </div>
 
-  <!-- Header con Today y Notificaciones -->
-  <div class="agenda-header">
+  <!-- Header con Today y Notificaciones (solo en appointments) -->
+  <div class="agenda-header" *ngIf="activeTab === 'appointments'">
     <div class="header-left">
       <div class="notification-badge">
         <ion-icon name="calendar-outline" class="calendar-icon"></ion-icon>
@@ -45,8 +45,8 @@
     </div>
   </div>
 
-  <!-- Calendario Semanal -->
-  <div class="week-calendar">
+  <!-- Calendario Semanal (solo en appointments) -->
+  <div class="week-calendar" *ngIf="activeTab === 'appointments'">
     <div
       class="day-item"
       *ngFor="let day of weekDays"
@@ -59,8 +59,127 @@
     </div>
   </div>
 
+  <!-- Contenido del tab Negocio -->
+  <div class="business-content" *ngIf="activeTab === 'business'">
+
+    <!-- Header del Perfil -->
+    <div class="profile-header">
+      <div class="header-background"></div>
+      <div class="profile-info">
+        <ion-avatar class="business-avatar">
+          <img [src]="businessInfo.logo" [alt]="businessInfo.name" />
+        </ion-avatar>
+        <h1 class="business-name">{{ businessInfo.name }}</h1>
+        <p class="business-description">{{ businessInfo.description }}</p>
+        <ion-badge color="success" class="status-badge">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          {{ businessInfo.status }}
+        </ion-badge>
+      </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <ion-card class="stats-card">
+      <ion-card-content>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="6" *ngFor="let stat of stats" class="stat-item stat-{{ stat.color }}">
+              <ion-icon [name]="stat.icon"></ion-icon>
+              <div class="stat-value">{{ stat.value }}</div>
+              <div class="stat-label">{{ stat.label }}</div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Información de Contacto -->
+    <ion-card class="contact-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="location-outline"></ion-icon>
+          Información de Contacto
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item lines="none" class="contact-item">
+            <ion-icon name="location-outline" slot="start" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Dirección</h3>
+              <p>{{ businessInfo.address }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="contact-item">
+            <ion-icon name="call-outline" slot="start" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Teléfono</h3>
+              <p>{{ businessInfo.phone }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="contact-item">
+            <ion-icon name="mail-outline" slot="start" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Email</h3>
+              <p>{{ businessInfo.email }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="contact-item">
+            <ion-icon name="globe-outline" slot="start" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Sitio Web</h3>
+              <p>{{ businessInfo.website }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Horarios -->
+    <ion-card class="hours-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="calendar-outline"></ion-icon>
+          Horario de Atención
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let schedule of businessHours" [class.today]="schedule.isToday" lines="none">
+            <ion-label>
+              <h3>{{ schedule.day }}</h3>
+            </ion-label>
+            <span class="hours-label">{{ schedule.hours }}</span>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Servicios -->
+    <ion-card class="services-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="cut-outline"></ion-icon>
+          Servicios Ofrecidos
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="services-grid">
+          <ion-chip *ngFor="let service of services" color="primary" class="service-chip">
+            <ion-icon [name]="service.icon"></ion-icon>
+            <ion-label>{{ service.name }}</ion-label>
+          </ion-chip>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+  </div>
+
   <!-- Timeline de Citas -->
-  <div class="timeline-container">
+  <div class="timeline-container" *ngIf="activeTab === 'appointments'">
     <div class="timeline-content">
 
       <!-- Líneas de hora -->

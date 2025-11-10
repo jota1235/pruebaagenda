@@ -46,19 +46,17 @@ export class HomePage {
   }
 
   /**
-   * Navegar a perfil (próximamente)
+   * Navegar a perfil del negocio
    */
   goToProfile() {
-    console.log('Ir a Perfil - Próximamente');
-    // TODO: this.router.navigate(['/profile']);
+    this.router.navigate(['/profile']);
   }
 
   /**
-   * Navegar a configuración (próximamente)
+   * Navegar a configuración
    */
   goToSettings() {
-    console.log('Ir a Configuración - Próximamente');
-    // TODO: this.router.navigate(['/settings']);
+    this.router.navigate(['/settings']);
   }
 
   /**
