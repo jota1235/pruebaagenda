@@ -1,0 +1,106 @@
+<!--
+  Template HTML de la Tabla de Agenda
+  Traducido desde listar_calendario.php
+-->
+
+<div class="agenda-tabla-container">
+
+  <!-- Loading -->
+  <div *ngIf="cargando" class="loading-overlay">
+    <ion-spinner></ion-spinner>
+    <p>Cargando agenda...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="errorCarga" class="error-message">
+    <ion-icon name="alert-circle-outline"></ion-icon>
+    <p>{{ errorCarga }}</p>
+  </div>
+
+  <!-- Tabla de agenda -->
+  <div *ngIf="!cargando && !errorCarga" class="tabla-wrapper">
+
+    <!-- Inputs ocultos para datos auxiliares -->
+    <input type="hidden" id="fechaLargaX" [value]="fechaLarga">
+    <input type="hidden" id="poscColumns" [value]="posColumnas">
+
+    <table class="tabla-agenda" cellspacing="0" cellpadding="0">
+
+      <!-- Encabezado con nombres de terapeutas o columnas -->
+      <thead *ngIf="encabezados.length > 0">
+        <tr>
+          <!-- Columna de hora (vacía en encabezado) -->
+          <th id="colHead_cero" class="col-hora-header"></th>
+
+          <!-- Columnas de terapeutas/comodines -->
+          <th *ngFor="let encabezado of encabezados"
+              [id]="'colHead_' + encabezado.columna"
+              [class.col-comdin]="encabezado.tipo === 'comodin'"
+              class="colHead">
+
+            <label>{{ encabezado.label }}</label>
+
+            <!-- Botón para añadir columna -->
+            <span *ngIf="encabezado.mostrarAgregar"
+                  class="addColm"
+                  title="Añadir columna">
+              <ion-icon name="add-circle-outline"></ion-icon>
+            </span>
+          </th>
+        </tr>
+      </thead>
+
+      <!-- Cuerpo de la tabla -->
+      <tbody>
+        <tr *ngFor="let fila of matrizCeldas; let i = index"
+            [class.fila-marca]="horarios[i]?.mark">
+
+          <!-- Columna de hora -->
+          <td [id]="horarios[i]?.mark ? 'h' + horarios[i].militar.split(':')[0] : ''"
+              [attr.data-hr]="horarios[i]?.mark ? horarios[i].militar.split(':')[0] : null"
+              [class.hClass]="horarios[i]?.mark"
+              [class.ULin]="debeSubrayarFila(horarios[i])"
+              [class.ULinBot]="i === matrizCeldas.length - 1"
+              class="Tit_hora">
+
+            <!-- Mostrar hora completa o solo minutos -->
+            <span *ngIf="horarios[i]?.mark">
+              {{ horarios[i].regular }}
+            </span>
+            <span *ngIf="!horarios[i]?.mark">
+              {{ horarios[i].militar.split(':')[1] }}
+            </span>
+          </td>
+
+          <!-- Celdas de la fila -->
+          <td *ngFor="let celda of fila; let j = index"
+              [id]="'reg' + j + '_' + (i + 1)"
+              [attr.data-idReg]="celda.idReg"
+              [attr.data-cliente]="celda.cliente"
+              [attr.data-tel1]="celda.tel1"
+              [attr.data-tel2]="celda.tel2"
+              [attr.data-idPersonal]="celda.idPersonal"
+              [attr.data-notas]="celda.notas"
+              [attr.data-hora]="celda.hora"
+              [attr.data-spacio]="celda.spacio"
+              [attr.data-status]="celda.status"
+              [attr.data-idCliente]="celda.idCliente"
+              [attr.data-email]="celda.email"
+              [attr.data-duracion]="celda.duracion"
+              [attr.data-clavRes]="celda.idReg"
+              [attr.reg-id]="'reg' + j + '_' + (i + 1)"
+              [attr.rowspan]="celda.rowspan > 1 ? celda.rowspan : null"
+              [class]="'Celda ' + celda.status + (debeSubrayarFila(horarios[i]) ? ' ULin' : '')"
+              [style.background-color]="celda.backgroundColor"
+              [style.display]="celda.visible ? 'table-cell' : 'none'"
+              (click)="onCeldaClick(celda)"
+              (dblclick)="onCeldaDblClick(celda)">
+
+            <!-- Contenido de la celda usando innerHTML -->
+            <div [innerHTML]="celda.contenidoHTML"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

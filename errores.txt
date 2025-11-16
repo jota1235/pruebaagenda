@@ -1,0 +1,252 @@
+jeep-sqlite isStore = false
+app.component.ts:55 🚀 Inicializando aplicación...
+app.component.ts:34 ⏳ Esperando que jeep-sqlite esté disponible...
+app.component.ts:40 ✅ jeep-sqlite encontrado en el DOM
+debug_node.mjs:18255 Angular is running in development mode.
+database.service.ts:43 Iniciando base de datos en plataforma: web...
+database.service.ts:56 Web store inicializado correctamente
+jeep-sqlite.js:2578 wasm streaming compile failed: LinkError: WebAssembly.instantiate(): Import #34 "a" "I": function import requires a callable
+(anonymous) @ jeep-sqlite.js:2578
+jeep-sqlite.js:2578 falling back to ArrayBuffer instantiation
+(anonymous) @ jeep-sqlite.js:2578
+jeep-sqlite.js:2578 failed to asynchronously prepare wasm: LinkError: WebAssembly.instantiate(): Import #34 "a" "I": function import requires a callable
+(anonymous) @ jeep-sqlite.js:2578
+jeep-sqlite.js:2577 Aborted(LinkError: WebAssembly.instantiate(): Import #34 "a" "I": function import requires a callable)
+G @ jeep-sqlite.js:2577
+root_effect_scheduler.mjs:3624 ERROR Error: LinkError: WebAssembly.instantiate(): Import #34 "a" "I": function import requires a callable
+    at Module.onAbort (jeep-sqlite.js:2521:20)
+    at G (jeep-sqlite.js:2577:17)
+    at jeep-sqlite.js:2578:131
+    at _ZoneDelegate.invoke (zone.js:398:28)
+    at Object.onInvoke (debug_node.mjs:7850:33)
+    at _ZoneDelegate.invoke (zone.js:397:34)
+    at ZoneImpl.run (zone.js:113:43)
+    at zone.js:2537:40
+    at _ZoneDelegate.invokeTask (zone.js:431:33)
+    at debug_node.mjs:7514:55
+handleError @ root_effect_scheduler.mjs:3624
+root_effect_scheduler.mjs:3624 ERROR RuntimeError: Aborted(LinkError: WebAssembly.instantiate(): Import #34 "a" "I": function import requires a callable). Build with -sASSERTIONS for more info.
+    at G (jeep-sqlite.js:2577:66)
+    at jeep-sqlite.js:2578:131
+    at _ZoneDelegate.invoke (zone.js:398:28)
+    at Object.onInvoke (debug_node.mjs:7850:33)
+    at _ZoneDelegate.invoke (zone.js:397:34)
+    at ZoneImpl.run (zone.js:113:43)
+    at zone.js:2537:40
+    at _ZoneDelegate.invokeTask (zone.js:431:33)
+    at debug_node.mjs:7514:55
+    at AsyncStackTaggingZoneSpec.onInvokeTask (debug_node.mjs:7514:36)
+handleError @ root_effect_scheduler.mjs:3624
+Node cannot be found in the current page.
+login.page.ts:87 Login con Google - Por implementar
+menu:1 Blocked aria-hidden on an element because its descendant retained focus. The focus must not be hidden from assistive technology users. Avoid using aria-hidden on a focused element or its ancestor. Consider using the inert attribute instead, which will also prevent focus. For more details, see the aria-hidden section of the WAI-ARIA specification at https://w3c.github.io/aria/#aria-hidden.
+Element with focus: <button.button-native>
+Ancestor with aria-hidden: <app-login.ion-page ion-page-hidden> <app-login _nghost-ng-c2667321598 class=​"ion-page ion-page-hidden" style=​"z-index:​ 100;​ pointer-events:​ none;​" aria-hidden=​"true">​…​</app-login>​slot
+agenda.service.ts:771 📱 Plataforma web detectada: usando configuración mock
+agenda-main.page.ts:231 ✅ Configuración de agenda cargada: {puesto_servicio: 'Terapeuta', hora_inicio: 9, minutos_incremento: 30, hora_fin: 20, color_libre: '#90EE90', …}
+agenda.service.ts:771 📱 Plataforma web detectada: usando configuración mock
+agenda.service.ts:771 📱 Plataforma web detectada: usando configuración mock
+agenda.service.ts:946 📱 Plataforma web: cargando citas mock para fecha 2025-11-14
+agenda.service.ts:947 📊 Citas totales en memoria: 0
+agenda.service.ts:948 📊 Todas las citas: []
+agenda.service.ts:961 ✅ 0 citas mock cargadas para 2025-11-14
+agenda.service.ts:962 📋 Citas filtradas: []
+agenda.service.ts:946 📱 Plataforma web: cargando citas mock para fecha 2025-11-14
+agenda.service.ts:947 📊 Citas totales en memoria: 0
+agenda.service.ts:948 📊 Todas las citas: []
+agenda.service.ts:961 ✅ 0 citas mock cargadas para 2025-11-14
+agenda.service.ts:962 📋 Citas filtradas: []
+2agenda-main.page.ts:274 ✅ 0 citas cargadas para 2025-11-15
+agenda-main.page.ts:362 ✅ 23 slots de tiempo generados
+agenda-main.page.ts:362 ✅ 23 slots de tiempo generados
+agenda-main.page.html:24 e TypeError: Failed to construct 'URL': Invalid base URL
+    at getAssetPath (index.js:345:20)
+    at getNamedUrl (icon.js:47:16)
+    at getUrl2 (icon.js:27:16)
+    at Icon2.loadIcon (icon.js:365:25)
+    at icon.js:303:18
+    at Icon2.waitUntilVisible (icon.js:348:20)
+    at Icon2.connectedCallback (icon.js:301:14)
+    at Icon2.connectedCallback (index.js:3987:35)
+    at _ZoneDelegate.invoke (zone.js:398:28)
+    at ZoneImpl.runGuarded (zone.js:123:47)
+agenda-main.page.html:24 [Ionicons Warning]: Could not load icon with name "ellipsisverticaloutline". Ensure that the icon is registered using addIcons or that the icon SVG data is passed directly to the icon component. <ion-icon _ngcontent-ng-c2084431434 name=​"ellipsisVerticalOutline" class=​"dropdown-icon md hydrated" role=​"img">​…​</ion-icon>​
+getNamedUrl @ icon.js:58
+getUrl2 @ icon.js:27
+loadIcon @ icon.js:365
+(anonymous) @ icon.js:303
+waitUntilVisible @ icon.js:348
+connectedCallback @ icon.js:301
+connectedCallback @ index.js:3987
+invoke @ zone.js:398
+runGuarded @ zone.js:123
+(anonymous) @ zone.js:107
+insertBefore @ dom_renderer.mjs:645
+nativeInsertBefore @ debug_node.mjs:6790
+applyToElementOrContainer @ debug_node.mjs:8289
+applyNodes @ debug_node.mjs:8884
+applyView @ debug_node.mjs:8891
+addViewToDOM @ debug_node.mjs:8341
+addLViewToLContainer @ debug_node.mjs:10446
+insertImpl @ debug_node.mjs:15020
+createEmbeddedView @ debug_node.mjs:14910
+_updateView @ common_module.mjs:3065
+set ngIf @ common_module.mjs:3037
+applyValueToInputField @ debug_node.mjs:528
+writeToDirectiveInput @ debug_node.mjs:7171
+setAllInputsForProperty @ debug_node.mjs:9539
+setPropertyAndInputs @ debug_node.mjs:9167
+ɵɵproperty @ debug_node.mjs:23312
+AgendaMainPage_ion_content_1_Template @ agenda-main.page.html:24
+executeTemplate @ debug_node.mjs:9040
+refreshView @ debug_node.mjs:10076
+detectChangesInView @ debug_node.mjs:10296
+detectChangesInViewIfAttached @ debug_node.mjs:10256
+detectChangesInEmbeddedViews @ debug_node.mjs:10213
+refreshView @ debug_node.mjs:10105
+detectChangesInView @ debug_node.mjs:10296
+detectChangesInViewIfAttached @ debug_node.mjs:10256
+detectChangesInComponent @ debug_node.mjs:10244
+detectChangesInChildComponents @ debug_node.mjs:10322
+refreshView @ debug_node.mjs:10131
+detectChangesInView @ debug_node.mjs:10296
+detectChangesInViewIfAttached @ debug_node.mjs:10256
+detectChangesInEmbeddedViews @ debug_node.mjs:10213
+refreshView @ debug_node.mjs:10105
+detectChangesInView @ debug_node.mjs:10296
+detectChangesInViewIfAttached @ debug_node.mjs:10256
+detectChangesInComponent @ debug_node.mjs:10244
+detectChangesInChildComponents @ debug_node.mjs:10322
+refreshView @ debug_node.mjs:10131
+detectChangesInView @ debug_node.mjs:10296
+detectChangesInViewIfAttached @ debug_node.mjs:10256
+detectChangesInComponent @ debug_node.mjs:10244
+detectChangesInChildComponents @ debug_node.mjs:10322
+refreshView @ debug_node.mjs:10131
+detectChangesInView @ debug_node.mjs:10296
+detectChangesInViewWhileDirty @ debug_node.mjs:9985
+detectChangesInternal @ debug_node.mjs:9973
+synchronizeOnce @ debug_node.mjs:20611
+synchronize @ debug_node.mjs:20570
+tickImpl @ debug_node.mjs:20543
+_tick @ debug_node.mjs:20532
+(anonymous) @ debug_node.mjs:30698
+invoke @ zone.js:398
+onInvoke @ debug_node.mjs:7850
+invoke @ zone.js:397
+run @ zone.js:113
+run @ debug_node.mjs:7696
+next @ debug_node.mjs:30695
+ConsumerObserver2.next @ Subscriber.js:96
+Subscriber2._next @ Subscriber.js:63
+Subscriber2.next @ Subscriber.js:34
+(anonymous) @ Subject.js:41
+errorContext @ errorContext.js:19
+Subject2.next @ Subject.js:31
+emit @ debug_node.mjs:7384
+checkStable @ debug_node.mjs:7764
+onHasTask @ debug_node.mjs:7878
+hasTask @ zone.js:451
+_updateTaskCount @ zone.js:471
+_updateTaskCount @ zone.js:266
+runTask @ zone.js:179
+drainMicroTaskQueue @ zone.js:612
+invokeTask @ zone.js:519
+invokeTask @ zone.js:1141
+globalCallback @ zone.js:1172
+globalZoneAwareCallback @ zone.js:1205
+chunk-SCNEKAWF.js:58 e TypeError: Failed to construct 'URL': Invalid base URL
+    at getAssetPath (index.js:345:20)
+    at getNamedUrl (icon.js:47:16)
+    at getUrl2 (icon.js:27:16)
+    at Icon2.loadIcon (icon.js:365:25)
+    at Icon2.componentDidLoad (icon.js:317:18)
+    at safeCall (index.js:3362:29)
+    at postUpdateComponent (index.js:3295:5)
+    at postUpdate (index.js:3223:30)
+    at index.js:3225:7
+    at Generator.next (<anonymous>)
+chunk-SCNEKAWF.js:58 [Ionicons Warning]: Could not load icon with name "ellipsisverticaloutline". Ensure that the icon is registered using addIcons or that the icon SVG data is passed directly to the icon component. <ion-icon _ngcontent-ng-c2084431434 name=​"ellipsisVerticalOutline" class=​"dropdown-icon md hydrated" role=​"img">​…​</ion-icon>​
+getNamedUrl @ icon.js:58
+getUrl2 @ icon.js:27
+loadIcon @ icon.js:365
+componentDidLoad @ icon.js:317
+safeCall @ index.js:3362
+postUpdateComponent @ index.js:3295
+postUpdate @ index.js:3223
+(anonymous) @ index.js:3225
+(anonymous) @ chunk-SCNEKAWF.js:58
+ZoneAwarePromise @ zone.js:2701
+__async @ chunk-SCNEKAWF.js:42
+updateComponent @ index.js:3180
+(anonymous) @ index.js:3173
+enqueue @ index.js:3178
+dispatchHooks @ index.js:3173
+dispatch @ index.js:3132
+(anonymous) @ index.js:3135
+invokeTask @ zone.js:431
+runTask @ zone.js:161
+drainMicroTaskQueue @ zone.js:612
+invokeTask @ zone.js:519
+invokeTask @ zone.js:1141
+globalCallback @ zone.js:1172
+globalZoneAwareCallback @ zone.js:1205
+agenda:1 Blocked aria-hidden on an element because its descendant retained focus. The focus must not be hidden from assistive technology users. Avoid using aria-hidden on a focused element or its ancestor. Consider using the inert attribute instead, which will also prevent focus. For more details, see the aria-hidden section of the WAI-ARIA specification at https://w3c.github.io/aria/#aria-hidden.
+Element with focus: <button.card-native>
+Ancestor with aria-hidden: <app-home.ion-page can-go-back ion-page-hidden> <app-home _nghost-ng-c3491615181 class=​"ion-page can-go-back ion-page-hidden" style=​"z-index:​ 100;​ pointer-events:​ none;​" aria-hidden=​"true">​…​</app-home>​
+agenda.service.ts:771 📱 Plataforma web detectada: usando configuración mock
+agenda-main.page.ts:375 Día seleccionado desde selector semanal: Sun Nov 16 2025 00:00:00 GMT-0600 (hora estándar central)
+agenda.service.ts:946 📱 Plataforma web: cargando citas mock para fecha 2025-11-15
+agenda.service.ts:947 📊 Citas totales en memoria: 0
+agenda.service.ts:948 📊 Todas las citas: []
+agenda.service.ts:961 ✅ 0 citas mock cargadas para 2025-11-15
+agenda.service.ts:962 📋 Citas filtradas: []
+agenda-main.page.ts:274 ✅ 0 citas cargadas para 2025-11-16
+agenda-main.page.ts:362 ✅ 23 slots de tiempo generados
+appointment-form.component.ts:220 🔄 Iniciando carga de datos...
+appointment-form.component.ts:223 📋 Cargando pacientes...
+appointment-form.component.ts:225 📋 Pacientes obtenidos de BD: (5) [{…}, {…}, {…}, {…}, {…}]
+appointment-form.component.ts:233 📋 Clientes procesados: (5) [{…}, {…}, {…}, {…}, {…}]
+appointment-form.component.ts:236 👥 Cargando personal...
+appointment-form.component.ts:238 👥 Personal obtenido de BD: (4) [{…}, {…}, {…}, {…}]
+appointment-form.component.ts:245 👥 Personal procesado: (4) [{…}, {…}, {…}, {…}]
+appointment-form.component.ts:248 💼 Cargando servicios...
+appointment-form.component.ts:250 💼 Servicios obtenidos de BD: (6) [{…}, {…}, {…}, {…}, {…}, {…}]
+appointment-form.component.ts:258 💼 Servicios procesados: (6) [{…}, {…}, {…}, {…}, {…}, {…}]
+appointment-form.component.ts:260 ✅ Datos cargados correctamente: {clients: 5, staff: 4, services: 6}
+appointment-form.component.ts:464 Guardando cita: {date: Sun Nov 16 2025 00:00:00 GMT-0600 (hora estándar central), time: '16/11/2025 - 12:00 a.m.', clientId: 3, clientName: 'Carlos López', staffId: 1, …}
+agenda-main.page.ts:567 Cita guardada: {date: Sun Nov 16 2025 00:00:00 GMT-0600 (hora estándar central), time: '16/11/2025 - 12:00 a.m.', clientId: 3, clientName: 'Carlos López', staffId: 1, …}
+agenda.service.ts:2082 📝 Creando cita mock: {date: Sun Nov 16 2025 00:00:00 GMT-0600 (hora estándar central), time: '16/11/2025 - 12:00 a.m.', clientId: 3, clientName: 'Carlos López', staffId: 1, …}
+agenda.service.ts:2083 📅 Fecha recibida: Sun Nov 16 2025 00:00:00 GMT-0600 (hora estándar central)
+agenda.service.ts:2091 📅 Fecha formateada para guardar: 2025-11-16
+agenda.service.ts:2133 ✅ Cita mock creada exitosamente: {id_agenda: 1, id_cliente: 3, id_personal: 1, hora: '00:00', hora_ag: '00:00', …}
+agenda.service.ts:2134 📊 Total de citas mock en memoria: [{…}]
+agenda.service.ts:771 📱 Plataforma web detectada: usando configuración mock
+agenda.service.ts:946 📱 Plataforma web: cargando citas mock para fecha 2025-11-15
+agenda.service.ts:947 📊 Citas totales en memoria: 1
+agenda.service.ts:948 📊 Todas las citas: [{…}]
+agenda.service.ts:952 🔍 Comparando: apt.fecha="2025-11-16" con fecha="2025-11-15"
+agenda.service.ts:961 ✅ 0 citas mock cargadas para 2025-11-15
+agenda.service.ts:962 📋 Citas filtradas: []
+agenda-main.page.ts:274 ✅ 0 citas cargadas para 2025-11-16
+agenda-main.page.ts:362 ✅ 23 slots de tiempo generados
+agenda.service.ts:771 📱 Plataforma web detectada: usando configuración mock
+agenda-main.page.ts:375 Día seleccionado desde selector semanal: Sat Nov 15 2025 00:00:00 GMT-0600 (hora estándar central)
+agenda.service.ts:946 📱 Plataforma web: cargando citas mock para fecha 2025-11-14
+agenda.service.ts:947 📊 Citas totales en memoria: 1
+agenda.service.ts:948 📊 Todas las citas: [{…}]
+agenda.service.ts:952 🔍 Comparando: apt.fecha="2025-11-16" con fecha="2025-11-14"
+agenda.service.ts:961 ✅ 0 citas mock cargadas para 2025-11-14
+agenda.service.ts:962 📋 Citas filtradas: []
+agenda-main.page.ts:274 ✅ 0 citas cargadas para 2025-11-15
+agenda-main.page.ts:362 ✅ 23 slots de tiempo generados
+agenda.service.ts:771 📱 Plataforma web detectada: usando configuración mock
+agenda-main.page.ts:375 Día seleccionado desde selector semanal: Sun Nov 16 2025 00:00:00 GMT-0600 (hora estándar central)
+agenda.service.ts:946 📱 Plataforma web: cargando citas mock para fecha 2025-11-15
+agenda.service.ts:947 📊 Citas totales en memoria: 1
+agenda.service.ts:948 📊 Todas las citas: [{…}]
+agenda.service.ts:952 🔍 Comparando: apt.fecha="2025-11-16" con fecha="2025-11-15"
+agenda.service.ts:961 ✅ 0 citas mock cargadas para 2025-11-15
+agenda.service.ts:962 📋 Citas filtradas: []
+agenda-main.page.ts:274 ✅ 0 citas cargadas para 2025-11-16
+agenda-main.page.ts:362 ✅ 23 slots de tiempo generados

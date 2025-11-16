@@ -38,6 +38,7 @@ import {
   personOutline,
   searchOutline
 } from 'ionicons/icons';
+import { AgendaService } from '../../../../core/services/agenda.service';
 
 /**
  * Interface para el formulario de cita
@@ -157,30 +158,10 @@ export class AppointmentFormComponent implements OnInit {
   // Promo
   isPromo = false;
 
-  // Mock data (TODO: Reemplazar con datos reales desde el servicio)
-  allClients: Client[] = [
-    { id: 1, name: 'Juan Pérez', phone: '555-0001', email: 'juan@example.com' },
-    { id: 2, name: 'María García', phone: '555-0002', email: 'maria@example.com' },
-    { id: 3, name: 'Carlos López', phone: '555-0003', email: 'carlos@example.com' },
-    { id: 4, name: 'Ana Martínez', phone: '555-0004', email: 'ana@example.com' },
-    { id: 5, name: 'Pedro Sánchez', phone: '555-0005', email: 'pedro@example.com' }
-  ];
-
-  staffList: Staff[] = [
-    { id: 1, name: 'ABILENE RICO PUENTES', active: true },
-    { id: 2, name: 'Dante Ramírez', active: true },
-    { id: 3, name: 'Sofia Torres', active: true },
-    { id: 4, name: 'Miguel Hernández', active: true }
-  ];
-
-  services: Service[] = [
-    { id: 1, name: 'Corte de Cabello', duration: 30, price: 150 },
-    { id: 2, name: 'Tinte y Color', duration: 60, price: 350 },
-    { id: 3, name: 'Manicure', duration: 45, price: 200 },
-    { id: 4, name: 'Pedicure', duration: 60, price: 250 },
-    { id: 5, name: 'Tratamiento Facial', duration: 90, price: 450 },
-    { id: 6, name: 'Maquillaje', duration: 45, price: 300 }
-  ];
+  // Data from database
+  allClients: Client[] = [];
+  staffList: Staff[] = [];
+  services: Service[] = [];
 
   durationOptions = [
     { value: 15, label: '00:15 m' },
@@ -191,7 +172,10 @@ export class AppointmentFormComponent implements OnInit {
     { value: 120, label: '02:00 m' }
   ];
 
-  constructor(private modalController: ModalController) {
+  constructor(
+    private modalController: ModalController,
+    private agendaService: AgendaService
+  ) {
     // Registrar iconos
     addIcons({
       closeOutline,
@@ -205,7 +189,7 @@ export class AppointmentFormComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     // Configurar fecha mínima (hoy a las 00:00 para permitir todas las horas del día)
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -223,6 +207,64 @@ export class AppointmentFormComponent implements OnInit {
 
     // Formatear fecha y hora inicial
     this.selectedDateTime = this.formatDateTime(this.date);
+
+    // Load data from database
+    await this.loadData();
+  }
+
+  /**
+   * Cargar datos desde la base de datos
+   */
+  async loadData() {
+    try {
+      console.log('🔄 Iniciando carga de datos...');
+
+      // Cargar pacientes/clientes
+      console.log('📋 Cargando pacientes...');
+      const pacientes = await this.agendaService.getPacientes();
+      console.log('📋 Pacientes obtenidos de BD:', pacientes);
+
+      this.allClients = pacientes.map((p: any) => ({
+        id: p.id,
+        name: p.nombre,
+        phone: p.telefono || '',
+        email: p.email || ''
+      }));
+      console.log('📋 Clientes procesados:', this.allClients);
+
+      // Cargar personal
+      console.log('👥 Cargando personal...');
+      const personal = await this.agendaService.getPersonalAgenda();
+      console.log('👥 Personal obtenido de BD:', personal);
+
+      this.staffList = personal.map((p: any) => ({
+        id: p.id,
+        name: p.nombre,
+        active: p.activo === 'SI'
+      }));
+      console.log('👥 Personal procesado:', this.staffList);
+
+      // Cargar servicios
+      console.log('💼 Cargando servicios...');
+      const servicios = await this.agendaService.getServicios();
+      console.log('💼 Servicios obtenidos de BD:', servicios);
+
+      this.services = servicios.map((s: any) => ({
+        id: s.id,
+        name: s.nombre,
+        duration: s.duracion || 30,
+        price: s.precio || 0
+      }));
+      console.log('💼 Servicios procesados:', this.services);
+
+      console.log('✅ Datos cargados correctamente:', {
+        clients: this.allClients.length,
+        staff: this.staffList.length,
+        services: this.services.length
+      });
+    } catch (error) {
+      console.error('❌ Error cargando datos:', error);
+    }
   }
 
   /**

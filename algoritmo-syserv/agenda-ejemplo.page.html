@@ -1,0 +1,185 @@
+<!--
+  Template HTML de ejemplo para el componente de Agenda
+  Ionic + Angular
+-->
+
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Agenda</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="buscarDisponibilidad(1)">
+        <ion-icon name="search"></ion-icon>
+      </ion-button>
+      <ion-button (click)="exportarDatos()">
+        <ion-icon name="download"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <!-- Selector de fecha -->
+  <ion-toolbar>
+    <ion-item>
+      <ion-label>Fecha:</ion-label>
+      <ion-datetime
+        [(ngModel)]="fechaSeleccionada"
+        presentation="date"
+        (ionChange)="cambiarFecha($event)"
+        display-format="DD/MM/YYYY">
+      </ion-datetime>
+    </ion-item>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <!-- Refresher -->
+  <ion-refresher slot="fixed" (ionRefresh)="refrescar($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Loading -->
+  <div *ngIf="cargando" class="loading-container">
+    <ion-spinner></ion-spinner>
+    <p>Cargando agenda...</p>
+  </div>
+
+  <!-- Mensaje si no hay datos -->
+  <div *ngIf="!cargando && !agendaInicializada" class="mensaje-vacio">
+    <ion-icon name="calendar-outline" size="large"></ion-icon>
+    <p>Inicializando agenda...</p>
+  </div>
+
+  <!-- Tabla de la agenda -->
+  <div *ngIf="!cargando && agendaInicializada" class="agenda-container">
+
+    <!-- Leyenda de colores -->
+    <ion-card class="leyenda-card">
+      <ion-card-header>
+        <ion-card-subtitle>Leyenda</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="leyenda-items">
+          <div class="leyenda-item">
+            <div class="color-box libre"></div>
+            <span>Libre</span>
+          </div>
+          <div class="leyenda-item">
+            <div class="color-box reservado"></div>
+            <span>Reservado</span>
+          </div>
+          <div class="leyenda-item">
+            <div class="color-box confirmado"></div>
+            <span>Confirmado</span>
+          </div>
+          <div class="leyenda-item">
+            <div class="color-box cobrado"></div>
+            <span>Cobrado</span>
+          </div>
+          <div class="leyenda-item">
+            <div class="color-box cancelado"></div>
+            <span>Cancelado</span>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Estadísticas rápidas -->
+    <ion-grid class="estadisticas">
+      <ion-row>
+        <ion-col size="4">
+          <ion-card class="stat-card">
+            <ion-card-content>
+              <h3>{{ reservas.length }}</h3>
+              <p>Citas</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="4">
+          <ion-card class="stat-card">
+            <ion-card-content>
+              <h3>{{ terapeutas.length }}</h3>
+              <p>Terapeutas</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="4">
+          <ion-card class="stat-card">
+            <ion-card-content>
+              <h3>{{ horarios.length }}</h3>
+              <p>Horarios</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- Tabla scrollable -->
+    <div class="table-container">
+      <table class="agenda-table">
+        <!-- Encabezado -->
+        <thead>
+          <tr>
+            <th class="hora-header sticky-col">Hora</th>
+            <th *ngFor="let terapeuta of terapeutas" class="terapeuta-header">
+              <div class="terapeuta-info">
+                <strong>{{ terapeuta.alias }}</strong>
+                <small>{{ terapeuta.nombre }}</small>
+              </div>
+            </th>
+          </tr>
+        </thead>
+
+        <!-- Cuerpo de la tabla -->
+        <tbody>
+          <tr *ngFor="let horario of horarios; let fila = index"
+              [class.hora-marca]="horario.mark">
+            <!-- Columna de hora -->
+            <td class="hora-cell sticky-col"
+                [class.hora-marca]="horario.mark">
+              <div class="hora-texto">
+                {{ horario.regular }}
+              </div>
+            </td>
+
+            <!-- Celdas de reservas -->
+            <td *ngFor="let terapeuta of terapeutas; let columna = index"
+                [ngClass]="getCeldaClass(columna, fila)"
+                [style.background-color]="getColorCelda(columna, fila)"
+                (click)="onCeldaClick(columna, fila)">
+
+              <!-- Contenido de la celda -->
+              <div class="celda-contenido">
+                {{ getCeldaContenido(columna, fila) }}
+              </div>
+
+              <!-- Indicador de selección -->
+              <div *ngIf="columnaSeleccionada === columna && filaSeleccionada === fila"
+                   class="celda-seleccionada">
+                <ion-icon name="checkmark-circle"></ion-icon>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Botón flotante para crear cita rápida -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="secondary">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="buscarDisponibilidad(1)" data-desc="1 Espacio">
+        <ion-icon name="time"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button (click)="buscarDisponibilidad(2)" data-desc="2 Espacios">
+        <ion-icon name="timer"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button (click)="buscarDisponibilidad(3)" data-desc="3 Espacios">
+        <ion-icon name="hourglass"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+
+</ion-content>

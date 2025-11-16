@@ -26,6 +26,8 @@ import {
 } from '@ionic/angular/standalone';
 import { CalendarModalComponent, CalendarModalResult } from '../../components/calendar-modal/calendar-modal.component';
 import { AppointmentFormComponent, AppointmentFormData } from '../../components/appointment-form/appointment-form.component';
+import { AgendaService } from '../../../../core/services/agenda.service';
+import { ConfigAgenda, Reserva } from '../../../../core/interfaces/agenda.interfaces';
 import { addIcons } from 'ionicons';
 import {
   notificationsOutline,
@@ -164,10 +166,17 @@ export class AgendaMainPage implements OnInit {
   // Fecha seleccionada actualmente
   selectedDate: Date = new Date();
 
+  // Configuración de agenda desde BD
+  agendaConfig?: ConfigAgenda;
+
+  // Citas del día
+  appointments: Reserva[] = [];
+
   constructor(
     private router: Router,
     private actionSheetController: ActionSheetController,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private agendaService: AgendaService
   ) {
     // Registrar iconos
     addIcons({
@@ -208,85 +217,147 @@ export class AgendaMainPage implements OnInit {
    * Inicializar agenda con animación de carga
    */
   async initializeAgenda() {
-    // Simular carga de datos
-    await this.delay(1500);
+    try {
+      // 1. Configurar el handel (sucursal) y empresa
+      this.agendaService.handel = 1;
+      this.agendaService.id_empresa_base = 1;
 
-    // Inicializar con la fecha actual (Hoy)
-    this.selectedDate = new Date();
-    this.updateViewForSelectedDate(this.selectedDate);
+      // 2. Cargar configuración de agenda
+      const fecha = this.formatDateSQL(new Date());
+      const configLoaded = await this.agendaService.readConfigAgenda(fecha);
 
-    // Generar timeline
-    this.generateTimeSlots();
+      if (configLoaded) {
+        this.agendaConfig = this.agendaService.getInfoConfigAgenda();
+        console.log('✅ Configuración de agenda cargada:', this.agendaConfig);
 
-    // Mostrar contenido con animación
-    this.isLoading = false;
-    setTimeout(() => {
+        // Actualizar horario del día
+        this.updateBusinessHours();
+      } else {
+        console.warn('⚠️ No se pudo cargar la configuración de agenda');
+      }
+
+      // 3. Inicializar con la fecha actual (Hoy)
+      this.selectedDate = new Date();
+      this.updateViewForSelectedDate(this.selectedDate);
+
+      // 4. Cargar citas del día
+      await this.loadAppointmentsForDate(this.selectedDate);
+
+      // 5. Generar timeline con datos reales
+      this.generateTimeSlots();
+
+      // Mostrar contenido con animación
+      this.isLoading = false;
+      setTimeout(() => {
+        this.showContent = true;
+      }, 100);
+    } catch (error) {
+      console.error('❌ Error inicializando agenda:', error);
+      this.isLoading = false;
       this.showContent = true;
-    }, 100);
+    }
   }
 
   /**
-   * Generar slots de tiempo para el timeline (cada 30 minutos)
+   * Cargar citas para una fecha específica
+   */
+  async loadAppointmentsForDate(date: Date) {
+    try {
+      const fecha = this.formatDateSQL(date);
+
+      // Establecer la fecha en el servicio ANTES de cargar las citas
+      this.agendaService.setFechaAg(fecha);
+
+      // Usar MapaAgenda para obtener todas las citas mapeadas de esa fecha
+      this.appointments = await this.agendaService.MapaAgenda(false);
+    } catch (error) {
+      console.error('Error cargando citas:', error);
+      this.appointments = [];
+    }
+  }
+
+  /**
+   * Actualizar horarios del negocio desde configuración
+   */
+  updateBusinessHours() {
+    if (!this.agendaConfig) return;
+
+    const horaInicio = this.agendaConfig.hora_inicio;
+    const horaFin = this.agendaConfig.hora_fin;
+
+    this.currentHours = `${this.formatHora(horaInicio)}:00 - ${this.formatHora(horaFin)}:00`;
+  }
+
+  /**
+   * Formatear hora en formato de 12 horas
+   */
+  formatHora(hora: number): string {
+    const period = hora >= 12 ? 'p.m.' : 'a.m.';
+    const hora12 = hora > 12 ? hora - 12 : hora === 0 ? 12 : hora;
+    return `${hora12}:00 ${period}`;
+  }
+
+  /**
+   * Formatear fecha en formato SQL (YYYY-MM-DD)
+   */
+  formatDateSQL(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  /**
+   * Generar slots de tiempo para el timeline basado en configuración real
    */
   generateTimeSlots() {
     this.timeSlots = [];
 
-    // Definir las horas y sus períodos
-    const schedule = [
-      { hour: 9, minute: 0, period: 'a.m.' },
-      { hour: 9, minute: 30, period: 'a.m.' },
-      { hour: 10, minute: 0, period: 'a.m.' },
-      { hour: 10, minute: 30, period: 'a.m.' },
-      { hour: 11, minute: 0, period: 'a.m.' },
-      { hour: 11, minute: 30, period: 'a.m.' },
-      { hour: 12, minute: 0, period: 'p.m.' },
-      { hour: 12, minute: 30, period: 'p.m.' },
-      { hour: 1, minute: 0, period: 'p.m.' },
-      { hour: 1, minute: 30, period: 'p.m.' },
-      { hour: 2, minute: 0, period: 'p.m.' },
-      { hour: 2, minute: 30, period: 'p.m.' },
-      { hour: 3, minute: 0, period: 'p.m.' },
-      { hour: 3, minute: 30, period: 'p.m.' },
-      { hour: 4, minute: 0, period: 'p.m.' },
-      { hour: 4, minute: 30, period: 'p.m.' },
-      { hour: 5, minute: 0, period: 'p.m.' },
-      { hour: 5, minute: 30, period: 'p.m.' },
-      { hour: 6, minute: 0, period: 'p.m.' },
-      { hour: 6, minute: 30, period: 'p.m.' },
-      { hour: 7, minute: 0, period: 'p.m.' },
-      { hour: 7, minute: 30, period: 'p.m.' }
-    ];
-
-    // Crear un slot para cada período de 30 minutos
-    schedule.forEach(slot => {
-      const minuteStr = slot.minute === 0 ? '00' : '30';
-      this.timeSlots.push({
-        time: `${slot.hour}:${minuteStr}`,
-        displayTime: `${slot.hour}:${minuteStr}`,
-        period: slot.period,
-        isEmpty: true
-      });
-    });
-
-    // Agregar una cita de ejemplo en 9:00 a.m. (60 min = 2 slots)
-    if (this.timeSlots.length >= 2) {
-      // Slot 9:00 a.m.
-      this.timeSlots[0] = {
-        ...this.timeSlots[0],
-        isEmpty: false,
-        appointment: {
-          clientName: 'Juan Pérez',
-          service: 'Corte de Cabello',
-          duration: 60,
-          status: 'confirmed'
-        }
-      };
-      // Slot 9:30 a.m. (segunda parte de la cita)
-      this.timeSlots[1] = {
-        ...this.timeSlots[1],
-        isEmpty: false
-      };
+    if (!this.agendaConfig) {
+      console.warn('⚠️ No hay configuración de agenda disponible');
+      return;
     }
+
+    const horaInicio = this.agendaConfig.hora_inicio;
+    const horaFin = this.agendaConfig.hora_fin;
+    const incrementoMinutos = this.agendaConfig.minutos_incremento;
+
+    // Generar slots desde hora inicio hasta hora fin
+    let horaActual = horaInicio;
+    let minutoActual = 0;
+
+    while (horaActual < horaFin || (horaActual === horaFin && minutoActual === 0)) {
+      const period = horaActual >= 12 ? 'p.m.' : 'a.m.';
+      const hora12 = horaActual > 12 ? horaActual - 12 : horaActual === 0 ? 12 : horaActual;
+      const minuteStr = minutoActual.toString().padStart(2, '0');
+
+      const timeKey = `${horaActual.toString().padStart(2, '0')}:${minuteStr}`;
+
+      // Buscar si hay una cita en este horario
+      const appointment = this.appointments.find(apt => apt.hora === timeKey);
+
+      this.timeSlots.push({
+        time: timeKey,
+        displayTime: `${hora12}:${minuteStr}`,
+        period: period,
+        isEmpty: !appointment,
+        appointment: appointment ? {
+          clientName: appointment.cliente,
+          service: appointment.servicios_agenda || 'Sin servicio',
+          duration: appointment.duracion * incrementoMinutos,
+          status: appointment.status.toLowerCase()
+        } : undefined
+      });
+
+      // Incrementar tiempo
+      minutoActual += incrementoMinutos;
+      if (minutoActual >= 60) {
+        horaActual++;
+        minutoActual = 0;
+      }
+    }
+
+    console.log(`✅ ${this.timeSlots.length} slots de tiempo generados`);
   }
 
   /**
@@ -330,7 +401,7 @@ export class AgendaMainPage implements OnInit {
   /**
    * Actualizar la vista según la fecha seleccionada
    */
-  updateViewForSelectedDate(date: Date) {
+  async updateViewForSelectedDate(date: Date) {
     // Actualizar el título del día
     const today = new Date();
     const isToday = this.isSameDay(date, today);
@@ -347,8 +418,11 @@ export class AgendaMainPage implements OnInit {
     // Actualizar el selector de días del mes
     this.updateMonthSelector(date);
 
-    // TODO: Cargar citas del día seleccionado desde la base de datos
-    console.log('Cargando citas para:', date);
+    // Cargar citas del día seleccionado
+    await this.loadAppointmentsForDate(date);
+
+    // Regenerar timeline con las nuevas citas
+    this.generateTimeSlots();
   }
 
   /**
@@ -489,10 +563,14 @@ export class AgendaMainPage implements OnInit {
 
     if (role === 'confirm' && data) {
       console.log('Cita guardada:', data);
-      // TODO: Recargar citas del día desde la base de datos
-      // await this.loadAppointmentsForDate(this.selectedDate);
 
-      // Por ahora regeneramos el timeline para mostrar feedback visual
+      // Guardar cita mock en web (en móvil se guardaría en SQLite)
+      await this.agendaService.createMockAppointment(data);
+
+      // Recargar citas del día desde la base de datos/memoria
+      await this.loadAppointmentsForDate(this.selectedDate);
+
+      // Regenerar timeline con las nuevas citas
       this.generateTimeSlots();
     }
   }

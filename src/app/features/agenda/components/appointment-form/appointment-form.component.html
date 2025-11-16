@@ -127,7 +127,7 @@
       <!-- Totales -->
       <div class="totals">
         <p><strong>Duración total:</strong> {{ totalDuration }} minutos</p>
-        <p><strong>Precio total:</strong> ${{ totalPrice }}</p>
+        <p><strong>Fecha y hora:</strong> {{ selectedDateTime }}</p>
       </div>
     </div>
 
@@ -204,7 +204,7 @@
         <ion-item *ngFor="let service of addedServices" class="added-service-item">
           <ion-label>
             <h3>{{ service.serviceName }}</h3>
-            <p>Cantidad: {{ service.quantity }} | Duración: {{ service.duration }} min | Precio: ${{ service.price }}</p>
+            <p>Cantidad: {{ service.quantity }} | Duración: {{ service.duration }} min</p>
           </ion-label>
           <ion-button slot="end" fill="clear" (click)="removeService(service)">
             <ion-icon name="trash-outline" color="danger"></ion-icon>
