@@ -52,35 +52,42 @@ export class AppComponent implements OnInit {
    */
   private async initializeApp() {
     try {
-      console.log('🚀 Inicializando aplicación...');
+      const platform = Capacitor.getPlatform();
+      console.log('🚀 Inicializando aplicación en plataforma:', platform);
 
-      // 0. Esperar a que jeep-sqlite esté disponible (solo en web)
-      await this.waitForJeepSqlite();
-
-      // 1. Inicializar base de datos
-      await this.dbService.initDatabase();
-      console.log('✅ Base de datos inicializada');
-
-      // 2. Verificar si es primera ejecución
-      const hasData = await this.seedService.hasData();
-
-      if (!hasData) {
-        console.log('📦 Primera ejecución detectada, poblando base de datos...');
-        await this.seedService.seedDatabase();
-        console.log('✅ Base de datos poblada con datos de prueba');
-      } else {
-        console.log('✅ Base de datos ya contiene datos');
-
-        // DESARROLLO: Recreando datos con estructura correcta
-        await this.seedService.clearAllData();
-        await this.seedService.seedDatabase();
+      // Solo en web: esperar a que jeep-sqlite esté disponible
+      if (platform === 'web') {
+        await this.waitForJeepSqlite();
       }
 
-      console.log('🎉 Aplicación lista!');
+      // En móvil (Android/iOS): inicializar SQLite nativo directamente
+      if (platform !== 'web') {
+        console.log('📱 Plataforma nativa detectada, inicializando SQLite nativo...');
+
+        // 1. Inicializar base de datos
+        await this.dbService.initDatabase();
+        console.log('✅ Base de datos SQLite nativa inicializada');
+
+        // 2. Verificar si es primera ejecución
+        const hasData = await this.seedService.hasData();
+
+        if (!hasData) {
+          console.log('📦 Primera ejecución detectada, poblando base de datos...');
+          await this.seedService.seedDatabase();
+          console.log('✅ Base de datos poblada con datos de prueba');
+        } else {
+          console.log('✅ Base de datos ya contiene datos');
+        }
+
+        console.log('🎉 Aplicación lista en móvil!');
+      } else {
+        console.log('🌐 Plataforma web detectada, usando mock data');
+        // En web no inicializamos BD para evitar errores de jeep-sqlite
+      }
+
     } catch (error) {
       console.error('❌ Error inicializando aplicación:', error);
-      // En producción, aquí podrías mostrar un mensaje al usuario
-      // o intentar recuperar de alguna manera
+      console.error('❌ Detalles del error:', JSON.stringify(error));
     }
   }
 
