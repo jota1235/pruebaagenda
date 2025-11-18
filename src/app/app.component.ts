@@ -15,9 +15,12 @@ export class AppComponent implements OnInit {
     private seedService: SeedDataService
   ) {}
 
-  async ngOnInit() {
-    // Inicializar base de datos
-    await this.initializeApp();
+  ngOnInit() {
+    // Inicializar base de datos de forma no bloqueante
+    this.initializeApp().catch(error => {
+      console.error('Error crítico en inicialización:', error);
+      // No lanzar el error para evitar crash de la app
+    });
 
     // Cargar preferencia de modo oscuro al iniciar la app
     this.loadDarkModePreference();

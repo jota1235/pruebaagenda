@@ -35,15 +35,16 @@ export class DatabaseService {
    */
   async initDatabase(): Promise<void> {
     if (this.isInitialized) {
-      console.log('Base de datos ya inicializada');
+      console.log('✅ Base de datos ya inicializada');
       return;
     }
 
     try {
-      console.log(`Iniciando base de datos en plataforma: ${this.platform}...`);
+      console.log(`🔧 Iniciando base de datos en plataforma: ${this.platform}...`);
 
       // En web, necesitamos inicializar el web store primero
       if (this.platform === 'web') {
+        console.log('🌐 Plataforma web detectada, inicializando web store...');
         // Verificar que jeep-sqlite esté disponible
         const jeepEl = document.querySelector('jeep-sqlite');
         if (!jeepEl) {
@@ -53,19 +54,22 @@ export class DatabaseService {
         // Inicializar el web store (solo falla si ya está inicializado, lo cual es seguro)
         try {
           await this.sqlite.initWebStore();
-          console.log('Web store inicializado correctamente');
+          console.log('✅ Web store inicializado correctamente');
         } catch (error: any) {
           // Si ya está inicializado, el error es esperado y lo ignoramos
           if (error.message && error.message.includes('already initialized')) {
-            console.log('Web store ya estaba inicializado');
+            console.log('ℹ️ Web store ya estaba inicializado');
           } else {
-            console.error('Error al inicializar web store:', error);
+            console.error('❌ Error al inicializar web store:', error);
             throw error;
           }
         }
+      } else {
+        console.log(`📱 Plataforma nativa (${this.platform}) detectada`);
       }
 
       // Crear/abrir conexión a la base de datos
+      console.log(`🔗 Creando conexión a: ${this.dbName}...`);
       this.db = await this.sqlite.createConnection(
         this.dbName,
         false,              // No encriptada
@@ -73,22 +77,30 @@ export class DatabaseService {
         1,                  // Versión
         false               // No readonly
       );
+      console.log('✅ Conexión creada');
 
       // Abrir base de datos
+      console.log('🔓 Abriendo base de datos...');
       await this.db.open();
-      console.log('Conexión a BD abierta');
+      console.log('✅ Base de datos abierta');
 
       // Crear todas las tablas
+      console.log('📋 Creando tablas...');
       await this.createTables();
+      console.log('✅ Tablas creadas');
 
       // Crear índices para performance
+      console.log('🔍 Creando índices...');
       await this.createIndexes();
+      console.log('✅ Índices creados');
 
       this.isInitialized = true;
-      console.log('Base de datos inicializada exitosamente');
+      console.log('🎉 Base de datos inicializada exitosamente');
 
     } catch (error) {
-      console.error('Error al inicializar base de datos:', error);
+      console.error('❌ Error FATAL al inicializar base de datos:', error);
+      console.error('❌ Tipo de error:', typeof error);
+      console.error('❌ Error stack:', (error as any)?.stack);
       throw error;
     }
   }
