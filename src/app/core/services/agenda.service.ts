@@ -2011,9 +2011,14 @@ export class AgendaService {
       // En móvil, usar SQLite real
       console.log(`📱 Consultando pacientes SQLite (handel: ${this.handel}, id_empresa_base: ${this.id_empresa_base})`);
       const query = `
-        SELECT id, nombre, telefono, email, activo
-        FROM tpacientes
-        WHERE handel = ? AND id_empresa_base = ? AND activo = 'SI'
+        SELECT
+          id,
+          nombre || ' ' || COALESCE(apaterno, '') || ' ' || COALESCE(amaterno, '') AS nombre,
+          tel1 AS telefono,
+          email1 AS email,
+          activo
+        FROM tclientes
+        WHERE handel = ? AND id_empresa_base = ? AND activo = 1
         ORDER BY nombre ASC
       `;
 
@@ -2048,9 +2053,12 @@ export class AgendaService {
       // En móvil, usar SQLite real
       console.log(`📱 Consultando personal SQLite (handel: ${this.handel}, id_empresa_base: ${this.id_empresa_base})`);
       const query = `
-        SELECT id, nombre, activo
-        FROM tpersonal_ag
-        WHERE handel = ? AND id_empresa_base = ? AND activo = 'SI'
+        SELECT
+          id,
+          nombre || ' ' || COALESCE(apellidos, '') AS nombre,
+          activo
+        FROM tpersonal
+        WHERE handel = ? AND id_empresa_base = ? AND activo = 1
         ORDER BY nombre ASC
       `;
 
@@ -2087,9 +2095,15 @@ export class AgendaService {
       // En móvil, usar SQLite real
       console.log(`📱 Consultando servicios SQLite (handel: ${this.handel}, id_empresa_base: ${this.id_empresa_base})`);
       const query = `
-        SELECT id, codigo, nombre, duracion, precio, activo
-        FROM tservicios
-        WHERE handel = ? AND id_empresa_base = ? AND activo = 'SI'
+        SELECT
+          id,
+          codigo,
+          nombre,
+          (n_duracion * 30) AS duracion,
+          0 AS precio,
+          activo
+        FROM tproductos
+        WHERE handel = ? AND activo = 1 AND tipo = 'Servicio'
         ORDER BY nombre ASC
       `;
 
