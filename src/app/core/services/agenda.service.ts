@@ -2013,12 +2013,12 @@ export class AgendaService {
       const query = `
         SELECT
           id,
-          nombre || ' ' || COALESCE(apaterno, '') || ' ' || COALESCE(amaterno, '') AS nombre,
-          tel1 AS telefono,
-          email1 AS email,
+          TRIM(nombre || ' ' || IFNULL(apaterno, '') || ' ' || IFNULL(amaterno, '')) AS nombre,
+          IFNULL(tel1, '') AS telefono,
+          IFNULL(email1, '') AS email,
           activo
         FROM tclientes
-        WHERE handel = ? AND id_empresa_base = ? AND activo = 1
+        WHERE handel = ? AND id_empresa_base = ?
         ORDER BY nombre ASC
       `;
 
@@ -2055,10 +2055,10 @@ export class AgendaService {
       const query = `
         SELECT
           id,
-          nombre || ' ' || COALESCE(apellidos, '') AS nombre,
+          TRIM(nombre || ' ' || IFNULL(apellidos, '')) AS nombre,
           activo
         FROM tpersonal
-        WHERE handel = ? AND id_empresa_base = ? AND activo = 1
+        WHERE handel = ? AND id_empresa_base = ?
         ORDER BY nombre ASC
       `;
 
@@ -2097,13 +2097,13 @@ export class AgendaService {
       const query = `
         SELECT
           id,
-          codigo,
+          IFNULL(codigo, '') AS codigo,
           nombre,
-          (n_duracion * 30) AS duracion,
+          (IFNULL(n_duracion, 0) * 30) AS duracion,
           0 AS precio,
           activo
         FROM tproductos
-        WHERE handel = ? AND activo = 1 AND tipo = 'Servicio'
+        WHERE handel = ? AND tipo = 'Servicio'
         ORDER BY nombre ASC
       `;
 

@@ -95,13 +95,17 @@ export class AppComponent implements OnInit {
    * Cargar y aplicar preferencia de modo oscuro desde localStorage
    */
   loadDarkModePreference() {
-    const savedMode = localStorage.getItem('darkMode');
-    const isDarkMode = savedMode === 'true';
+    try {
+      const savedMode = localStorage.getItem('darkMode');
+      const isDarkMode = savedMode === 'true';
 
-    if (isDarkMode) {
-      document.body.classList.add('dark');
-    } else {
-      document.body.classList.remove('dark');
+      if (isDarkMode) {
+        document.body.classList.add('dark');
+      } else {
+        document.body.classList.remove('dark');
+      }
+    } catch (error) {
+      console.warn('No se pudo cargar preferencia de modo oscuro:', error);
     }
   }
 }
