@@ -19,7 +19,7 @@ export class SeedSimpleService {
    */
   hasData(): boolean {
     const clientes = this.storage.get<Cliente[]>('clientes', []);
-    return clientes.length > 0;
+    return (clientes && clientes.length > 0) || false;
   }
 
   /**
