@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DatabaseService } from './database.service';
+import { StorageService } from './storage.service';
 import { Capacitor } from '@capacitor/core';
 import {
   ConfigAgenda,
@@ -102,11 +103,12 @@ export class AgendaService {
 
   // ==================== CONSTRUCTOR ====================
 
-  constructor(private dbService: DatabaseService) {
-    // Cargar citas desde localStorage al inicializar (solo en web)
-    if (Capacitor.getPlatform() === 'web') {
-      this.loadMockAppointmentsFromStorage();
-    }
+  constructor(
+    private dbService: DatabaseService,
+    private storage: StorageService
+  ) {
+    // Cargar citas desde localStorage al inicializar
+    this.loadMockAppointmentsFromStorage();
   }
 
   // ==================== INICIALIZACIÓN ====================
@@ -1990,8 +1992,26 @@ export class AgendaService {
 
   /**
    * Obtiene la lista de pacientes/clientes
+   * MODIFICADO: Ahora usa localStorage en lugar de SQLite
    */
   async getPacientes(): Promise<any[]> {
+    console.log('📋 getPacientes() usando localStorage');
+
+    // Usar localStorage tanto en web como en Android
+    const clientes = this.storage.get<any[]>('clientes', []) ?? [];
+
+    return clientes
+      .filter(c => c.handel === this.handel && c.id_empresa_base === this.id_empresa_base && c.activo === 1)
+      .map(c => ({
+        id: c.id,
+        nombre: `${c.nombre} ${c.apaterno || ''} ${c.amaterno || ''}`.trim(),
+        telefono: c.tel1 || '',
+        email: c.email1 || '',
+        activo: 'SI'
+      }))
+      .sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+    /* CÓDIGO SQLite COMENTADO - Mantener para futura depuración
     const platform = Capacitor.getPlatform();
 
     // En web, devolver datos mock para desarrollo
@@ -2014,12 +2034,29 @@ export class AgendaService {
     `;
 
     return await this.executeQuery(query, [this.handel, this.id_empresa_base]);
+    */
   }
 
   /**
    * Obtiene la lista de personal de agenda
+   * MODIFICADO: Ahora usa localStorage en lugar de SQLite
    */
   async getPersonalAgenda(): Promise<any[]> {
+    console.log('👥 getPersonalAgenda() usando localStorage');
+
+    // Usar localStorage tanto en web como en Android
+    const personal = this.storage.get<any[]>('personal', []) ?? [];
+
+    return personal
+      .filter(p => p.handel === this.handel && p.id_empresa_base === this.id_empresa_base && p.activo === 1)
+      .map(p => ({
+        id: p.id,
+        nombre: p.apellidos ? `${p.nombre} ${p.apellidos}` : p.nombre,
+        activo: 'SI'
+      }))
+      .sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+    /* CÓDIGO SQLite COMENTADO - Mantener para futura depuración
     const platform = Capacitor.getPlatform();
 
     // En web, devolver datos mock para desarrollo
@@ -2041,12 +2078,32 @@ export class AgendaService {
     `;
 
     return await this.executeQuery(query, [this.handel, this.id_empresa_base]);
+    */
   }
 
   /**
    * Obtiene la lista de servicios
+   * MODIFICADO: Ahora usa localStorage en lugar de SQLite
    */
   async getServicios(): Promise<any[]> {
+    console.log('🛠️ getServicios() usando localStorage');
+
+    // Usar localStorage tanto en web como en Android
+    const productos = this.storage.get<any[]>('productos', []) ?? [];
+
+    return productos
+      .filter(p => p.handel === this.handel && p.id_empresa_base === this.id_empresa_base && p.tipo === 'Servicio' && p.activo === 1)
+      .map(p => ({
+        id: p.id,
+        codigo: p.codigo || '',
+        nombre: p.nombre,
+        duracion: (p.n_duracion || 0) * 30, // Convertir a minutos
+        precio: p.precio || 0,
+        activo: 'SI'
+      }))
+      .sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+    /* CÓDIGO SQLite COMENTADO - Mantener para futura depuración
     const platform = Capacitor.getPlatform();
 
     // En web, devolver datos mock para desarrollo
@@ -2070,17 +2127,24 @@ export class AgendaService {
     `;
 
     return await this.executeQuery(query, [this.handel, this.id_empresa_base]);
+    */
   }
 
   /**
-   * Crea una cita mock en memoria (solo para plataforma web)
+   * Crea una cita en localStorage
+   * MODIFICADO: Ahora funciona tanto en web como en Android
    */
   async createMockAppointment(appointmentData: any): Promise<boolean> {
+    console.log('💾 createMockAppointment() usando localStorage');
+    console.log('Datos de cita:', appointmentData);
+
+    /* CÓDIGO COMENTADO - Platform check ya no es necesario
     const platform = Capacitor.getPlatform();
 
     if (platform !== 'web') {
       return false;
     }
+    */
 
     // Formatear fecha directamente sin convertir a ISO (evita problemas de zona horaria)
     const year = appointmentData.date.getFullYear();
