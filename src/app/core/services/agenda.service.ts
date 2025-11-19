@@ -1992,128 +1992,84 @@ export class AgendaService {
    * Obtiene la lista de pacientes/clientes
    */
   async getPacientes(): Promise<any[]> {
-    try {
-      const platform = Capacitor.getPlatform();
-      console.log('🔍 getPacientes() - Plataforma:', platform);
+    const platform = Capacitor.getPlatform();
 
-      // En web, devolver datos mock para desarrollo
-      if (platform === 'web') {
-        console.log('🌐 Devolviendo 5 pacientes mock (web)');
-        return [
-          { id: 1, nombre: 'Juan Pérez', telefono: '555-0101', email: 'juan@example.com', activo: 'SI' },
-          { id: 2, nombre: 'María García', telefono: '555-0102', email: 'maria@example.com', activo: 'SI' },
-          { id: 3, nombre: 'Carlos López', telefono: '555-0103', email: 'carlos@example.com', activo: 'SI' },
-          { id: 4, nombre: 'Ana Martínez', telefono: '555-0104', email: 'ana@example.com', activo: 'SI' },
-          { id: 5, nombre: 'Pedro Sánchez', telefono: '555-0105', email: 'pedro@example.com', activo: 'SI' }
-        ];
-      }
-
-      // En móvil, usar SQLite real
-      console.log(`📱 Consultando pacientes SQLite (handel: ${this.handel}, id_empresa_base: ${this.id_empresa_base})`);
-      const query = `
-        SELECT
-          id,
-          TRIM(nombre || ' ' || IFNULL(apaterno, '') || ' ' || IFNULL(amaterno, '')) AS nombre,
-          IFNULL(tel1, '') AS telefono,
-          IFNULL(email1, '') AS email,
-          activo
-        FROM tclientes
-        WHERE handel = ? AND id_empresa_base = ?
-        ORDER BY nombre ASC
-      `;
-
-      const results = await this.executeQuery(query, [this.handel, this.id_empresa_base]);
-      console.log(`✅ Pacientes encontrados: ${results.length}`, results);
-      return results;
-    } catch (error) {
-      console.error('❌ Error en getPacientes():', error);
-      return [];
+    // En web, devolver datos mock para desarrollo
+    if (platform === 'web') {
+      return [
+        { id: 1, nombre: 'Juan Pérez', telefono: '555-0101', email: 'juan@example.com', activo: 'SI' },
+        { id: 2, nombre: 'María García', telefono: '555-0102', email: 'maria@example.com', activo: 'SI' },
+        { id: 3, nombre: 'Carlos López', telefono: '555-0103', email: 'carlos@example.com', activo: 'SI' },
+        { id: 4, nombre: 'Ana Martínez', telefono: '555-0104', email: 'ana@example.com', activo: 'SI' },
+        { id: 5, nombre: 'Pedro Sánchez', telefono: '555-0105', email: 'pedro@example.com', activo: 'SI' }
+      ];
     }
+
+    // En móvil, usar SQLite real
+    const query = `
+      SELECT id, nombre, telefono, email, activo
+      FROM tpacientes
+      WHERE handel = ? AND id_empresa_base = ? AND activo = 'SI'
+      ORDER BY nombre ASC
+    `;
+
+    return await this.executeQuery(query, [this.handel, this.id_empresa_base]);
   }
 
   /**
    * Obtiene la lista de personal de agenda
    */
   async getPersonalAgenda(): Promise<any[]> {
-    try {
-      const platform = Capacitor.getPlatform();
-      console.log('🔍 getPersonalAgenda() - Plataforma:', platform);
+    const platform = Capacitor.getPlatform();
 
-      // En web, devolver datos mock para desarrollo
-      if (platform === 'web') {
-        console.log('🌐 Devolviendo 4 personal mock (web)');
-        return [
-          { id: 1, nombre: 'Dr. Rodríguez', activo: 'SI' },
-          { id: 2, nombre: 'Dra. Fernández', activo: 'SI' },
-          { id: 3, nombre: 'Lic. González', activo: 'SI' },
-          { id: 4, nombre: 'Lic. Torres', activo: 'SI' }
-        ];
-      }
-
-      // En móvil, usar SQLite real
-      console.log(`📱 Consultando personal SQLite (handel: ${this.handel}, id_empresa_base: ${this.id_empresa_base})`);
-      const query = `
-        SELECT
-          id,
-          TRIM(nombre || ' ' || IFNULL(apellidos, '')) AS nombre,
-          activo
-        FROM tpersonal
-        WHERE handel = ? AND id_empresa_base = ?
-        ORDER BY nombre ASC
-      `;
-
-      const results = await this.executeQuery(query, [this.handel, this.id_empresa_base]);
-      console.log(`✅ Personal encontrado: ${results.length}`, results);
-      return results;
-    } catch (error) {
-      console.error('❌ Error en getPersonalAgenda():', error);
-      return [];
+    // En web, devolver datos mock para desarrollo
+    if (platform === 'web') {
+      return [
+        { id: 1, nombre: 'Dr. Rodríguez', activo: 'SI' },
+        { id: 2, nombre: 'Dra. Fernández', activo: 'SI' },
+        { id: 3, nombre: 'Lic. González', activo: 'SI' },
+        { id: 4, nombre: 'Lic. Torres', activo: 'SI' }
+      ];
     }
+
+    // En móvil, usar SQLite real
+    const query = `
+      SELECT id, nombre, activo
+      FROM tpersonal_ag
+      WHERE handel = ? AND id_empresa_base = ? AND activo = 'SI'
+      ORDER BY nombre ASC
+    `;
+
+    return await this.executeQuery(query, [this.handel, this.id_empresa_base]);
   }
 
   /**
    * Obtiene la lista de servicios
    */
   async getServicios(): Promise<any[]> {
-    try {
-      const platform = Capacitor.getPlatform();
-      console.log('🔍 getServicios() - Plataforma:', platform);
+    const platform = Capacitor.getPlatform();
 
-      // En web, devolver datos mock para desarrollo
-      if (platform === 'web') {
-        console.log('🌐 Devolviendo 6 servicios mock (web)');
-        return [
-          { id: 1, codigo: 'SRV001', nombre: 'Masaje Relajante', duracion: 60, precio: 500, activo: 'SI' },
-          { id: 2, codigo: 'SRV002', nombre: 'Masaje Terapéutico', duracion: 90, precio: 750, activo: 'SI' },
-          { id: 3, codigo: 'SRV003', nombre: 'Acupuntura', duracion: 45, precio: 600, activo: 'SI' },
-          { id: 4, codigo: 'SRV004', nombre: 'Reflexología', duracion: 60, precio: 550, activo: 'SI' },
-          { id: 5, codigo: 'SRV005', nombre: 'Aromaterapia', duracion: 30, precio: 350, activo: 'SI' },
-          { id: 6, codigo: 'SRV006', nombre: 'Tratamiento Facial', duracion: 60, precio: 650, activo: 'SI' }
-        ];
-      }
-
-      // En móvil, usar SQLite real
-      console.log(`📱 Consultando servicios SQLite (handel: ${this.handel}, id_empresa_base: ${this.id_empresa_base})`);
-      const query = `
-        SELECT
-          id,
-          IFNULL(codigo, '') AS codigo,
-          nombre,
-          (IFNULL(n_duracion, 0) * 30) AS duracion,
-          0 AS precio,
-          activo
-        FROM tproductos
-        WHERE handel = ? AND tipo = 'Servicio'
-        ORDER BY nombre ASC
-      `;
-
-      const results = await this.executeQuery(query, [this.handel, this.id_empresa_base]);
-      console.log(`✅ Servicios encontrados: ${results.length}`, results);
-      return results;
-    } catch (error) {
-      console.error('❌ Error en getServicios():', error);
-      return [];
+    // En web, devolver datos mock para desarrollo
+    if (platform === 'web') {
+      return [
+        { id: 1, codigo: 'SRV001', nombre: 'Masaje Relajante', duracion: 60, precio: 500, activo: 'SI' },
+        { id: 2, codigo: 'SRV002', nombre: 'Masaje Terapéutico', duracion: 90, precio: 750, activo: 'SI' },
+        { id: 3, codigo: 'SRV003', nombre: 'Acupuntura', duracion: 45, precio: 600, activo: 'SI' },
+        { id: 4, codigo: 'SRV004', nombre: 'Reflexología', duracion: 60, precio: 550, activo: 'SI' },
+        { id: 5, codigo: 'SRV005', nombre: 'Aromaterapia', duracion: 30, precio: 350, activo: 'SI' },
+        { id: 6, codigo: 'SRV006', nombre: 'Tratamiento Facial', duracion: 60, precio: 650, activo: 'SI' }
+      ];
     }
+
+    // En móvil, usar SQLite real
+    const query = `
+      SELECT id, codigo, nombre, duracion, precio, activo
+      FROM tservicios
+      WHERE handel = ? AND id_empresa_base = ? AND activo = 'SI'
+      ORDER BY nombre ASC
+    `;
+
+    return await this.executeQuery(query, [this.handel, this.id_empresa_base]);
   }
 
   /**
