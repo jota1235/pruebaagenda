@@ -13,17 +13,27 @@ export class AppComponent implements OnInit {
   constructor(
     private dbService: DatabaseService,
     private seedService: SeedDataService
-  ) {}
+  ) {
+    console.log('✅ AppComponent constructor completado');
+  }
 
   ngOnInit() {
-    // Inicializar base de datos de forma no bloqueante
-    this.initializeApp().catch(error => {
-      console.error('Error crítico en inicialización:', error);
-      // No lanzar el error para evitar crash de la app
-    });
+    console.log('🚀 AppComponent ngOnInit iniciado');
 
-    // Cargar preferencia de modo oscuro al iniciar la app
-    this.loadDarkModePreference();
+    // Cargar preferencia de modo oscuro primero (más seguro)
+    try {
+      this.loadDarkModePreference();
+    } catch (error) {
+      console.error('Error al cargar modo oscuro:', error);
+    }
+
+    // Inicializar base de datos de forma no bloqueante
+    setTimeout(() => {
+      this.initializeApp().catch(error => {
+        console.error('Error crítico en inicialización:', error);
+        // No lanzar el error para evitar crash de la app
+      });
+    }, 100);
   }
 
   /**
@@ -58,39 +68,30 @@ export class AppComponent implements OnInit {
       const platform = Capacitor.getPlatform();
       console.log('🚀 Inicializando aplicación en plataforma:', platform);
 
-      // Solo en web: esperar a que jeep-sqlite esté disponible
+      // TEMPORALMENTE: Solo inicializar en web para debugging
       if (platform === 'web') {
+        console.log('🌐 Plataforma web detectada');
         await this.waitForJeepSqlite();
-      }
-
-      // En móvil (Android/iOS): inicializar SQLite nativo directamente
-      if (platform !== 'web') {
-        console.log('📱 Plataforma nativa detectada, inicializando SQLite nativo...');
-
-        // 1. Inicializar base de datos
-        await this.dbService.initDatabase();
-        console.log('✅ Base de datos SQLite nativa inicializada');
-
-        // 2. Verificar si es primera ejecución
-        const hasData = await this.seedService.hasData();
-
-        if (!hasData) {
-          console.log('📦 Primera ejecución detectada, poblando base de datos...');
-          await this.seedService.seedDatabase();
-          console.log('✅ Base de datos poblada con datos de prueba');
-        } else {
-          console.log('✅ Base de datos ya contiene datos');
-        }
-
-        console.log('🎉 Aplicación lista en móvil!');
+        console.log('✅ Web listo');
       } else {
-        console.log('🌐 Plataforma web detectada, usando mock data');
-        // En web no inicializamos BD para evitar errores de jeep-sqlite
+        console.log('📱 Plataforma nativa detectada');
+        console.log('⚠️ Inicialización de BD deshabilitada temporalmente');
+        console.log('💡 La app usará datos mock por ahora');
+        // TODO: Habilitar cuando funcione correctamente
+        /*
+        await this.dbService.initDatabase();
+        const hasData = await this.seedService.hasData();
+        if (!hasData) {
+          await this.seedService.seedDatabase();
+        }
+        */
       }
+
+      console.log('🎉 Aplicación inicializada');
 
     } catch (error) {
       console.error('❌ Error inicializando aplicación:', error);
-      console.error('❌ Detalles del error:', JSON.stringify(error));
+      console.error('❌ Stack:', (error as any)?.stack || 'No stack available');
     }
   }
 

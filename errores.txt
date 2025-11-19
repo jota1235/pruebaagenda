@@ -1,252 +1,206 @@
-jeep-sqlite isStore = false
-app.component.ts:55 🚀 Inicializando aplicación...
-app.component.ts:34 ⏳ Esperando que jeep-sqlite esté disponible...
-app.component.ts:40 ✅ jeep-sqlite encontrado en el DOM
-debug_node.mjs:18255 Angular is running in development mode.
-database.service.ts:43 Iniciando base de datos en plataforma: web...
-database.service.ts:56 Web store inicializado correctamente
-jeep-sqlite.js:2578 wasm streaming compile failed: LinkError: WebAssembly.instantiate(): Import #34 "a" "I": function import requires a callable
-(anonymous) @ jeep-sqlite.js:2578
-jeep-sqlite.js:2578 falling back to ArrayBuffer instantiation
-(anonymous) @ jeep-sqlite.js:2578
-jeep-sqlite.js:2578 failed to asynchronously prepare wasm: LinkError: WebAssembly.instantiate(): Import #34 "a" "I": function import requires a callable
-(anonymous) @ jeep-sqlite.js:2578
-jeep-sqlite.js:2577 Aborted(LinkError: WebAssembly.instantiate(): Import #34 "a" "I": function import requires a callable)
-G @ jeep-sqlite.js:2577
-root_effect_scheduler.mjs:3624 ERROR Error: LinkError: WebAssembly.instantiate(): Import #34 "a" "I": function import requires a callable
-    at Module.onAbort (jeep-sqlite.js:2521:20)
-    at G (jeep-sqlite.js:2577:17)
-    at jeep-sqlite.js:2578:131
-    at _ZoneDelegate.invoke (zone.js:398:28)
-    at Object.onInvoke (debug_node.mjs:7850:33)
-    at _ZoneDelegate.invoke (zone.js:397:34)
-    at ZoneImpl.run (zone.js:113:43)
-    at zone.js:2537:40
-    at _ZoneDelegate.invokeTask (zone.js:431:33)
-    at debug_node.mjs:7514:55
-handleError @ root_effect_scheduler.mjs:3624
-root_effect_scheduler.mjs:3624 ERROR RuntimeError: Aborted(LinkError: WebAssembly.instantiate(): Import #34 "a" "I": function import requires a callable). Build with -sASSERTIONS for more info.
-    at G (jeep-sqlite.js:2577:66)
-    at jeep-sqlite.js:2578:131
-    at _ZoneDelegate.invoke (zone.js:398:28)
-    at Object.onInvoke (debug_node.mjs:7850:33)
-    at _ZoneDelegate.invoke (zone.js:397:34)
-    at ZoneImpl.run (zone.js:113:43)
-    at zone.js:2537:40
-    at _ZoneDelegate.invokeTask (zone.js:431:33)
-    at debug_node.mjs:7514:55
-    at AsyncStackTaggingZoneSpec.onInvokeTask (debug_node.mjs:7514:36)
-handleError @ root_effect_scheduler.mjs:3624
-Node cannot be found in the current page.
-login.page.ts:87 Login con Google - Por implementar
-menu:1 Blocked aria-hidden on an element because its descendant retained focus. The focus must not be hidden from assistive technology users. Avoid using aria-hidden on a focused element or its ancestor. Consider using the inert attribute instead, which will also prevent focus. For more details, see the aria-hidden section of the WAI-ARIA specification at https://w3c.github.io/aria/#aria-hidden.
-Element with focus: <button.button-native>
-Ancestor with aria-hidden: <app-login.ion-page ion-page-hidden> <app-login _nghost-ng-c2667321598 class=​"ion-page ion-page-hidden" style=​"z-index:​ 100;​ pointer-events:​ none;​" aria-hidden=​"true">​…​</app-login>​slot
-agenda.service.ts:771 📱 Plataforma web detectada: usando configuración mock
-agenda-main.page.ts:231 ✅ Configuración de agenda cargada: {puesto_servicio: 'Terapeuta', hora_inicio: 9, minutos_incremento: 30, hora_fin: 20, color_libre: '#90EE90', …}
-agenda.service.ts:771 📱 Plataforma web detectada: usando configuración mock
-agenda.service.ts:771 📱 Plataforma web detectada: usando configuración mock
-agenda.service.ts:946 📱 Plataforma web: cargando citas mock para fecha 2025-11-14
-agenda.service.ts:947 📊 Citas totales en memoria: 0
-agenda.service.ts:948 📊 Todas las citas: []
-agenda.service.ts:961 ✅ 0 citas mock cargadas para 2025-11-14
-agenda.service.ts:962 📋 Citas filtradas: []
-agenda.service.ts:946 📱 Plataforma web: cargando citas mock para fecha 2025-11-14
-agenda.service.ts:947 📊 Citas totales en memoria: 0
-agenda.service.ts:948 📊 Todas las citas: []
-agenda.service.ts:961 ✅ 0 citas mock cargadas para 2025-11-14
-agenda.service.ts:962 📋 Citas filtradas: []
-2agenda-main.page.ts:274 ✅ 0 citas cargadas para 2025-11-15
-agenda-main.page.ts:362 ✅ 23 slots de tiempo generados
-agenda-main.page.ts:362 ✅ 23 slots de tiempo generados
-agenda-main.page.html:24 e TypeError: Failed to construct 'URL': Invalid base URL
-    at getAssetPath (index.js:345:20)
-    at getNamedUrl (icon.js:47:16)
-    at getUrl2 (icon.js:27:16)
-    at Icon2.loadIcon (icon.js:365:25)
-    at icon.js:303:18
-    at Icon2.waitUntilVisible (icon.js:348:20)
-    at Icon2.connectedCallback (icon.js:301:14)
-    at Icon2.connectedCallback (index.js:3987:35)
-    at _ZoneDelegate.invoke (zone.js:398:28)
-    at ZoneImpl.runGuarded (zone.js:123:47)
-agenda-main.page.html:24 [Ionicons Warning]: Could not load icon with name "ellipsisverticaloutline". Ensure that the icon is registered using addIcons or that the icon SVG data is passed directly to the icon component. <ion-icon _ngcontent-ng-c2084431434 name=​"ellipsisVerticalOutline" class=​"dropdown-icon md hydrated" role=​"img">​…​</ion-icon>​
-getNamedUrl @ icon.js:58
-getUrl2 @ icon.js:27
-loadIcon @ icon.js:365
-(anonymous) @ icon.js:303
-waitUntilVisible @ icon.js:348
-connectedCallback @ icon.js:301
-connectedCallback @ index.js:3987
-invoke @ zone.js:398
-runGuarded @ zone.js:123
-(anonymous) @ zone.js:107
-insertBefore @ dom_renderer.mjs:645
-nativeInsertBefore @ debug_node.mjs:6790
-applyToElementOrContainer @ debug_node.mjs:8289
-applyNodes @ debug_node.mjs:8884
-applyView @ debug_node.mjs:8891
-addViewToDOM @ debug_node.mjs:8341
-addLViewToLContainer @ debug_node.mjs:10446
-insertImpl @ debug_node.mjs:15020
-createEmbeddedView @ debug_node.mjs:14910
-_updateView @ common_module.mjs:3065
-set ngIf @ common_module.mjs:3037
-applyValueToInputField @ debug_node.mjs:528
-writeToDirectiveInput @ debug_node.mjs:7171
-setAllInputsForProperty @ debug_node.mjs:9539
-setPropertyAndInputs @ debug_node.mjs:9167
-ɵɵproperty @ debug_node.mjs:23312
-AgendaMainPage_ion_content_1_Template @ agenda-main.page.html:24
-executeTemplate @ debug_node.mjs:9040
-refreshView @ debug_node.mjs:10076
-detectChangesInView @ debug_node.mjs:10296
-detectChangesInViewIfAttached @ debug_node.mjs:10256
-detectChangesInEmbeddedViews @ debug_node.mjs:10213
-refreshView @ debug_node.mjs:10105
-detectChangesInView @ debug_node.mjs:10296
-detectChangesInViewIfAttached @ debug_node.mjs:10256
-detectChangesInComponent @ debug_node.mjs:10244
-detectChangesInChildComponents @ debug_node.mjs:10322
-refreshView @ debug_node.mjs:10131
-detectChangesInView @ debug_node.mjs:10296
-detectChangesInViewIfAttached @ debug_node.mjs:10256
-detectChangesInEmbeddedViews @ debug_node.mjs:10213
-refreshView @ debug_node.mjs:10105
-detectChangesInView @ debug_node.mjs:10296
-detectChangesInViewIfAttached @ debug_node.mjs:10256
-detectChangesInComponent @ debug_node.mjs:10244
-detectChangesInChildComponents @ debug_node.mjs:10322
-refreshView @ debug_node.mjs:10131
-detectChangesInView @ debug_node.mjs:10296
-detectChangesInViewIfAttached @ debug_node.mjs:10256
-detectChangesInComponent @ debug_node.mjs:10244
-detectChangesInChildComponents @ debug_node.mjs:10322
-refreshView @ debug_node.mjs:10131
-detectChangesInView @ debug_node.mjs:10296
-detectChangesInViewWhileDirty @ debug_node.mjs:9985
-detectChangesInternal @ debug_node.mjs:9973
-synchronizeOnce @ debug_node.mjs:20611
-synchronize @ debug_node.mjs:20570
-tickImpl @ debug_node.mjs:20543
-_tick @ debug_node.mjs:20532
-(anonymous) @ debug_node.mjs:30698
-invoke @ zone.js:398
-onInvoke @ debug_node.mjs:7850
-invoke @ zone.js:397
-run @ zone.js:113
-run @ debug_node.mjs:7696
-next @ debug_node.mjs:30695
-ConsumerObserver2.next @ Subscriber.js:96
-Subscriber2._next @ Subscriber.js:63
-Subscriber2.next @ Subscriber.js:34
-(anonymous) @ Subject.js:41
-errorContext @ errorContext.js:19
-Subject2.next @ Subject.js:31
-emit @ debug_node.mjs:7384
-checkStable @ debug_node.mjs:7764
-onHasTask @ debug_node.mjs:7878
-hasTask @ zone.js:451
-_updateTaskCount @ zone.js:471
-_updateTaskCount @ zone.js:266
-runTask @ zone.js:179
-drainMicroTaskQueue @ zone.js:612
-invokeTask @ zone.js:519
-invokeTask @ zone.js:1141
-globalCallback @ zone.js:1172
-globalZoneAwareCallback @ zone.js:1205
-chunk-SCNEKAWF.js:58 e TypeError: Failed to construct 'URL': Invalid base URL
-    at getAssetPath (index.js:345:20)
-    at getNamedUrl (icon.js:47:16)
-    at getUrl2 (icon.js:27:16)
-    at Icon2.loadIcon (icon.js:365:25)
-    at Icon2.componentDidLoad (icon.js:317:18)
-    at safeCall (index.js:3362:29)
-    at postUpdateComponent (index.js:3295:5)
-    at postUpdate (index.js:3223:30)
-    at index.js:3225:7
-    at Generator.next (<anonymous>)
-chunk-SCNEKAWF.js:58 [Ionicons Warning]: Could not load icon with name "ellipsisverticaloutline". Ensure that the icon is registered using addIcons or that the icon SVG data is passed directly to the icon component. <ion-icon _ngcontent-ng-c2084431434 name=​"ellipsisVerticalOutline" class=​"dropdown-icon md hydrated" role=​"img">​…​</ion-icon>​
-getNamedUrl @ icon.js:58
-getUrl2 @ icon.js:27
-loadIcon @ icon.js:365
-componentDidLoad @ icon.js:317
-safeCall @ index.js:3362
-postUpdateComponent @ index.js:3295
-postUpdate @ index.js:3223
-(anonymous) @ index.js:3225
-(anonymous) @ chunk-SCNEKAWF.js:58
-ZoneAwarePromise @ zone.js:2701
-__async @ chunk-SCNEKAWF.js:42
-updateComponent @ index.js:3180
-(anonymous) @ index.js:3173
-enqueue @ index.js:3178
-dispatchHooks @ index.js:3173
-dispatch @ index.js:3132
-(anonymous) @ index.js:3135
-invokeTask @ zone.js:431
-runTask @ zone.js:161
-drainMicroTaskQueue @ zone.js:612
-invokeTask @ zone.js:519
-invokeTask @ zone.js:1141
-globalCallback @ zone.js:1172
-globalZoneAwareCallback @ zone.js:1205
-agenda:1 Blocked aria-hidden on an element because its descendant retained focus. The focus must not be hidden from assistive technology users. Avoid using aria-hidden on a focused element or its ancestor. Consider using the inert attribute instead, which will also prevent focus. For more details, see the aria-hidden section of the WAI-ARIA specification at https://w3c.github.io/aria/#aria-hidden.
-Element with focus: <button.card-native>
-Ancestor with aria-hidden: <app-home.ion-page can-go-back ion-page-hidden> <app-home _nghost-ng-c3491615181 class=​"ion-page can-go-back ion-page-hidden" style=​"z-index:​ 100;​ pointer-events:​ none;​" aria-hidden=​"true">​…​</app-home>​
-agenda.service.ts:771 📱 Plataforma web detectada: usando configuración mock
-agenda-main.page.ts:375 Día seleccionado desde selector semanal: Sun Nov 16 2025 00:00:00 GMT-0600 (hora estándar central)
-agenda.service.ts:946 📱 Plataforma web: cargando citas mock para fecha 2025-11-15
-agenda.service.ts:947 📊 Citas totales en memoria: 0
-agenda.service.ts:948 📊 Todas las citas: []
-agenda.service.ts:961 ✅ 0 citas mock cargadas para 2025-11-15
-agenda.service.ts:962 📋 Citas filtradas: []
-agenda-main.page.ts:274 ✅ 0 citas cargadas para 2025-11-16
-agenda-main.page.ts:362 ✅ 23 slots de tiempo generados
-appointment-form.component.ts:220 🔄 Iniciando carga de datos...
-appointment-form.component.ts:223 📋 Cargando pacientes...
-appointment-form.component.ts:225 📋 Pacientes obtenidos de BD: (5) [{…}, {…}, {…}, {…}, {…}]
-appointment-form.component.ts:233 📋 Clientes procesados: (5) [{…}, {…}, {…}, {…}, {…}]
-appointment-form.component.ts:236 👥 Cargando personal...
-appointment-form.component.ts:238 👥 Personal obtenido de BD: (4) [{…}, {…}, {…}, {…}]
-appointment-form.component.ts:245 👥 Personal procesado: (4) [{…}, {…}, {…}, {…}]
-appointment-form.component.ts:248 💼 Cargando servicios...
-appointment-form.component.ts:250 💼 Servicios obtenidos de BD: (6) [{…}, {…}, {…}, {…}, {…}, {…}]
-appointment-form.component.ts:258 💼 Servicios procesados: (6) [{…}, {…}, {…}, {…}, {…}, {…}]
-appointment-form.component.ts:260 ✅ Datos cargados correctamente: {clients: 5, staff: 4, services: 6}
-appointment-form.component.ts:464 Guardando cita: {date: Sun Nov 16 2025 00:00:00 GMT-0600 (hora estándar central), time: '16/11/2025 - 12:00 a.m.', clientId: 3, clientName: 'Carlos López', staffId: 1, …}
-agenda-main.page.ts:567 Cita guardada: {date: Sun Nov 16 2025 00:00:00 GMT-0600 (hora estándar central), time: '16/11/2025 - 12:00 a.m.', clientId: 3, clientName: 'Carlos López', staffId: 1, …}
-agenda.service.ts:2082 📝 Creando cita mock: {date: Sun Nov 16 2025 00:00:00 GMT-0600 (hora estándar central), time: '16/11/2025 - 12:00 a.m.', clientId: 3, clientName: 'Carlos López', staffId: 1, …}
-agenda.service.ts:2083 📅 Fecha recibida: Sun Nov 16 2025 00:00:00 GMT-0600 (hora estándar central)
-agenda.service.ts:2091 📅 Fecha formateada para guardar: 2025-11-16
-agenda.service.ts:2133 ✅ Cita mock creada exitosamente: {id_agenda: 1, id_cliente: 3, id_personal: 1, hora: '00:00', hora_ag: '00:00', …}
-agenda.service.ts:2134 📊 Total de citas mock en memoria: [{…}]
-agenda.service.ts:771 📱 Plataforma web detectada: usando configuración mock
-agenda.service.ts:946 📱 Plataforma web: cargando citas mock para fecha 2025-11-15
-agenda.service.ts:947 📊 Citas totales en memoria: 1
-agenda.service.ts:948 📊 Todas las citas: [{…}]
-agenda.service.ts:952 🔍 Comparando: apt.fecha="2025-11-16" con fecha="2025-11-15"
-agenda.service.ts:961 ✅ 0 citas mock cargadas para 2025-11-15
-agenda.service.ts:962 📋 Citas filtradas: []
-agenda-main.page.ts:274 ✅ 0 citas cargadas para 2025-11-16
-agenda-main.page.ts:362 ✅ 23 slots de tiempo generados
-agenda.service.ts:771 📱 Plataforma web detectada: usando configuración mock
-agenda-main.page.ts:375 Día seleccionado desde selector semanal: Sat Nov 15 2025 00:00:00 GMT-0600 (hora estándar central)
-agenda.service.ts:946 📱 Plataforma web: cargando citas mock para fecha 2025-11-14
-agenda.service.ts:947 📊 Citas totales en memoria: 1
-agenda.service.ts:948 📊 Todas las citas: [{…}]
-agenda.service.ts:952 🔍 Comparando: apt.fecha="2025-11-16" con fecha="2025-11-14"
-agenda.service.ts:961 ✅ 0 citas mock cargadas para 2025-11-14
-agenda.service.ts:962 📋 Citas filtradas: []
-agenda-main.page.ts:274 ✅ 0 citas cargadas para 2025-11-15
-agenda-main.page.ts:362 ✅ 23 slots de tiempo generados
-agenda.service.ts:771 📱 Plataforma web detectada: usando configuración mock
-agenda-main.page.ts:375 Día seleccionado desde selector semanal: Sun Nov 16 2025 00:00:00 GMT-0600 (hora estándar central)
-agenda.service.ts:946 📱 Plataforma web: cargando citas mock para fecha 2025-11-15
-agenda.service.ts:947 📊 Citas totales en memoria: 1
-agenda.service.ts:948 📊 Todas las citas: [{…}]
-agenda.service.ts:952 🔍 Comparando: apt.fecha="2025-11-16" con fecha="2025-11-15"
-agenda.service.ts:961 ✅ 0 citas mock cargadas para 2025-11-15
-agenda.service.ts:962 📋 Citas filtradas: []
-agenda-main.page.ts:274 ✅ 0 citas cargadas para 2025-11-16
-agenda-main.page.ts:362 ✅ 23 slots de tiempo generados
+---------
+
+
+--------------------------- PROCESS STARTED (10606) for package io.ionic.starter ----------------------------
+2025-11-18 17:38:26.371 10606-10606 nativeloader            io.ionic.starter                     D  Load /system/lib64/libwebviewchromium_plat_support.so using class loader ns clns-11 (caller=/data/app/~~N7PI_6diY5NSqqVv6bpmkA==/com.google.android.webview-uMZ5AGv4HZ65lMBiRTeofA==/WebViewGoogle.apk): ok
+2025-11-18 17:38:26.414 10606-10628 chromium                io.ionic.starter                     I  [1118/233826.403454:INFO:variations_seed_loader.cc(67)] Failed to open file for reading.: No such file or directory (2)
+2025-11-18 17:38:26.421 10606-10628 chromium                io.ionic.starter                     I  [1118/233826.420910:INFO:variations_seed_loader.cc(67)] Failed to open file for reading.: No such file or directory (2)
+2025-11-18 17:38:26.594   754-795   ActivityManager         system_server                        I  Start proc 10633:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0i6 for  {io.ionic.starter/org.chromium.content.app.SandboxedProcessService0:0}
+2025-11-18 17:38:26.649 10633-10633 cr_WebViewApkApp        webview_zygote                       I  version=133.0.6943.137 (694313738) minSdkVersion=29 isBundle=false processName=com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0
+2025-11-18 17:38:26.841 10606-10647 chromium                io.ionic.starter                     W  [WARNING:dns_config_service_android.cc(81)] Failed to read DnsConfig.
+2025-11-18 17:38:28.361 10633-10643 chromium                webview_zygote                       W  [WARNING:runtime_features.cc(560)] Fenced frames cannot be enabled in this configuration. Use --enable-features=FencedFrames instead.
+2025-11-18 17:38:28.363 10633-10643 chromium                webview_zygote                       W  [WARNING:runtime_features.cc(585)] Topics cannot be enabled in this configuration. Use --enable-features=BrowsingTopics in addition.
+2025-11-18 17:38:28.363 10633-10643 chromium                webview_zygote                       W  [WARNING:runtime_features.cc(606)] SharedStorage cannot be enabled in this configuration. Use --enable-features=SharedStorageAPI in addition.
+2025-11-18 17:38:28.765 10606-10680 chromium                io.ionic.starter                     W  [WARNING:viz_main_impl.cc(85)] VizNullHypothesis is disabled (not a warning)
+2025-11-18 17:39:42.301   754-795   ActivityManager         system_server                        I  Start proc 10822:com.android.chrome/u0a150 for service {com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService}
+2025-11-18 17:39:42.604   754-940   JobServiceContext       system_server                        W  Sending onNetworkChanged for a job that isn't started. JobStatus{4489c55 #u0a150/53 com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService u=0 s=10150 TIME=-15s136ms:+7h54m44s864ms NET PERSISTED READY}
+2025-11-18 17:39:42.649 10822-10822 nativeloader            com.android.chrome                   D  Load /data/app/~~ikhX5FquqO6ue3fCCh-94Q==/com.android.chrome-5fBfdJShVbQUPYgMRWC77w==/Chrome.apk!/lib/x86_64/libchromium_android_linker.so using class loader ns clns-10 (caller=/data/app/~~ikhX5FquqO6ue3fCCh-94Q==/com.android.chrome-5fBfdJShVbQUPYgMRWC77w==/Chrome.apk): ok
+2025-11-18 17:39:43.492 10822-10822 chromium                com.android.chrome                   I  [INFO:chrome_browser_cloud_management_controller.cc(273)] Deferring CBCM Controller Initialization until it is unblocked.
+2025-11-18 17:39:44.062 10822-10860 chromium                com.android.chrome                   W  [WARNING:ev_root_ca_metadata.cc(119)] Not implemented
+2025-11-18 17:39:44.838  9336-9497  cn_CronetU...estContext com.google.android.gms               I  destroyNativeStreamLocked org.chromium.net.impl.CronetBidirectionalStream@1f67830
+2025-11-18 17:39:48.531 10822-10860 chromium                com.android.chrome                   W  [WARNING:ev_root_ca_metadata.cc(119)] Not implemented
+2025-11-18 17:39:49.365 10822-10822 chromium                com.android.chrome                   W  [WARNING:controller_impl.cc(1187)] Background download complete, client: 6, completion type: 0, file size:2200227
+2025-11-18 17:39:49.366 10822-10822 JobInfo                 com.android.chrome                   W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+2025-11-18 17:39:49.366   754-2697  JobInfo                 system_server                        W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+2025-11-18 17:39:49.542 10909-10909 nativeloader            com.android.chrome_zygote            D  Load /data/app/~~ikhX5FquqO6ue3fCCh-94Q==/com.android.chrome-5fBfdJShVbQUPYgMRWC77w==/Chrome.apk!/lib/x86_64/libchromium_android_linker.so using class loader ns clns-10 (caller=/data/app/~~ikhX5FquqO6ue3fCCh-94Q==/com.android.chrome-5fBfdJShVbQUPYgMRWC77w==/Chrome.apk): ok
+2025-11-18 17:39:49.617   754-2700  ActivityManager         system_server                        I  Start proc 10919:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0ai0 for  {com.android.chrome/org.chromium.content.app.SandboxedProcessService0:0}
+2025-11-18 17:39:49.652 10919-10919 cr_SplitCompatApp       com.android.chrome_zygote            I  version=133.0.6943.137 (694313738) minSdkVersion=29 isBundle=false processName=com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0 isIsolatedProcess=true
+2025-11-18 17:39:49.755 10919-10929 chromium                com.android.chrome_zygote            I  [INFO:child_process_service.cc(73)] ChildProcessService: Exiting child process.
+2025-11-18 17:39:49.758   754-2692  ActivityManager         system_server                        I  Killing 10919:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0a150i-9000 (adj 0): isolated not needed
+2025-11-18 17:39:52.670 10822-10822 chromium                com.android.chrome                   W  [WARNING:controller_impl.cc(1187)] Background download complete, client: 6, completion type: 0, file size:609005
+2025-11-18 17:39:52.670 10822-10822 JobInfo                 com.android.chrome                   W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+2025-11-18 17:39:52.671   754-2700  JobInfo                 system_server                        W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+2025-11-18 17:39:52.744   754-2699  ActivityManager         system_server                        I  Start proc 10942:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1/u0ai1 for  {com.android.chrome/org.chromium.content.app.SandboxedProcessService0:1}
+2025-11-18 17:39:52.775 10942-10942 cr_SplitCompatApp       com.android.chrome_zygote            I  version=133.0.6943.137 (694313738) minSdkVersion=29 isBundle=false processName=com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1 isIsolatedProcess=true
+2025-11-18 17:39:52.852 10942-10952 chromium                com.android.chrome_zygote            I  [INFO:child_process_service.cc(73)] ChildProcessService: Exiting child process.
+2025-11-18 17:39:52.855   754-2699  ActivityManager         system_server                        I  Killing 10942:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1/u0a150i-8999 (adj 0): isolated not needed
+2025-11-18 17:39:53.359 10822-10822 chromium                com.android.chrome                   W  [WARNING:controller_impl.cc(1187)] Background download complete, client: 6, completion type: 0, file size:214315
+2025-11-18 17:39:53.359 10822-10822 JobInfo                 com.android.chrome                   W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+2025-11-18 17:39:53.360   754-2699  JobInfo                 system_server                        W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+2025-11-18 17:39:53.416   754-2699  ActivityManager         system_server                        I  Start proc 10958:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:2/u0ai2 for  {com.android.chrome/org.chromium.content.app.SandboxedProcessService0:2}
+2025-11-18 17:39:53.441 10958-10958 cr_SplitCompatApp       com.android.chrome_zygote            I  version=133.0.6943.137 (694313738) minSdkVersion=29 isBundle=false processName=com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:2 isIsolatedProcess=true
+2025-11-18 17:39:53.515 10958-10968 chromium                com.android.chrome_zygote            I  [INFO:child_process_service.cc(73)] ChildProcessService: Exiting child process.
+2025-11-18 17:39:53.519   754-2697  ActivityManager         system_server                        I  Killing 10958:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:2/u0a150i-8998 (adj 0): isolated not needed
+2025-11-18 17:39:53.868 10822-10822 chromium                com.android.chrome                   W  [WARNING:controller_impl.cc(1187)] Background download complete, client: 6, completion type: 0, file size:24028
+2025-11-18 17:39:53.869 10822-10822 JobInfo                 com.android.chrome                   W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+2025-11-18 17:39:53.870   754-2699  JobInfo                 system_server                        W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+2025-11-18 17:39:53.936   754-2700  ActivityManager         system_server                        I  Start proc 10974:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:3/u0ai3 for  {com.android.chrome/org.chromium.content.app.SandboxedProcessService0:3}
+2025-11-18 17:39:53.974 10974-10974 cr_SplitCompatApp       com.android.chrome_zygote            I  version=133.0.6943.137 (694313738) minSdkVersion=29 isBundle=false processName=com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:3 isIsolatedProcess=true
+2025-11-18 17:39:53.978 10822-10822 chromium                com.android.chrome                   W  [WARNING:controller_impl.cc(1187)] Background download complete, client: 6, completion type: 0, file size:2992963
+2025-11-18 17:39:53.978 10822-10822 JobInfo                 com.android.chrome                   W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+2025-11-18 17:39:53.981   754-2699  JobInfo                 system_server                        W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+2025-11-18 17:39:54.044 10974-10984 chromium                com.android.chrome_zygote            I  [INFO:child_process_service.cc(73)] ChildProcessService: Exiting child process.
+2025-11-18 17:39:54.047   754-2697  ActivityManager         system_server                        I  Killing 10974:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:3/u0a150i-8997 (adj 0): isolated not needed
+2025-11-18 17:39:54.114   754-2700  ActivityManager         system_server                        I  Start proc 10990:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:4/u0ai4 for  {com.android.chrome/org.chromium.content.app.SandboxedProcessService0:4}
+2025-11-18 17:39:54.150 10990-10990 cr_SplitCompatApp       com.android.chrome_zygote            I  version=133.0.6943.137 (694313738) minSdkVersion=29 isBundle=false processName=com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:4 isIsolatedProcess=true
+2025-11-18 17:39:54.203 10822-10822 chromium                com.android.chrome                   W  [WARNING:controller_impl.cc(1187)] Background download complete, client: 6, completion type: 0, file size:24028
+2025-11-18 17:39:54.205 10822-10822 JobInfo                 com.android.chrome                   W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+2025-11-18 17:39:54.206   754-1782  JobInfo                 system_server                        W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+2025-11-18 17:39:54.290   754-2699  ActivityManager         system_server                        I  Start proc 11006:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:5/u0ai5 for  {com.android.chrome/org.chromium.content.app.SandboxedProcessService0:5}
+2025-11-18 17:39:54.328 11006-11006 cr_SplitCompatApp       com.android.chrome_zygote            I  version=133.0.6943.137 (694313738) minSdkVersion=29 isBundle=false processName=com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:5 isIsolatedProcess=true
+2025-11-18 17:39:54.408 11006-11016 chromium                com.android.chrome_zygote            I  [INFO:child_process_service.cc(73)] ChildProcessService: Exiting child process.
+2025-11-18 17:39:54.417   754-1782  ActivityManager         system_server                        I  Killing 11006:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:5/u0a150i-8995 (adj 0): isolated not needed
+2025-11-18 17:39:54.419 10990-11000 chromium                com.android.chrome_zygote            I  [INFO:child_process_service.cc(73)] ChildProcessService: Exiting child process.
+2025-11-18 17:39:54.422   754-1782  ActivityManager         system_server                        I  Killing 10990:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:4/u0a150i-8996 (adj 0): isolated not needed
+2025-11-18 17:39:57.107 10822-10822 chromium                com.android.chrome                   W  [WARNING:controller_impl.cc(1187)] Background download complete, client: 6, completion type: 0, file size:2992963
+2025-11-18 17:39:57.108 10822-10822 JobInfo                 com.android.chrome                   W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+2025-11-18 17:39:57.108   754-2699  JobInfo                 system_server                        W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
+2025-11-18 17:39:57.141   754-1782  JobScheduler            system_server                        W  Job didn't exist in JobStore: 4489c55 #u0a150/53 com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService
+2025-11-18 17:39:57.223   754-1782  ActivityManager         system_server                        I  Start proc 11022:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:6/u0ai6 for  {com.android.chrome/org.chromium.content.app.SandboxedProcessService0:6}
+2025-11-18 17:39:57.246 11022-11022 cr_SplitCompatApp       com.android.chrome_zygote            I  version=133.0.6943.137 (694313738) minSdkVersion=29 isBundle=false processName=com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:6 isIsolatedProcess=true
+2025-11-18 17:39:57.358 11022-11032 chromium                com.android.chrome_zygote            I  [INFO:child_process_service.cc(73)] ChildProcessService: Exiting child process.
+2025-11-18 17:39:57.362   754-1782  ActivityManager         system_server                        I  Killing 11022:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:6/u0a150i-8994 (adj 0): isolated not needed
+
+
+
+
+
+
+------------------- PROCESS STARTED (10606) for package io.ionic.starter ----------------------------
+2025-11-18 17:38:25.229 10606-10606 nativeloader            io.ionic.starter                     D  Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+2025-11-18 17:38:25.616 10606-10606 nativeloader            io.ionic.starter                     D  Configuring clns-9 for other apk /data/app/~~vCg9cXyJFITT7Ao4n3hmrQ==/io.ionic.starter-6GQaAhhtY15kWtexMEqalw==/base.apk. target_sdk_version=35, uses_libraries=, library_path=/data/app/~~vCg9cXyJFITT7Ao4n3hmrQ==/io.ionic.starter-6GQaAhhtY15kWtexMEqalw==/lib/x86_64:/data/app/~~vCg9cXyJFITT7Ao4n3hmrQ==/io.ionic.starter-6GQaAhhtY15kWtexMEqalw==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/io.ionic.starter
+2025-11-18 17:38:25.620 10606-10606 CompatChangeReporter    io.ionic.starter                     D  Compat change id reported: 202956589; UID 10219; state: ENABLED
+2025-11-18 17:38:25.636 10606-10606 o.ionic.starter         io.ionic.starter                     I  AssetManager2(0x71f7cf69f618) locale list changing from [] to [en-US]
+2025-11-18 17:38:25.661 10606-10606 GraphicsEnvironment     io.ionic.starter                     V  Currently set values for:
+2025-11-18 17:38:25.661 10606-10606 GraphicsEnvironment     io.ionic.starter                     V    angle_gl_driver_selection_pkgs=[]
+2025-11-18 17:38:25.661 10606-10606 GraphicsEnvironment     io.ionic.starter                     V    angle_gl_driver_selection_values=[]
+2025-11-18 17:38:25.661 10606-10606 GraphicsEnvironment     io.ionic.starter                     V  io.ionic.starter is not listed in per-application setting
+2025-11-18 17:38:25.661 10606-10606 GraphicsEnvironment     io.ionic.starter                     V  ANGLE allowlist from config: com.dreamgames.royalmatch com.dts.freefiremax com.dxx.firenow com.gramgames.mergedragons com.ludo.king com.mojang.minecraftpe com.my.defense com.nintendo.zaka com.os.airforce com.playrix.fishdomdd.gplay io.teslatech.callbreak jp.konami.prospia net.peakgames.toonblast
+2025-11-18 17:38:25.661 10606-10606 GraphicsEnvironment     io.ionic.starter                     V  io.ionic.starter is not listed in ANGLE allowlist or settings, returning default
+2025-11-18 17:38:25.662 10606-10606 GraphicsEnvironment     io.ionic.starter                     V  Neither updatable production driver nor prerelease driver is supported.
+2025-11-18 17:38:25.738 10606-10606 CompatChangeReporter    io.ionic.starter                     D  Compat change id reported: 279646685; UID 10219; state: ENABLED
+2025-11-18 17:38:25.779 10606-10622 DisplayManager          io.ionic.starter                     I  Choreographer implicitly registered for the refresh rate.
+2025-11-18 17:38:25.786 10606-10606 o.ionic.starter         io.ionic.starter                     I  AssetManager2(0x71f7cf69fc58) locale list changing from [] to [en-US]
+2025-11-18 17:38:25.891 10606-10622 EGL_emulation           io.ionic.starter                     I  Opening libGLESv1_CM_emulation.so
+2025-11-18 17:38:25.893 10606-10622 EGL_emulation           io.ionic.starter                     I  Opening libGLESv2_emulation.so
+2025-11-18 17:38:25.906 10606-10622 HWUI                    io.ionic.starter                     W  Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+2025-11-18 17:38:25.906 10606-10622 HWUI                    io.ionic.starter                     W  Failed to initialize 101010-2 format, error = EGL_SUCCESS
+2025-11-18 17:38:25.909 10606-10606 AppCompatDelegate       io.ionic.starter                     D  Checking for metadata for AppLocalesMetadataHolderService : Service not found
+2025-11-18 17:38:25.911 10606-10606 o.ionic.starter         io.ionic.starter                     I  AssetManager2(0x71f7cf6a7c78) locale list changing from [] to [en-US]
+2025-11-18 17:38:25.928 10606-10606 ashmem                  io.ionic.starter                     E  Pinning is deprecated since Android Q. Please use trim or other methods.
+2025-11-18 17:38:26.033 10606-10606 CompatChangeReporter    io.ionic.starter                     D  Compat change id reported: 309578419; UID 10219; state: ENABLED
+2025-11-18 17:38:26.036 10606-10606 DesktopModeFlags        io.ionic.starter                     D  Toggle override initialized to: OVERRIDE_UNSET
+2025-11-18 17:38:26.075 10606-10606 o.ionic.starter         io.ionic.starter                     I  hiddenapi: Accessing hidden method Landroid/view/ViewGroup;->makeOptionalFitsSystemWindows()V (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/appcompat/widget/ViewUtils; (domain=app) using reflection: allowed
+2025-11-18 17:38:26.104 10606-10606 o.ionic.starter         io.ionic.starter                     I  AssetManager2(0x71f7cf6a9898) locale list changing from [] to [en-US]
+2025-11-18 17:38:26.104 10606-10606 WebViewFactory          io.ionic.starter                     I  Loading com.google.android.webview version 133.0.6943.137 (code 694313738)
+2025-11-18 17:38:26.107 10606-10606 o.ionic.starter         io.ionic.starter                     I  AssetManager2(0x71f7cf6a6058) locale list changing from [] to [en-US]
+2025-11-18 17:38:26.109 10606-10606 o.ionic.starter         io.ionic.starter                     I  AssetManager2(0x71f7cf6a9bb8) locale list changing from [] to [en-US]
+2025-11-18 17:38:26.113 10606-10606 o.ionic.starter         io.ionic.starter                     I  AssetManager2(0x71f7cf6ad718) locale list changing from [] to [en-US]
+2025-11-18 17:38:26.114 10606-10606 o.ionic.starter         io.ionic.starter                     I  AssetManager2(0x71f7cf6a88f8) locale list changing from [] to [en-US]
+2025-11-18 17:38:26.115 10606-10606 ResourcesManager        io.ionic.starter                     V  The following library key has been added: ResourcesKey{ mHash=921f452e mResDir=null mSplitDirs=[] mOverlayDirs=[] mLibDirs=[/data/app/~~N7PI_6diY5NSqqVv6bpmkA==/com.google.android.webview-uMZ5AGv4HZ65lMBiRTeofA==/WebViewGoogle.apk,/data/app/~~Q0D93C_93nskK-CN3as90w==/com.google.android.trichromelibrary_694313738-AL0P-Qrp6GSMxYLjqwhYVA==/TrichromeLibrary.apk,/system_ext/framework/androidx.window.extensions.jar] mDisplayId=0 mOverrideConfig=v36 mCompatInfo={420dpi always-compat} mLoaders=[]}
+2025-11-18 17:38:26.120 10606-10606 o.ionic.starter         io.ionic.starter                     W  Failed to find entry 'classes.dex': Entry not found
+2025-11-18 17:38:26.124 10606-10606 nativeloader            io.ionic.starter                     D  Configuring clns-10 for other apk /data/app/~~Q0D93C_93nskK-CN3as90w==/com.google.android.trichromelibrary_694313738-AL0P-Qrp6GSMxYLjqwhYVA==/TrichromeLibrary.apk. target_sdk_version=34, uses_libraries=ALL, library_path=/data/app/~~N7PI_6diY5NSqqVv6bpmkA==/com.google.android.webview-uMZ5AGv4HZ65lMBiRTeofA==/lib/x86_64:/data/app/~~N7PI_6diY5NSqqVv6bpmkA==/com.google.android.webview-uMZ5AGv4HZ65lMBiRTeofA==/WebViewGoogle.apk!/lib/x86_64:/data/app/~~Q0D93C_93nskK-CN3as90w==/com.google.android.trichromelibrary_694313738-AL0P-Qrp6GSMxYLjqwhYVA==/TrichromeLibrary.apk!/lib/x86_64, permitted_path=/data:/mnt/expand
+2025-11-18 17:38:26.130 10606-10606 ApplicationLoaders      io.ionic.starter                     D  Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+2025-11-18 17:38:26.146 10606-10606 nativeloader            io.ionic.starter                     D  Configuring clns-11 for other apk /data/app/~~N7PI_6diY5NSqqVv6bpmkA==/com.google.android.webview-uMZ5AGv4HZ65lMBiRTeofA==/WebViewGoogle.apk. target_sdk_version=34, uses_libraries=, library_path=/data/app/~~N7PI_6diY5NSqqVv6bpmkA==/com.google.android.webview-uMZ5AGv4HZ65lMBiRTeofA==/lib/x86_64:/data/app/~~N7PI_6diY5NSqqVv6bpmkA==/com.google.android.webview-uMZ5AGv4HZ65lMBiRTeofA==/WebViewGoogle.apk!/lib/x86_64:/data/app/~~Q0D93C_93nskK-CN3as90w==/com.google.android.trichromelibrary_694313738-AL0P-Qrp6GSMxYLjqwhYVA==/TrichromeLibrary.apk!/lib/x86_64, permitted_path=/data:/mnt/expand
+2025-11-18 17:38:26.299 10606-10606 cr_WVCFactoryProvider   io.ionic.starter                     I  version=133.0.6943.137 (694313738) minSdkVersion=29 isBundle=false multiprocess=true packageId=2
+2025-11-18 17:38:26.306 10606-10606 o.ionic.starter         io.ionic.starter                     I  AssetManager2(0x71f7cf6a8c18) locale list changing from [] to [en-US]
+2025-11-18 17:38:26.356 10606-10606 nativeloader            io.ionic.starter                     D  Load /data/app/~~Q0D93C_93nskK-CN3as90w==/com.google.android.trichromelibrary_694313738-AL0P-Qrp6GSMxYLjqwhYVA==/TrichromeLibrary.apk!/lib/x86_64/libmonochrome_64.so using class loader ns clns-11 (caller=/data/app/~~N7PI_6diY5NSqqVv6bpmkA==/com.google.android.webview-uMZ5AGv4HZ65lMBiRTeofA==/WebViewGoogle.apk): ok
+2025-11-18 17:38:26.371 10606-10606 nativeloader            io.ionic.starter                     D  Load /system/lib64/libwebviewchromium_plat_support.so using class loader ns clns-11 (caller=/data/app/~~N7PI_6diY5NSqqVv6bpmkA==/com.google.android.webview-uMZ5AGv4HZ65lMBiRTeofA==/WebViewGoogle.apk): ok
+2025-11-18 17:38:26.414 10606-10628 chromium                io.ionic.starter                     I  [1118/233826.403454:INFO:variations_seed_loader.cc(67)] Failed to open file for reading.: No such file or directory (2)
+2025-11-18 17:38:26.421 10606-10628 chromium                io.ionic.starter                     I  [1118/233826.420910:INFO:variations_seed_loader.cc(67)] Failed to open file for reading.: No such file or directory (2)
+2025-11-18 17:38:26.445 10606-10606 cr_LibraryLoader        io.ionic.starter                     I  Successfully loaded native library
+2025-11-18 17:38:26.459 10606-10606 cr_CachingUmaRecorder   io.ionic.starter                     I  Flushed 6 samples from 6 histograms, 0 samples were dropped.
+2025-11-18 17:38:26.489 10606-10606 cr_CombinedPProvider    io.ionic.starter                     I  #registerProvider() provider:WV.C8@b803bda isPolicyCacheEnabled:false policyProvidersSize:0
+2025-11-18 17:38:26.493 10606-10606 cr_PolicyProvider       io.ionic.starter                     I  #setManagerAndSource() 0
+2025-11-18 17:38:26.654 10606-10606 cr_CombinedPProvider    io.ionic.starter                     I  #linkNativeInternal() 1
+2025-11-18 17:38:26.660 10606-10606 cr_AppResProvider       io.ionic.starter                     I  #getApplicationRestrictionsFromUserManager() Bundle[EMPTY_PARCEL]
+2025-11-18 17:38:26.661 10606-10606 cr_PolicyProvider       io.ionic.starter                     I  #notifySettingsAvailable() 0
+2025-11-18 17:38:26.661 10606-10606 cr_CombinedPProvider    io.ionic.starter                     I  #onSettingsAvailable() 0
+2025-11-18 17:38:26.661 10606-10606 cr_CombinedPProvider    io.ionic.starter                     I  #flushPolicies()
+2025-11-18 17:38:26.841 10606-10647 chromium                io.ionic.starter                     W  [WARNING:dns_config_service_android.cc(81)] Failed to read DnsConfig.
+2025-11-18 17:38:26.872 10606-10606 o.ionic.starter         io.ionic.starter                     I  AssetManager2(0x71f7cf69e038) locale list changing from [] to [en-US]
+2025-11-18 17:38:26.876 10606-10606 o.ionic.starter         io.ionic.starter                     I  AssetManager2(0x71f7cf6a9258) locale list changing from [] to [en-US]
+2025-11-18 17:38:27.077 10606-10606 CompatChangeReporter    io.ionic.starter                     D  Compat change id reported: 352594277; UID 10219; state: ENABLED
+2025-11-18 17:38:27.290 10606-10606 Capacitor               io.ionic.starter                     D  Starting BridgeActivity
+2025-11-18 17:38:27.413 10606-10606 Capacitor               io.ionic.starter                     D  Registering plugin instance: CapacitorCookies
+2025-11-18 17:38:27.425 10606-10606 Capacitor               io.ionic.starter                     D  Registering plugin instance: WebView
+2025-11-18 17:38:27.429 10606-10606 Capacitor               io.ionic.starter                     D  Registering plugin instance: CapacitorHttp
+2025-11-18 17:38:27.433 10606-10606 Capacitor               io.ionic.starter                     D  Registering plugin instance: CapacitorSQLite
+2025-11-18 17:38:28.144 10606-10606 Capacitor               io.ionic.starter                     D  Registering plugin instance: App
+2025-11-18 17:38:28.148 10606-10606 Capacitor               io.ionic.starter                     D  Registering plugin instance: Haptics
+2025-11-18 17:38:28.152 10606-10606 Capacitor               io.ionic.starter                     D  Registering plugin instance: Keyboard
+2025-11-18 17:38:28.155 10606-10606 Capacitor               io.ionic.starter                     D  Registering plugin instance: StatusBar
+2025-11-18 17:38:28.172 10606-10606 Capacitor/...sBarPlugin io.ionic.starter                     V  Notifying listeners for event statusBarOverlayChanged
+2025-11-18 17:38:28.172 10606-10606 Capacitor/...sBarPlugin io.ionic.starter                     D  No listeners found for event statusBarOverlayChanged
+2025-11-18 17:38:28.174 10606-10606 Capacitor/...sBarPlugin io.ionic.starter                     V  Notifying listeners for event statusBarOverlayChanged
+2025-11-18 17:38:28.174 10606-10606 Capacitor/...sBarPlugin io.ionic.starter                     D  No listeners found for event statusBarOverlayChanged
+2025-11-18 17:38:28.203 10606-10606 Capacitor               io.ionic.starter                     W  Unable to read file at path public/plugins
+2025-11-18 17:38:28.220 10606-10606 Capacitor               io.ionic.starter                     D  Loading app at https://localhost
+2025-11-18 17:38:28.326 10606-10651 cr_media                io.ionic.starter                     W  BLUETOOTH_CONNECT permission is missing.
+2025-11-18 17:38:28.328 10606-10651 cr_media                io.ionic.starter                     W  getBluetoothAdapter() requires BLUETOOTH permission
+2025-11-18 17:38:28.329 10606-10651 cr_media                io.ionic.starter                     W  registerBluetoothIntentsIfNeeded: Requires BLUETOOTH permission
+2025-11-18 17:38:28.338 10606-10680 libc                    io.ionic.starter                     W  Access denied finding property "vendor.mesa.log"
+2025-11-18 17:38:28.338 10606-10680 libc                    io.ionic.starter                     W  Access denied finding property "vendor.mesa.log.file"
+2025-11-18 17:38:28.338 10606-10680 MESA                    io.ionic.starter                     E  Failed to open rendernode: No such file or directory
+2025-11-18 17:38:28.368 10606-10680 vulkan                  io.ionic.starter                     D  searching for layers in '/data/app/~~vCg9cXyJFITT7Ao4n3hmrQ==/io.ionic.starter-6GQaAhhtY15kWtexMEqalw==/lib/x86_64'
+2025-11-18 17:38:28.368 10606-10680 vulkan                  io.ionic.starter                     D  searching for layers in '/data/app/~~vCg9cXyJFITT7Ao4n3hmrQ==/io.ionic.starter-6GQaAhhtY15kWtexMEqalw==/base.apk!/lib/x86_64'
+2025-11-18 17:38:28.381 10606-10606 Capacitor               io.ionic.starter                     D  App started
+2025-11-18 17:38:28.383 10606-10606 WindowOnBackDispatcher  io.ionic.starter                     W  OnBackInvokedCallback is not enabled for the application.
+                                                                                                    Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
+2025-11-18 17:38:28.386 10606-10606 Capacitor/AppPlugin     io.ionic.starter                     D  Firing change: true
+2025-11-18 17:38:28.386 10606-10606 Capacitor/AppPlugin     io.ionic.starter                     V  Notifying listeners for event appStateChange
+2025-11-18 17:38:28.386 10606-10606 Capacitor/AppPlugin     io.ionic.starter                     D  No listeners found for event appStateChange
+2025-11-18 17:38:28.386 10606-10606 Capacitor               io.ionic.starter                     D  App resumed
+2025-11-18 17:38:28.409 10606-10606 CompatChangeReporter    io.ionic.starter                     D  Compat change id reported: 349153669; UID 10219; state: ENABLED
+2025-11-18 17:38:28.418 10606-10606 HWUI                    io.ionic.starter                     W  Unknown dataspace 0
+2025-11-18 17:38:28.466 10606-10646 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/
+2025-11-18 17:38:28.483 10606-10691 CameraManagerGlobal     io.ionic.starter                     I  Connecting to camera service
+2025-11-18 17:38:28.533 10606-10680 libc                    io.ionic.starter                     W  Access denied finding property "vendor.mesa.vk.trace.per.submit"
+2025-11-18 17:38:28.533 10606-10680 libc                    io.ionic.starter                     W  Access denied finding property "vendor.mesa.gallium.print.optio"
+2025-11-18 17:38:28.533 10606-10680 libc                    io.ionic.starter                     W  Access denied finding property "vendor.mesa.vk.trace.frame"
+2025-11-18 17:38:28.558 10606-10680 libc                    io.ionic.starter                     W  Access denied finding property "vendor.mesa.vk.wsi.headless.swa"
+2025-11-18 17:38:28.765 10606-10680 chromium                io.ionic.starter                     W  [WARNING:viz_main_impl.cc(85)] VizNullHypothesis is disabled (not a warning)
+2025-11-18 17:38:28.924 10606-10647 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-FGWRQ4TY.js
+2025-11-18 17:38:28.931 10606-10650 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-NHXDGK5N.js
+2025-11-18 17:38:28.949 10606-10645 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-H2UQMALX.js
+2025-11-18 17:38:28.953 10606-10653 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-3XMQAUZW.js
+2025-11-18 17:38:28.966 10606-10646 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-M5P7WWVC.js
+2025-11-18 17:38:28.978 10606-10654 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-EBR2FFRC.js
+2025-11-18 17:38:29.084 10606-10606 InsetsController        io.ionic.starter                     D  hide(ime(), fromIme=false)
+2025-11-18 17:38:29.085 10606-10606 ImeTracker              io.ionic.starter                     I  io.ionic.starter:70bda537: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2025-11-18 17:38:29.263 10606-10647 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-CLDSZD2A.js
+2025-11-18 17:38:29.272 10606-10647 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-4WFVMWDK.js
+2025-11-18 17:38:29.285 10606-10650 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-DVVH2KKN.js
+2025-11-18 17:38:29.285 10606-10645 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/polyfills-TDCRLYKL.js
+2025-11-18 17:38:29.286 10606-10647 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-M2X7KQLB.js
+2025-11-18 17:38:29.300 10606-10653 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/main-R5VNI3EQ.js
+2025-11-18 17:38:29.339 10606-10650 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/styles-I7WJSELC.css
+2025-11-18 17:38:29.644 10606-10646 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-NV3QH4JK.js
+2025-11-18 17:38:29.645 10606-10646 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-FNBMHXHF.js
+2025-11-18 17:38:29.659 10606-10653 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-42C7ZIID.js
+2025-11-18 17:38:29.660 10606-10646 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-JHI3MBHO.js
+2025-11-18 17:38:29.664 10606-10645 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-OZYWYLNK.js
+2025-11-18 17:38:29.882 10606-10645 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-N5R6D5RA.js
+2025-11-18 17:38:29.936 10606-10645 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-FENPZXUZ.js
+2025-11-18 17:38:30.085 10606-10645 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/assets/icon/favicon.png
+2025-11-18 17:38:30.085 10606-10645 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/assets/icon/favicon.png
+2025-11-18 17:38:30.086 10606-10646 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-RSSLQG4E.js
+2025-11-18 17:38:30.089 10606-10645 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-BAGT6LPP.js
+2025-11-18 17:38:30.090 10606-10647 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-P5FJYL7I.js
+2025-11-18 17:38:30.154 10606-10645 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-36ESZ2IJ.js
+2025-11-18 17:38:30.154 10606-10646 Capacitor               io.ionic.starter                     D  Handling local request: https://localhost/chunk-FA25AEA4.js
+2025-11-18 17:38:30.287 10606-10606 Capacitor/Plugin        io.ionic.starter                     V  To native (Capacitor plugin): callbackId: 101507864, pluginId: App, methodName: addListener
+2025-11-18 17:38:30.293 10606-10606 Capacitor               io.ionic.starter                     V  callback: 101507864, pluginId: App, methodName: addListener, methodData: {"eventName":"backButton"}
+2025-11-18 17:38:30.627 10606-10611 o.ionic.starter         io.ionic.starter                     I  Compiler allocated 5042KB to compile void android.view.ViewRootImpl.performTraversals()
+2025-11-18 17:38:30.827 10606-10712 ProfileInstaller        io.ionic.starter                     D  Installing profile for io.ionic.starter
+2025-11-18 17:38:45.932 10606-10612 o.ionic.starter         io.ionic.starter                     I  Background concurrent mark compact GC freed 6667KB AllocSpace bytes, 55(2300KB) LOS objects, 49% free, 4063KB/8127KB, paused 1.009ms,2.786ms total 123.562ms
