@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Clientes (localStorage)</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando clientes...</p>
+  </div>
+
+  <div *ngIf="!isLoading">
+    <h2>Total: {{ clientes.length }} clientes</h2>
+
+    <ion-list *ngIf="clientes.length > 0">
+      <ion-item *ngFor="let cliente of clientes">
+        <ion-label>
+          <h3>{{ cliente.nombre }}</h3>
+          <p>Tel: {{ cliente.telefono }}</p>
+          <p>Email: {{ cliente.email }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <div *ngIf="clientes.length === 0" class="empty-state">
+      <p>No hay clientes en localStorage</p>
+    </div>
+  </div>
+</ion-content>

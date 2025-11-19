@@ -37,6 +37,20 @@ export const routes: Routes = [
     loadComponent: () => import('./features/settings/pages/settings-main/settings-main.page').then((m) => m.SettingsMainPage),
   },
 
+  // Test pages para localStorage
+  {
+    path: 'test/clientes',
+    loadComponent: () => import('./features/test-pages/clientes-test.page').then((m) => m.ClientesTestPage),
+  },
+  {
+    path: 'test/personal',
+    loadComponent: () => import('./features/test-pages/personal-test.page').then((m) => m.PersonalTestPage),
+  },
+  {
+    path: 'test/servicios',
+    loadComponent: () => import('./features/test-pages/servicios-test.page').then((m) => m.ServiciosTestPage),
+  },
+
   // Alias para home (mantener compatibilidad)
   {
     path: 'home',

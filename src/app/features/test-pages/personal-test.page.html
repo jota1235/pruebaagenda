@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Personal (localStorage)</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando personal...</p>
+  </div>
+
+  <div *ngIf="!isLoading">
+    <h2>Total: {{ personal.length }} personal</h2>
+
+    <ion-list *ngIf="personal.length > 0">
+      <ion-item *ngFor="let p of personal">
+        <ion-label>
+          <h3>{{ p.nombre }}</h3>
+          <p>Activo: {{ p.activo }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <div *ngIf="personal.length === 0" class="empty-state">
+      <p>No hay personal en localStorage</p>
+    </div>
+  </div>
+</ion-content>

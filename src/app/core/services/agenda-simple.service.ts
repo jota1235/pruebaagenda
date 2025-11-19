@@ -21,7 +21,7 @@ export class AgendaSimpleService {
    * Obtiene todos los clientes
    */
   async getPacientes(): Promise<any[]> {
-    const clientes = this.storage.get<Cliente[]>('clientes', []);
+    const clientes = this.storage.get<Cliente[]>('clientes', []) ?? [];
     return clientes
       .filter(c => c.handel === this.handel && c.id_empresa_base === this.id_empresa_base && c.activo === 1)
       .map(c => ({
@@ -38,7 +38,7 @@ export class AgendaSimpleService {
    * Agrega un nuevo cliente
    */
   async addCliente(cliente: Omit<Cliente, 'id'>): Promise<Cliente> {
-    const clientes = this.storage.get<Cliente[]>('clientes', []);
+    const clientes = this.storage.get<Cliente[]>('clientes', []) ?? [];
     const nuevoId = clientes.length > 0 ? Math.max(...clientes.map(c => c.id)) + 1 : 1;
 
     const nuevoCliente: Cliente = {
@@ -56,7 +56,7 @@ export class AgendaSimpleService {
    * Actualiza un cliente
    */
   async updateCliente(id: number, datos: Partial<Cliente>): Promise<boolean> {
-    const clientes = this.storage.get<Cliente[]>('clientes', []);
+    const clientes = this.storage.get<Cliente[]>('clientes', []) ?? [];
     const index = clientes.findIndex(c => c.id === id);
 
     if (index === -1) return false;
@@ -80,7 +80,7 @@ export class AgendaSimpleService {
    * Obtiene todo el personal
    */
   async getPersonalAgenda(): Promise<any[]> {
-    const personal = this.storage.get<Personal[]>('personal', []);
+    const personal = this.storage.get<Personal[]>('personal', []) ?? [];
     return personal
       .filter(p => p.handel === this.handel && p.id_empresa_base === this.id_empresa_base && p.activo === 1)
       .map(p => ({
@@ -95,7 +95,7 @@ export class AgendaSimpleService {
    * Agrega nuevo personal
    */
   async addPersonal(personal: Omit<Personal, 'id'>): Promise<Personal> {
-    const listPersonal = this.storage.get<Personal[]>('personal', []);
+    const listPersonal = this.storage.get<Personal[]>('personal', []) ?? [];
     const nuevoId = listPersonal.length > 0 ? Math.max(...listPersonal.map(p => p.id)) + 1 : 1;
 
     const nuevoPersonal: Personal = {
@@ -113,7 +113,7 @@ export class AgendaSimpleService {
    * Actualiza personal
    */
   async updatePersonal(id: number, datos: Partial<Personal>): Promise<boolean> {
-    const personal = this.storage.get<Personal[]>('personal', []);
+    const personal = this.storage.get<Personal[]>('personal', []) ?? [];
     const index = personal.findIndex(p => p.id === id);
 
     if (index === -1) return false;
@@ -137,7 +137,7 @@ export class AgendaSimpleService {
    * Obtiene todos los servicios
    */
   async getServicios(): Promise<any[]> {
-    const productos = this.storage.get<Producto[]>('productos', []);
+    const productos = this.storage.get<Producto[]>('productos', []) ?? [];
     return productos
       .filter(p => p.handel === this.handel && p.id_empresa_base === this.id_empresa_base && p.tipo === 'Servicio' && p.activo === 1)
       .map(p => ({
@@ -155,7 +155,7 @@ export class AgendaSimpleService {
    * Agrega un nuevo servicio
    */
   async addServicio(producto: Omit<Producto, 'id'>): Promise<Producto> {
-    const productos = this.storage.get<Producto[]>('productos', []);
+    const productos = this.storage.get<Producto[]>('productos', []) ?? [];
     const nuevoId = productos.length > 0 ? Math.max(...productos.map(p => p.id)) + 1 : 1;
 
     const nuevoProducto: Producto = {
@@ -174,7 +174,7 @@ export class AgendaSimpleService {
    * Actualiza un servicio
    */
   async updateServicio(id: number, datos: Partial<Producto>): Promise<boolean> {
-    const productos = this.storage.get<Producto[]>('productos', []);
+    const productos = this.storage.get<Producto[]>('productos', []) ?? [];
     const index = productos.findIndex(p => p.id === id);
 
     if (index === -1) return false;
@@ -198,7 +198,7 @@ export class AgendaSimpleService {
    * Obtiene citas por fecha
    */
   async getCitasPorFecha(fecha: string): Promise<Cita[]> {
-    const citas = this.storage.get<Cita[]>('citas', []);
+    const citas = this.storage.get<Cita[]>('citas', []) ?? [];
     return citas.filter(c =>
       c.handel === this.handel &&
       c.id_empresa_base === this.id_empresa_base &&
@@ -210,7 +210,7 @@ export class AgendaSimpleService {
    * Agrega una nueva cita
    */
   async addCita(cita: Omit<Cita, 'id'>): Promise<Cita> {
-    const citas = this.storage.get<Cita[]>('citas', []);
+    const citas = this.storage.get<Cita[]>('citas', []) ?? [];
     const nuevoId = citas.length > 0 ? Math.max(...citas.map(c => c.id)) + 1 : 1;
 
     const nuevaCita: Cita = {
@@ -228,7 +228,7 @@ export class AgendaSimpleService {
    * Actualiza una cita
    */
   async updateCita(id: number, datos: Partial<Cita>): Promise<boolean> {
-    const citas = this.storage.get<Cita[]>('citas', []);
+    const citas = this.storage.get<Cita[]>('citas', []) ?? [];
     const index = citas.findIndex(c => c.id === id);
 
     if (index === -1) return false;
@@ -259,7 +259,7 @@ export class AgendaSimpleService {
    * Verifica si hay datos
    */
   async hasData(): Promise<boolean> {
-    const clientes = this.storage.get<Cliente[]>('clientes', []);
+    const clientes = this.storage.get<Cliente[]>('clientes', []) ?? [];
     return clientes.length > 0;
   }
 }
