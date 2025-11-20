@@ -201,16 +201,61 @@ export class SeedSimpleService {
       }
     ];
 
+    // Configuración de agenda de prueba
+    const configAgenda = {
+      puesto_servicio: 'Terapeuta',
+      hora_inicio: 9,
+      minutos_incremento: 30,
+      hora_fin: 20,
+      color_libre: '#90EE90',
+      color_reservada: '#FFD700',
+      color_confirmada: '#87CEEB',
+      color_cancelada: '#FF6B6B',
+      color_cobrado: '#98FB98',
+      color_fuera_tiempo: '#D3D3D3',
+      most_disponibilidad: true,
+      rangoManual: false,
+      rangoHora: true,
+      vizNombreTerapeuta: true,
+      Filas: '',
+      num_columnas: 4,
+      cantColsFijas: 0,
+      col_aux: 0,
+      config_horario: {
+        horario_sabado: '09:00-18:00',
+        horario_domingo: '10:00-15:00',
+        formato_hora: '12',
+        str_dias: 'L,M,Mi,J,V,S,D'
+      },
+      dias_ctespr: '365',
+      nventa_ctespr: '-1',
+      arrTerapeutas: [
+        { id: 1, alias: 'DR', nombre: 'Dr. Rodríguez' },
+        { id: 2, alias: 'DF', nombre: 'Dra. Fernández' },
+        { id: 3, alias: 'LG', nombre: 'Lic. González' },
+        { id: 4, alias: 'LT', nombre: 'Lic. Torres' }
+      ],
+      arrLisTerapeutas: [1, 2, 3, 4],
+      aliasTerapeutas: ['DR', 'DF', 'LG', 'LT'],
+      disponibilidad: {
+        hora_inicio: 9,
+        hora_fin: 20,
+        dia_habil: true
+      }
+    };
+
     // Guardar en localStorage
     this.storage.set('clientes', clientes);
     this.storage.set('personal', personal);
     this.storage.set('productos', productos);
     this.storage.set('citas', []); // Array vacío de citas
+    this.storage.set('config_agenda', configAgenda); // Configuración de agenda
 
     console.log('✅ Datos de prueba guardados en localStorage');
     console.log(`   - ${clientes.length} clientes`);
     console.log(`   - ${personal.length} personal`);
     console.log(`   - ${productos.length} servicios`);
+    console.log('   - Configuración de agenda');
   }
 
   /**

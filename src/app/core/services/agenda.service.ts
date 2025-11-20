@@ -773,19 +773,25 @@ export class AgendaService {
 
   /**
    * Obtiene todos los datos de configuración necesarios para visualizar la agenda
+   * MODIFICADO: Ahora usa localStorage en lugar de SQLite
    */
   async readConfigAgenda(fecha: string = ''): Promise<boolean> {
     if (fecha === '') fecha = this.fecha_op;
 
     this.vecConfigAgenda = {};
 
-    const platform = Capacitor.getPlatform();
+    console.log('📋 readConfigAgenda() usando localStorage');
 
-    // En web, devolver configuración mock para desarrollo
-    if (platform === 'web') {
-      console.log('📱 Plataforma web detectada: usando configuración mock');
+    // Intentar leer configuración desde localStorage
+    const configGuardada = this.storage.get<any>('config_agenda', null);
 
-      // Configuración mock para desarrollo web
+    if (configGuardada) {
+      // Usar configuración guardada
+      this.vecConfigAgenda = configGuardada;
+      console.log('✅ Configuración cargada desde localStorage');
+    } else {
+      // Usar configuración por defecto
+      console.log('📦 Usando configuración por defecto');
       this.vecConfigAgenda = {
         puesto_servicio: 'Terapeuta',
         hora_inicio: 9,
@@ -828,17 +834,23 @@ export class AgendaService {
         }
       };
 
-      this.setMinutosIncremento(this.vecConfigAgenda.minutos_incremento);
-      this.poscColumns = '1|2|3|4|';
-
-      // Lee matriz de horarios en la agenda
-      this.readHorariosAgenda(
-        this.vecConfigAgenda.disponibilidad.hora_inicio,
-        this.vecConfigAgenda.disponibilidad.hora_fin
-      );
-
-      return true;
+      // Guardar configuración por defecto para futuros usos
+      this.storage.set('config_agenda', this.vecConfigAgenda);
     }
+
+    this.setMinutosIncremento(this.vecConfigAgenda.minutos_incremento);
+    this.poscColumns = '1|2|3|4|';
+
+    // Lee matriz de horarios en la agenda
+    this.readHorariosAgenda(
+      this.vecConfigAgenda.disponibilidad.hora_inicio,
+      this.vecConfigAgenda.disponibilidad.hora_fin
+    );
+
+    return true;
+
+    /* CÓDIGO SQLite COMENTADO - Mantener para futura depuración
+    const platform = Capacitor.getPlatform();
 
     // En móvil, usar SQLite real
     const query = `
@@ -922,6 +934,7 @@ export class AgendaService {
       // Array de terapeutas
       await this.readArrTerapeutas();
     }
+    */
 
     // Lee disponibilidad de la fecha en calendario
     this.disponibilidadDias();
@@ -947,6 +960,7 @@ export class AgendaService {
 
   /**
    * Obtiene un array con todas las citas para un día específico
+   * MODIFICADO: Ahora usa localStorage en lugar de SQLite
    */
   async readReservas(fecha: string = ''): Promise<boolean> {
     if (fecha === '') fecha = this.fecha_op;
@@ -954,20 +968,22 @@ export class AgendaService {
     this.vecReservas = [];
     this.ids_clientes = [];
 
+    console.log('📋 readReservas() usando localStorage para fecha:', fecha);
+
+    // Filtrar citas mock por fecha (this.mockAppointments se carga desde localStorage)
+    this.vecReservas = this.mockAppointments.filter(apt => {
+      return (apt.fecha || '') === fecha;
+    });
+
+    // Extraer ids de clientes
+    this.ids_clientes = this.vecReservas.map(r => r.id_cliente);
+
+    console.log(`✅ ${this.vecReservas.length} citas encontradas para ${fecha}`);
+
+    return this.vecReservas.length > 0;
+
+    /* CÓDIGO SQLite COMENTADO - Mantener para futura depuración
     const platform = Capacitor.getPlatform();
-
-    // En web, devolver citas mock de memoria filtradas por fecha
-    if (platform === 'web') {
-      // Filtrar citas mock por fecha
-      this.vecReservas = this.mockAppointments.filter(apt => {
-        return (apt.fecha || '') === fecha;
-      });
-
-      // Extraer ids de clientes
-      this.ids_clientes = this.vecReservas.map(r => r.id_cliente);
-
-      return this.vecReservas.length > 0;
-    }
 
     // En móvil, usar SQLite real
     let auxSq = '';
@@ -1063,6 +1079,7 @@ export class AgendaService {
     });
 
     return this.vecReservas.length > 0;
+    */
   }
 
   /**
