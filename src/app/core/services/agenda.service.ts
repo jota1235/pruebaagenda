@@ -2168,12 +2168,33 @@ export class AgendaService {
 
   /**
    * Obtiene la lista de pacientes/clientes
-   * MODIFICADO: Ahora usa localStorage en lugar de SQLite
+   * ACTUALIZADO: Usa SQLite si está disponible, fallback a localStorage
    */
   async getPacientes(): Promise<any[]> {
-    console.log('📋 getPacientes() usando localStorage');
+    // Verificar si SQLite está disponible
+    if (this.dbService.isReady()) {
+      console.log('📱 getPacientes() usando SQLite');
 
-    // Usar localStorage tanto en web como en Android
+      try {
+        const clientes = await this.dbService.getClientes();
+
+        // Mapear a formato esperado
+        return clientes
+          .map(c => ({
+            id: c.id,
+            nombre: `${c.nombre || ''} ${c.apaterno || ''} ${c.amaterno || ''}`.trim(),
+            telefono: c.tel1 || '',
+            email: c.email1 || '',
+            activo: 'SI'
+          }))
+          .sort((a, b) => a.nombre.localeCompare(b.nombre));
+      } catch (error) {
+        console.error('❌ Error leyendo clientes desde SQLite, usando localStorage:', error);
+      }
+    }
+
+    // Fallback a localStorage
+    console.log('💾 getPacientes() usando localStorage');
     const clientes = this.storage.get<any[]>('clientes', []) ?? [];
 
     return clientes
@@ -2215,12 +2236,31 @@ export class AgendaService {
 
   /**
    * Obtiene la lista de personal de agenda
-   * MODIFICADO: Ahora usa localStorage en lugar de SQLite
+   * ACTUALIZADO: Usa SQLite si está disponible, fallback a localStorage
    */
   async getPersonalAgenda(): Promise<any[]> {
-    console.log('👥 getPersonalAgenda() usando localStorage');
+    // Verificar si SQLite está disponible
+    if (this.dbService.isReady()) {
+      console.log('📱 getPersonalAgenda() usando SQLite');
 
-    // Usar localStorage tanto en web como en Android
+      try {
+        const personal = await this.dbService.getPersonal();
+
+        // Mapear a formato esperado
+        return personal
+          .map(p => ({
+            id: p.id,
+            nombre: p.apellidos ? `${p.nombre} ${p.apellidos}` : p.nombre,
+            activo: 'SI'
+          }))
+          .sort((a, b) => a.nombre.localeCompare(b.nombre));
+      } catch (error) {
+        console.error('❌ Error leyendo personal desde SQLite, usando localStorage:', error);
+      }
+    }
+
+    // Fallback a localStorage
+    console.log('💾 getPersonalAgenda() usando localStorage');
     const personal = this.storage.get<any[]>('personal', []) ?? [];
 
     return personal
