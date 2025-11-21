@@ -2299,12 +2299,34 @@ export class AgendaService {
 
   /**
    * Obtiene la lista de servicios
-   * MODIFICADO: Ahora usa localStorage en lugar de SQLite
+   * ACTUALIZADO: Usa SQLite si está disponible, fallback a localStorage
    */
   async getServicios(): Promise<any[]> {
-    console.log('🛠️ getServicios() usando localStorage');
+    // Verificar si SQLite está disponible
+    if (this.dbService.isReady()) {
+      console.log('📱 getServicios() usando SQLite');
 
-    // Usar localStorage tanto en web como en Android
+      try {
+        const servicios = await this.dbService.getServicios();
+
+        // Mapear a formato esperado
+        return servicios
+          .map(s => ({
+            id: s.id,
+            codigo: s.codigo || '',
+            nombre: s.nombre,
+            duracion: (s.n_duracion || 0) * 30, // Convertir a minutos
+            precio: s.precio || 0,
+            activo: 'SI'
+          }))
+          .sort((a, b) => a.nombre.localeCompare(b.nombre));
+      } catch (error) {
+        console.error('❌ Error leyendo servicios desde SQLite, usando localStorage:', error);
+      }
+    }
+
+    // Fallback a localStorage
+    console.log('💾 getServicios() usando localStorage');
     const productos = this.storage.get<any[]>('productos', []) ?? [];
 
     return productos
