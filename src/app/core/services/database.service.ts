@@ -5,14 +5,13 @@ import { BehaviorSubject } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 
 /**
- * DatabaseService - Patrón actualizado 2025
+ * DatabaseService - SQLite v7.x Compatible
  *
- * Servicio para gestionar SQLite usando @capacitor-community/sqlite
- * Siguiendo las mejores prácticas para Android/iOS
+ * Servicio para gestionar SQLite usando @capacitor-community/sqlite v7.x
+ * Compatible con la API correcta de la versión 7
  *
- * Características clave:
- * - BehaviorSubject para dbReady (patrón recomendado)
- * - Verifica conexión existente antes de crear
+ * Características:
+ * - BehaviorSubject para dbReady
  * - Solo funciona en plataformas nativas (Android/iOS)
  * - Inicialización en app.component.ts después de platform.ready()
  * - Manejo de errores robusto
@@ -54,27 +53,28 @@ export class DatabaseService {
     try {
       // 1. Verificar consistencia de conexiones
       console.log('🔍 Verificando consistencia de conexiones...');
-      await CapacitorSQLite.checkConnectionsConsistency();
-      console.log('✅ Consistencia verificada');
+      const consistency = await this.sqlite.checkConnectionsConsistency();
+      console.log('✅ Consistencia verificada:', consistency.result);
 
       // 2. Verificar si la conexión ya existe
       console.log(`🔍 Verificando si existe conexión "${this.dbName}"...`);
-      const isConn = (await CapacitorSQLite.isConnection(this.dbName, false)).result;
+      const isConn = (await this.sqlite.isConnection(this.dbName, false)).result;
 
       if (isConn) {
         console.log('📦 Conexión existente encontrada, recuperando...');
-        this.db = await CapacitorSQLite.retrieveConnection(this.dbName, false);
+        this.db = await this.sqlite.retrieveConnection(this.dbName, false);
       } else {
         console.log('🆕 Creando nueva conexión...');
-        this.db = await CapacitorSQLite.createConnection({
-          database: this.dbName,
-          version: 1,
-          encrypted: false,
-          mode: 'no-encryption',
-          readonly: false
-        });
+        // createConnection retorna la conexión directamente
+        this.db = await this.sqlite.createConnection(
+          this.dbName,
+          false, // encrypted
+          'no-encryption', // mode
+          1, // version
+          false // readonly
+        );
       }
-      console.log('✅ Conexión obtenida');
+      console.log('✅ Conexión obtenida:', this.db ? 'OK' : 'ERROR');
 
       // 3. Abrir la base de datos
       console.log('🔓 Abriendo base de datos...');
@@ -167,6 +167,7 @@ export class DatabaseService {
         duracion INTEGER,
         status TEXT DEFAULT 'Reservado',
         notas TEXT,
+        activo INTEGER DEFAULT 1,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (id_cliente) REFERENCES clientes(id),
@@ -180,6 +181,7 @@ export class DatabaseService {
       CREATE INDEX IF NOT EXISTS idx_productos_activo ON productos(activo, tipo, handel, id_empresa_base);
       CREATE INDEX IF NOT EXISTS idx_citas_fecha ON citas(fecha, handel, id_empresa_base);
       CREATE INDEX IF NOT EXISTS idx_citas_personal ON citas(id_personal, fecha);
+      CREATE INDEX IF NOT EXISTS idx_citas_activo ON citas(activo);
     `;
 
     await this.db.execute(schema);
@@ -442,13 +444,29 @@ export class DatabaseService {
 
   // ==================== MÉTODOS DE CONSULTA: CITAS ====================
 
-  async getCitasPorFecha(fecha: string): Promise<any[]> {
+  async getCitas(fecha?: string): Promise<any[]> {
+    await this.waitForDB();
+    let sql = 'SELECT * FROM citas WHERE activo = 1';
+    const params: any[] = [];
+
+    if (fecha) {
+      sql += ' AND fecha = ?';
+      params.push(fecha);
+    }
+
+    sql += ' ORDER BY fecha, hora';
+
+    const result = await this.db.query(sql, params);
+    return result.values || [];
+  }
+
+  async getCitaById(id: number): Promise<any | null> {
     await this.waitForDB();
     const result = await this.db.query(
-      'SELECT * FROM citas WHERE fecha = ? ORDER BY hora',
-      [fecha]
+      'SELECT * FROM citas WHERE id = ?',
+      [id]
     );
-    return result.values || [];
+    return result.values?.[0] || null;
   }
 
   async addCita(data: any): Promise<number> {
@@ -476,7 +494,8 @@ export class DatabaseService {
     await this.waitForDB();
     const sql = `
       UPDATE citas
-      SET id_cliente = ?, id_personal = ?, id_servicio = ?, fecha = ?, hora = ?, duracion = ?, status = ?, notas = ?, updated_at = CURRENT_TIMESTAMP
+      SET id_cliente = ?, id_personal = ?, id_servicio = ?, fecha = ?, hora = ?,
+          duracion = ?, status = ?, notas = ?, updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
     `;
     const result = await this.db.run(sql, [
@@ -493,37 +512,11 @@ export class DatabaseService {
     return (result.changes?.changes || 0) > 0;
   }
 
-  async cancelCita(id: number): Promise<boolean> {
+  async deleteCita(id: number): Promise<boolean> {
     await this.waitForDB();
-    const sql = 'UPDATE citas SET status = "Cancelado", updated_at = CURRENT_TIMESTAMP WHERE id = ?';
+    // Soft delete: marcar como inactivo en lugar de eliminar
+    const sql = 'UPDATE citas SET activo = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ?';
     const result = await this.db.run(sql, [id]);
     return (result.changes?.changes || 0) > 0;
-  }
-
-  // ==================== UTILIDADES ====================
-
-  /**
-   * Limpia todos los datos de las tablas
-   */
-  async clearAllData(): Promise<void> {
-    await this.waitForDB();
-    await this.db.execute(`
-      DELETE FROM citas;
-      DELETE FROM productos;
-      DELETE FROM personal;
-      DELETE FROM clientes;
-    `);
-    console.log('🗑️ Todos los datos eliminados');
-  }
-
-  /**
-   * Cierra la conexión a la base de datos
-   */
-  async close(): Promise<void> {
-    if (this.db) {
-      await this.db.close();
-      this.dbReady.next(false);
-      console.log('🔒 Base de datos cerrada');
-    }
   }
 }

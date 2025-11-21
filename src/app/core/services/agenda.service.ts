@@ -590,10 +590,15 @@ export class AgendaService {
 
   /**
    * Ejecuta una consulta SQL y retorna los resultados
+   * NOTA: Estos métodos no se usan actualmente porque la agenda usa localStorage
+   * Se mantienen comentados para cuando se migre a SQLite
    */
   private async executeQuery(query: string, params: any[] = []): Promise<any[]> {
     try {
-      return await this.dbService.executeQuery(query, params);
+      // TODO: Implementar cuando se migre a SQLite
+      // Usar this.dbService.getDB().query(query, params)
+      console.warn('executeQuery no implementado, usando localStorage');
+      return [];
     } catch (error) {
       console.error('Error ejecutando query:', error);
       return [];
@@ -602,10 +607,14 @@ export class AgendaService {
 
   /**
    * Ejecuta un comando SQL (INSERT, UPDATE, DELETE)
+   * NOTA: No se usa actualmente porque la agenda usa localStorage
    */
   private async executeCommand(query: string, params: any[] = []): Promise<boolean> {
     try {
-      return await this.dbService.executeCommand(query, params);
+      // TODO: Implementar cuando se migre a SQLite
+      // Usar this.dbService.getDB().run(query, params)
+      console.warn('executeCommand no implementado, usando localStorage');
+      return false;
     } catch (error) {
       console.error('Error ejecutando comando:', error);
       return false;
