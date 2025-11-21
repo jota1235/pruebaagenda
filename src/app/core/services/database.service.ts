@@ -523,15 +523,36 @@ export class DatabaseService {
 
   async getCitas(fecha?: string): Promise<any[]> {
     await this.waitForDB();
-    let sql = 'SELECT * FROM citas WHERE activo = 1';
+
+    // JOIN con clientes, personal y productos para obtener información completa
+    let sql = `
+      SELECT
+        citas.*,
+        clientes.nombre as cliente_nombre,
+        clientes.apaterno as cliente_apaterno,
+        clientes.amaterno as cliente_amaterno,
+        clientes.tel1 as cliente_tel1,
+        clientes.email1 as cliente_email1,
+        personal.alias as personal_alias,
+        personal.nombre as personal_nombre,
+        personal.apellidos as personal_apellidos,
+        productos.nombre as servicio_nombre,
+        productos.codigo as servicio_codigo,
+        productos.precio as servicio_precio
+      FROM citas
+      LEFT JOIN clientes ON citas.id_cliente = clientes.id
+      LEFT JOIN personal ON citas.id_personal = personal.id
+      LEFT JOIN productos ON citas.id_servicio = productos.id
+      WHERE citas.activo = 1
+    `;
     const params: any[] = [];
 
     if (fecha) {
-      sql += ' AND fecha = ?';
+      sql += ' AND citas.fecha = ?';
       params.push(fecha);
     }
 
-    sql += ' ORDER BY fecha, hora';
+    sql += ' ORDER BY citas.fecha, citas.hora';
 
     const result = await this.db.query(sql, params);
     return result.values || [];
