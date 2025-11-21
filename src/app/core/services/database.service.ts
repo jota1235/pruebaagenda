@@ -154,6 +154,55 @@ export class DatabaseService {
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP
       );
 
+      -- ==================== CONFIGURACIÓN DE AGENDA ====================
+      CREATE TABLE IF NOT EXISTS config_agenda (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        handel INTEGER NOT NULL DEFAULT 1,
+        id_empresa_base INTEGER NOT NULL DEFAULT 1,
+        puesto_servicio TEXT DEFAULT 'Terapeuta',
+        hora_inicio INTEGER DEFAULT 9,
+        minutos_incremento INTEGER DEFAULT 30,
+        hora_fin INTEGER DEFAULT 20,
+        color_libre TEXT DEFAULT '#90EE90',
+        color_reservada TEXT DEFAULT '#FFD700',
+        color_confirmada TEXT DEFAULT '#87CEEB',
+        color_cancelada TEXT DEFAULT '#FF6B6B',
+        color_cobrado TEXT DEFAULT '#98FB98',
+        color_fuera_tiempo TEXT DEFAULT '#D3D3D3',
+        most_disponibilidad INTEGER DEFAULT 1,
+        rango_manual INTEGER DEFAULT 0,
+        rango_hora INTEGER DEFAULT 1,
+        viz_nombre_terapeuta INTEGER DEFAULT 1,
+        num_columnas INTEGER DEFAULT 4,
+        cant_cols_fijas INTEGER DEFAULT 0,
+        col_aux INTEGER DEFAULT 0,
+        horario_sabado TEXT DEFAULT '09:00-18:00',
+        horario_domingo TEXT DEFAULT '10:00-15:00',
+        formato_hora TEXT DEFAULT '12',
+        str_dias TEXT DEFAULT 'L,M,Mi,J,V,S,D',
+        dias_ctespr TEXT DEFAULT '365',
+        nventa_ctespr TEXT DEFAULT '-1',
+        disponibilidad_hora_inicio INTEGER DEFAULT 9,
+        disponibilidad_hora_fin INTEGER DEFAULT 20,
+        disponibilidad_dia_habil INTEGER DEFAULT 1,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+      );
+
+      -- ==================== TERAPEUTAS/PERSONAL DE AGENDA ====================
+      CREATE TABLE IF NOT EXISTS agenda_terapeutas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        handel INTEGER NOT NULL DEFAULT 1,
+        id_empresa_base INTEGER NOT NULL DEFAULT 1,
+        id_personal INTEGER,
+        alias TEXT,
+        nombre TEXT,
+        orden INTEGER DEFAULT 0,
+        activo INTEGER DEFAULT 1,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (id_personal) REFERENCES personal(id)
+      );
+
       -- ==================== CITAS ====================
       CREATE TABLE IF NOT EXISTS citas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -179,6 +228,8 @@ export class DatabaseService {
       CREATE INDEX IF NOT EXISTS idx_clientes_activo ON clientes(activo, handel, id_empresa_base);
       CREATE INDEX IF NOT EXISTS idx_personal_activo ON personal(activo, handel, id_empresa_base);
       CREATE INDEX IF NOT EXISTS idx_productos_activo ON productos(activo, tipo, handel, id_empresa_base);
+      CREATE INDEX IF NOT EXISTS idx_config_agenda_handel ON config_agenda(handel, id_empresa_base);
+      CREATE INDEX IF NOT EXISTS idx_agenda_terapeutas ON agenda_terapeutas(handel, id_empresa_base, activo);
       CREATE INDEX IF NOT EXISTS idx_citas_fecha ON citas(fecha, handel, id_empresa_base);
       CREATE INDEX IF NOT EXISTS idx_citas_personal ON citas(id_personal, fecha);
       CREATE INDEX IF NOT EXISTS idx_citas_activo ON citas(activo);
@@ -222,10 +273,36 @@ export class DatabaseService {
         (1, 1, 'SRV004', 'Reflexología', 'Servicio', 2, 550, 1),
         (1, 1, 'SRV005', 'Aromaterapia', 'Servicio', 1, 350, 1),
         (1, 1, 'SRV006', 'Tratamiento Facial', 'Servicio', 2, 650, 1);
+
+        -- CONFIGURACIÓN DE AGENDA
+        INSERT INTO config_agenda (
+          handel, id_empresa_base, puesto_servicio, hora_inicio, minutos_incremento,
+          hora_fin, color_libre, color_reservada, color_confirmada, color_cancelada,
+          color_cobrado, color_fuera_tiempo, most_disponibilidad, rango_manual,
+          rango_hora, viz_nombre_terapeuta, num_columnas, horario_sabado,
+          horario_domingo, formato_hora, str_dias, disponibilidad_hora_inicio,
+          disponibilidad_hora_fin, disponibilidad_dia_habil
+        ) VALUES (
+          1, 1, 'Terapeuta', 9, 30, 20,
+          '#90EE90', '#FFD700', '#87CEEB', '#FF6B6B', '#98FB98', '#D3D3D3',
+          1, 0, 1, 1, 4,
+          '09:00-18:00', '10:00-15:00', '12', 'L,M,Mi,J,V,S,D',
+          9, 20, 1
+        );
+
+        -- TERAPEUTAS DE AGENDA (vinculados al personal)
+        INSERT INTO agenda_terapeutas (handel, id_empresa_base, id_personal, alias, nombre, orden, activo)
+        SELECT 1, 1, id, alias, nombre || ' ' || apellidos, orden, 1
+        FROM personal WHERE activo = 1;
       `;
 
       await this.db.execute(seedData);
       console.log('✅ Datos de prueba sembrados correctamente');
+      console.log('   - 5 clientes');
+      console.log('   - 4 personal');
+      console.log('   - 6 servicios');
+      console.log('   - 1 configuración de agenda');
+      console.log('   - 4 terapeutas de agenda');
     } else {
       console.log(`ℹ️ Base de datos ya contiene ${total} clientes`);
     }
@@ -518,5 +595,159 @@ export class DatabaseService {
     const sql = 'UPDATE citas SET activo = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ?';
     const result = await this.db.run(sql, [id]);
     return (result.changes?.changes || 0) > 0;
+  }
+
+  // ==================== MÉTODOS DE CONSULTA: CONFIG_AGENDA ====================
+
+  async getConfigAgenda(handel: number = 1, idEmpresa: number = 1): Promise<any | null> {
+    await this.waitForDB();
+    const result = await this.db.query(
+      'SELECT * FROM config_agenda WHERE handel = ? AND id_empresa_base = ? LIMIT 1',
+      [handel, idEmpresa]
+    );
+    return result.values?.[0] || null;
+  }
+
+  async saveConfigAgenda(data: any): Promise<number> {
+    await this.waitForDB();
+
+    // Verificar si ya existe una configuración
+    const existing = await this.getConfigAgenda(data.handel || 1, data.id_empresa_base || 1);
+
+    if (existing) {
+      // Actualizar existente
+      const sql = `
+        UPDATE config_agenda SET
+          puesto_servicio = ?,
+          hora_inicio = ?,
+          minutos_incremento = ?,
+          hora_fin = ?,
+          color_libre = ?,
+          color_reservada = ?,
+          color_confirmada = ?,
+          color_cancelada = ?,
+          color_cobrado = ?,
+          color_fuera_tiempo = ?,
+          most_disponibilidad = ?,
+          rango_manual = ?,
+          rango_hora = ?,
+          viz_nombre_terapeuta = ?,
+          num_columnas = ?,
+          horario_sabado = ?,
+          horario_domingo = ?,
+          formato_hora = ?,
+          str_dias = ?,
+          disponibilidad_hora_inicio = ?,
+          disponibilidad_hora_fin = ?,
+          disponibilidad_dia_habil = ?,
+          updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+      `;
+
+      await this.db.run(sql, [
+        data.puesto_servicio || 'Terapeuta',
+        data.hora_inicio || 9,
+        data.minutos_incremento || 30,
+        data.hora_fin || 20,
+        data.color_libre || '#90EE90',
+        data.color_reservada || '#FFD700',
+        data.color_confirmada || '#87CEEB',
+        data.color_cancelada || '#FF6B6B',
+        data.color_cobrado || '#98FB98',
+        data.color_fuera_tiempo || '#D3D3D3',
+        data.most_disponibilidad ? 1 : 0,
+        data.rangoManual ? 1 : 0,
+        data.rangoHora ? 1 : 0,
+        data.vizNombreTerapeuta ? 1 : 0,
+        data.num_columnas || 4,
+        data.config_horario?.horario_sabado || '09:00-18:00',
+        data.config_horario?.horario_domingo || '10:00-15:00',
+        data.config_horario?.formato_hora || '12',
+        data.config_horario?.str_dias || 'L,M,Mi,J,V,S,D',
+        data.disponibilidad?.hora_inicio || 9,
+        data.disponibilidad?.hora_fin || 20,
+        data.disponibilidad?.dia_habil ? 1 : 0,
+        existing.id
+      ]);
+
+      return existing.id;
+    } else {
+      // Insertar nuevo
+      const sql = `
+        INSERT INTO config_agenda (
+          handel, id_empresa_base, puesto_servicio, hora_inicio, minutos_incremento,
+          hora_fin, color_libre, color_reservada, color_confirmada, color_cancelada,
+          color_cobrado, color_fuera_tiempo, most_disponibilidad, rango_manual,
+          rango_hora, viz_nombre_terapeuta, num_columnas, horario_sabado,
+          horario_domingo, formato_hora, str_dias, disponibilidad_hora_inicio,
+          disponibilidad_hora_fin, disponibilidad_dia_habil
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `;
+
+      const result = await this.db.run(sql, [
+        data.handel || 1,
+        data.id_empresa_base || 1,
+        data.puesto_servicio || 'Terapeuta',
+        data.hora_inicio || 9,
+        data.minutos_incremento || 30,
+        data.hora_fin || 20,
+        data.color_libre || '#90EE90',
+        data.color_reservada || '#FFD700',
+        data.color_confirmada || '#87CEEB',
+        data.color_cancelada || '#FF6B6B',
+        data.color_cobrado || '#98FB98',
+        data.color_fuera_tiempo || '#D3D3D3',
+        data.most_disponibilidad ? 1 : 0,
+        data.rangoManual ? 1 : 0,
+        data.rangoHora ? 1 : 0,
+        data.vizNombreTerapeuta ? 1 : 0,
+        data.num_columnas || 4,
+        data.config_horario?.horario_sabado || '09:00-18:00',
+        data.config_horario?.horario_domingo || '10:00-15:00',
+        data.config_horario?.formato_hora || '12',
+        data.config_horario?.str_dias || 'L,M,Mi,J,V,S,D',
+        data.disponibilidad?.hora_inicio || 9,
+        data.disponibilidad?.hora_fin || 20,
+        data.disponibilidad?.dia_habil ? 1 : 0
+      ]);
+
+      return result.changes?.lastId || -1;
+    }
+  }
+
+  // ==================== MÉTODOS DE CONSULTA: AGENDA_TERAPEUTAS ====================
+
+  async getAgendaTerapeutas(handel: number = 1, idEmpresa: number = 1): Promise<any[]> {
+    await this.waitForDB();
+    const result = await this.db.query(
+      'SELECT * FROM agenda_terapeutas WHERE handel = ? AND id_empresa_base = ? AND activo = 1 ORDER BY orden',
+      [handel, idEmpresa]
+    );
+    return result.values || [];
+  }
+
+  async addAgendaTerapeuta(data: any): Promise<number> {
+    await this.waitForDB();
+    const sql = `
+      INSERT INTO agenda_terapeutas (handel, id_empresa_base, id_personal, alias, nombre, orden, activo)
+      VALUES (?, ?, ?, ?, ?, ?, 1)
+    `;
+    const result = await this.db.run(sql, [
+      data.handel || 1,
+      data.id_empresa_base || 1,
+      data.id_personal || data.id,
+      data.alias || '',
+      data.nombre || '',
+      data.orden || 0
+    ]);
+    return result.changes?.lastId || -1;
+  }
+
+  async clearAgendaTerapeutas(handel: number = 1, idEmpresa: number = 1): Promise<void> {
+    await this.waitForDB();
+    await this.db.run(
+      'DELETE FROM agenda_terapeutas WHERE handel = ? AND id_empresa_base = ?',
+      [handel, idEmpresa]
+    );
   }
 }

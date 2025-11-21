@@ -782,15 +782,110 @@ export class AgendaService {
 
   /**
    * Obtiene todos los datos de configuración necesarios para visualizar la agenda
-   * MODIFICADO: Ahora usa localStorage en lugar de SQLite
+   * ACTUALIZADO: Usa SQLite si está disponible, fallback a localStorage
    */
   async readConfigAgenda(fecha: string = ''): Promise<boolean> {
     if (fecha === '') fecha = this.fecha_op;
 
     this.vecConfigAgenda = {};
 
-    console.log('📋 readConfigAgenda() usando localStorage');
+    // Verificar si SQLite está disponible
+    if (this.dbService.isReady()) {
+      console.log('📱 readConfigAgenda() usando SQLite');
 
+      try {
+        // Leer configuración desde SQLite
+        const config = await this.dbService.getConfigAgenda(this.handel, 1);
+
+        if (config) {
+          // Leer terapeutas
+          const terapeutas = await this.dbService.getAgendaTerapeutas(this.handel, 1);
+
+          // Construir arrTerapeutas, arrLisTerapeutas, aliasTerapeutas
+          const arrTerapeutas: any[] = [];
+          const arrLisTerapeutas: number[] = [];
+          const arrAliasTerapeutas: string[] = [];
+          this.poscColumns = '';
+
+          terapeutas.forEach((t: any) => {
+            arrTerapeutas.push({
+              id: t.id_personal,
+              alias: t.alias,
+              nombre: t.nombre
+            });
+            arrLisTerapeutas.push(t.id_personal);
+            arrAliasTerapeutas.push(t.alias);
+            this.poscColumns += t.id_personal + '|';
+          });
+
+          // Mapear datos de SQLite al formato esperado
+          this.vecConfigAgenda = {
+            puesto_servicio: config.puesto_servicio,
+            hora_inicio: config.hora_inicio,
+            minutos_incremento: config.minutos_incremento,
+            hora_fin: config.hora_fin,
+            color_libre: config.color_libre,
+            color_reservada: config.color_reservada,
+            color_confirmada: config.color_confirmada,
+            color_cancelada: config.color_cancelada,
+            color_cobrado: config.color_cobrado,
+            color_fuera_tiempo: config.color_fuera_tiempo,
+            most_disponibilidad: Boolean(config.most_disponibilidad),
+            rangoManual: Boolean(config.rango_manual),
+            rangoHora: Boolean(config.rango_hora),
+            vizNombreTerapeuta: Boolean(config.viz_nombre_terapeuta),
+            Filas: '',
+            num_columnas: arrTerapeutas.length,
+            cantColsFijas: config.cant_cols_fijas || 0,
+            col_aux: config.col_aux || 0,
+            config_horario: {
+              horario_sabado: config.horario_sabado,
+              horario_domingo: config.horario_domingo,
+              formato_hora: config.formato_hora,
+              str_dias: config.str_dias
+            },
+            dias_ctespr: config.dias_ctespr,
+            nventa_ctespr: config.nventa_ctespr,
+            arrTerapeutas: arrTerapeutas,
+            arrLisTerapeutas: arrLisTerapeutas,
+            aliasTerapeutas: arrAliasTerapeutas,
+            disponibilidad: {
+              hora_inicio: config.disponibilidad_hora_inicio,
+              hora_fin: config.disponibilidad_hora_fin,
+              dia_habil: Boolean(config.disponibilidad_dia_habil)
+            }
+          };
+
+          console.log('✅ Configuración cargada desde SQLite');
+        } else {
+          console.warn('⚠️ No se encontró configuración en SQLite, usando fallback a localStorage');
+          return await this.readConfigAgendaFromLocalStorage();
+        }
+      } catch (error) {
+        console.error('❌ Error leyendo config desde SQLite, usando localStorage:', error);
+        return await this.readConfigAgendaFromLocalStorage();
+      }
+    } else {
+      // SQLite no disponible, usar localStorage
+      console.log('💾 readConfigAgenda() usando localStorage (SQLite no disponible)');
+      return await this.readConfigAgendaFromLocalStorage();
+    }
+
+    this.setMinutosIncremento(this.vecConfigAgenda.minutos_incremento);
+
+    // Lee matriz de horarios en la agenda
+    this.readHorariosAgenda(
+      this.vecConfigAgenda.disponibilidad.hora_inicio,
+      this.vecConfigAgenda.disponibilidad.hora_fin
+    );
+
+    return true;
+  }
+
+  /**
+   * Lee configuración desde localStorage (fallback)
+   */
+  private async readConfigAgendaFromLocalStorage(): Promise<boolean> {
     // Intentar leer configuración desde localStorage
     const configGuardada = this.storage.get<any>('config_agenda', null);
 
@@ -969,7 +1064,7 @@ export class AgendaService {
 
   /**
    * Obtiene un array con todas las citas para un día específico
-   * MODIFICADO: Ahora usa localStorage en lugar de SQLite
+   * ACTUALIZADO: Usa SQLite si está disponible, fallback a localStorage
    */
   async readReservas(fecha: string = ''): Promise<boolean> {
     if (fecha === '') fecha = this.fecha_op;
@@ -977,8 +1072,63 @@ export class AgendaService {
     this.vecReservas = [];
     this.ids_clientes = [];
 
-    console.log('📋 readReservas() usando localStorage para fecha:', fecha);
+    // Verificar si SQLite está disponible
+    if (this.dbService.isReady()) {
+      console.log('📱 readReservas() usando SQLite para fecha:', fecha);
 
+      try {
+        // Leer citas desde SQLite
+        const citas = await this.dbService.getCitas(fecha);
+
+        // Mapear datos de SQLite al formato esperado
+        this.vecReservas = citas.map((cita: any) => ({
+          id_agenda: cita.id,
+          id_cliente: cita.id_cliente,
+          id_personal: cita.id_personal,
+          hora: cita.hora,
+          hora_ag: cita.hora,
+          status: cita.status,
+          duracion: cita.duracion || 30,
+          columna: cita.id_personal,
+          columna_ag: cita.id_personal,
+          id_personal_ag: cita.id_personal,
+          cliente: '', // Se llenará después con lookup de clientes
+          tel1: null,
+          tel2: null,
+          email1: null,
+          notas: cita.notas || '',
+          notas2: '',
+          notas_ag: cita.notas || '',
+          ban_cita: 0,
+          ban_liquid_credito: 0,
+          servicios_agenda: null,
+          seteado: false,
+          alias_personal: '',
+          nombre_personal: '',
+          fecha: cita.fecha
+        }));
+
+        // Extraer ids de clientes
+        this.ids_clientes = this.vecReservas.map(r => r.id_cliente).filter(id => id);
+
+        console.log(`✅ ${this.vecReservas.length} citas encontradas desde SQLite para ${fecha}`);
+      } catch (error) {
+        console.error('❌ Error leyendo citas desde SQLite, usando localStorage:', error);
+        return await this.readReservasFromLocalStorage(fecha);
+      }
+    } else {
+      // SQLite no disponible, usar localStorage
+      console.log('💾 readReservas() usando localStorage (SQLite no disponible) para fecha:', fecha);
+      return await this.readReservasFromLocalStorage(fecha);
+    }
+
+    return this.vecReservas.length > 0;
+  }
+
+  /**
+   * Lee citas desde localStorage (fallback)
+   */
+  private async readReservasFromLocalStorage(fecha: string): Promise<boolean> {
     // Filtrar citas mock por fecha (this.mockAppointments se carga desde localStorage)
     this.vecReservas = this.mockAppointments.filter(apt => {
       return (apt.fecha || '') === fecha;
@@ -987,7 +1137,7 @@ export class AgendaService {
     // Extraer ids de clientes
     this.ids_clientes = this.vecReservas.map(r => r.id_cliente);
 
-    console.log(`✅ ${this.vecReservas.length} citas encontradas para ${fecha}`);
+    console.log(`✅ ${this.vecReservas.length} citas encontradas desde localStorage para ${fecha}`);
 
     return this.vecReservas.length > 0;
 
