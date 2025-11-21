@@ -344,7 +344,7 @@ export class AgendaMainPage implements OnInit {
         appointment: appointment ? {
           clientName: appointment.cliente,
           service: appointment.servicios_agenda || 'Sin servicio',
-          duration: appointment.duracion * incrementoMinutos,
+          duration: appointment.duracion, // Ya está en minutos, no multiplicar
           status: appointment.status.toLowerCase()
         } : undefined
       });
