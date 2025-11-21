@@ -3,11 +3,18 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home"></ion-back-button>
     </ion-buttons>
-    <ion-title>Clientes (localStorage)</ion-title>
+    <ion-title>Test: Clientes</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
+  <!-- Badge mostrando fuente de datos -->
+  <div style="text-align: center; margin-bottom: 1rem;" *ngIf="!isLoading && source">
+    <ion-badge [color]="source === 'SQLite' ? 'success' : 'warning'">
+      {{ source === 'SQLite' ? '📱 Datos desde SQLite' : '💾 Datos desde localStorage' }}
+    </ion-badge>
+  </div>
+
   <div *ngIf="isLoading" class="loading-container">
     <ion-spinner name="crescent"></ion-spinner>
     <p>Cargando clientes...</p>
@@ -27,7 +34,7 @@
     </ion-list>
 
     <div *ngIf="clientes.length === 0" class="empty-state">
-      <p>No hay clientes en localStorage</p>
+      <p>No hay clientes registrados</p>
     </div>
   </div>
 </ion-content>

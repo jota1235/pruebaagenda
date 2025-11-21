@@ -1,79 +1,851 @@
----------
+Running with gitlab-runner 18.2.0 (c24769e8)
+  on Ionic Package Android Runner 8edcfcad2, system ID: r_grBV51LLoFR2
+  feature flags: FF_USE_POD_ACTIVE_DEADLINE_SECONDS:false
+Preparing the "kubernetes" executor
+Using Kubernetes namespace: ionic-runners
+Using Kubernetes executor with image 319312831725.dkr.ecr.us-west-2.amazonaws.com/appflow-runners/linux:2025.06 ...
+Using attach strategy to execute scripts...
+Using effective pull policy of [Always] for container metrics
+Using effective pull policy of [Always] for container build
+Using effective pull policy of [Always] for container helper
+Using effective pull policy of [Always] for container init-permissions
+Preparing environment
+Waiting for pod ionic-runners/runner-8edcfcad2-project-0-concurrent-13-a6bkzywj to be running, status is Pending
+Waiting for pod ionic-runners/runner-8edcfcad2-project-0-concurrent-13-a6bkzywj to be running, status is Pending
+	ContainersNotInitialized: "containers with incomplete status: [init-permissions]"
+	ContainersNotReady: "containers with unready status: [build helper metrics]"
+	ContainersNotReady: "containers with unready status: [build helper metrics]"
+Running on runner-8edcfcad2-project-0-concurrent-13-a6bkzywj via gitlab-runner-7dffd7b966-798h4...
 
+Getting source from Git repository
+Gitaly correlation ID: 
+Fetching changes...
+Initialized empty Git repository in /builds/jota1235/pruebaagenda/.git/
+Created fresh repository.
+Checking out 1349180c as detached HEAD (ref is main)...
 
---------------------------- PROCESS STARTED (10606) for package io.ionic.starter ----------------------------
-2025-11-18 17:38:26.371 10606-10606 nativeloader            io.ionic.starter                     D  Load /system/lib64/libwebviewchromium_plat_support.so using class loader ns clns-11 (caller=/data/app/~~N7PI_6diY5NSqqVv6bpmkA==/com.google.android.webview-uMZ5AGv4HZ65lMBiRTeofA==/WebViewGoogle.apk): ok
-2025-11-18 17:38:26.414 10606-10628 chromium                io.ionic.starter                     I  [1118/233826.403454:INFO:variations_seed_loader.cc(67)] Failed to open file for reading.: No such file or directory (2)
-2025-11-18 17:38:26.421 10606-10628 chromium                io.ionic.starter                     I  [1118/233826.420910:INFO:variations_seed_loader.cc(67)] Failed to open file for reading.: No such file or directory (2)
-2025-11-18 17:38:26.594   754-795   ActivityManager         system_server                        I  Start proc 10633:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0i6 for  {io.ionic.starter/org.chromium.content.app.SandboxedProcessService0:0}
-2025-11-18 17:38:26.649 10633-10633 cr_WebViewApkApp        webview_zygote                       I  version=133.0.6943.137 (694313738) minSdkVersion=29 isBundle=false processName=com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0
-2025-11-18 17:38:26.841 10606-10647 chromium                io.ionic.starter                     W  [WARNING:dns_config_service_android.cc(81)] Failed to read DnsConfig.
-2025-11-18 17:38:28.361 10633-10643 chromium                webview_zygote                       W  [WARNING:runtime_features.cc(560)] Fenced frames cannot be enabled in this configuration. Use --enable-features=FencedFrames instead.
-2025-11-18 17:38:28.363 10633-10643 chromium                webview_zygote                       W  [WARNING:runtime_features.cc(585)] Topics cannot be enabled in this configuration. Use --enable-features=BrowsingTopics in addition.
-2025-11-18 17:38:28.363 10633-10643 chromium                webview_zygote                       W  [WARNING:runtime_features.cc(606)] SharedStorage cannot be enabled in this configuration. Use --enable-features=SharedStorageAPI in addition.
-2025-11-18 17:38:28.765 10606-10680 chromium                io.ionic.starter                     W  [WARNING:viz_main_impl.cc(85)] VizNullHypothesis is disabled (not a warning)
-2025-11-18 17:39:42.301   754-795   ActivityManager         system_server                        I  Start proc 10822:com.android.chrome/u0a150 for service {com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService}
-2025-11-18 17:39:42.604   754-940   JobServiceContext       system_server                        W  Sending onNetworkChanged for a job that isn't started. JobStatus{4489c55 #u0a150/53 com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService u=0 s=10150 TIME=-15s136ms:+7h54m44s864ms NET PERSISTED READY}
-2025-11-18 17:39:42.649 10822-10822 nativeloader            com.android.chrome                   D  Load /data/app/~~ikhX5FquqO6ue3fCCh-94Q==/com.android.chrome-5fBfdJShVbQUPYgMRWC77w==/Chrome.apk!/lib/x86_64/libchromium_android_linker.so using class loader ns clns-10 (caller=/data/app/~~ikhX5FquqO6ue3fCCh-94Q==/com.android.chrome-5fBfdJShVbQUPYgMRWC77w==/Chrome.apk): ok
-2025-11-18 17:39:43.492 10822-10822 chromium                com.android.chrome                   I  [INFO:chrome_browser_cloud_management_controller.cc(273)] Deferring CBCM Controller Initialization until it is unblocked.
-2025-11-18 17:39:44.062 10822-10860 chromium                com.android.chrome                   W  [WARNING:ev_root_ca_metadata.cc(119)] Not implemented
-2025-11-18 17:39:44.838  9336-9497  cn_CronetU...estContext com.google.android.gms               I  destroyNativeStreamLocked org.chromium.net.impl.CronetBidirectionalStream@1f67830
-2025-11-18 17:39:48.531 10822-10860 chromium                com.android.chrome                   W  [WARNING:ev_root_ca_metadata.cc(119)] Not implemented
-2025-11-18 17:39:49.365 10822-10822 chromium                com.android.chrome                   W  [WARNING:controller_impl.cc(1187)] Background download complete, client: 6, completion type: 0, file size:2200227
-2025-11-18 17:39:49.366 10822-10822 JobInfo                 com.android.chrome                   W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
-2025-11-18 17:39:49.366   754-2697  JobInfo                 system_server                        W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
-2025-11-18 17:39:49.542 10909-10909 nativeloader            com.android.chrome_zygote            D  Load /data/app/~~ikhX5FquqO6ue3fCCh-94Q==/com.android.chrome-5fBfdJShVbQUPYgMRWC77w==/Chrome.apk!/lib/x86_64/libchromium_android_linker.so using class loader ns clns-10 (caller=/data/app/~~ikhX5FquqO6ue3fCCh-94Q==/com.android.chrome-5fBfdJShVbQUPYgMRWC77w==/Chrome.apk): ok
-2025-11-18 17:39:49.617   754-2700  ActivityManager         system_server                        I  Start proc 10919:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0ai0 for  {com.android.chrome/org.chromium.content.app.SandboxedProcessService0:0}
-2025-11-18 17:39:49.652 10919-10919 cr_SplitCompatApp       com.android.chrome_zygote            I  version=133.0.6943.137 (694313738) minSdkVersion=29 isBundle=false processName=com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0 isIsolatedProcess=true
-2025-11-18 17:39:49.755 10919-10929 chromium                com.android.chrome_zygote            I  [INFO:child_process_service.cc(73)] ChildProcessService: Exiting child process.
-2025-11-18 17:39:49.758   754-2692  ActivityManager         system_server                        I  Killing 10919:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0a150i-9000 (adj 0): isolated not needed
-2025-11-18 17:39:52.670 10822-10822 chromium                com.android.chrome                   W  [WARNING:controller_impl.cc(1187)] Background download complete, client: 6, completion type: 0, file size:609005
-2025-11-18 17:39:52.670 10822-10822 JobInfo                 com.android.chrome                   W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
-2025-11-18 17:39:52.671   754-2700  JobInfo                 system_server                        W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
-2025-11-18 17:39:52.744   754-2699  ActivityManager         system_server                        I  Start proc 10942:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1/u0ai1 for  {com.android.chrome/org.chromium.content.app.SandboxedProcessService0:1}
-2025-11-18 17:39:52.775 10942-10942 cr_SplitCompatApp       com.android.chrome_zygote            I  version=133.0.6943.137 (694313738) minSdkVersion=29 isBundle=false processName=com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1 isIsolatedProcess=true
-2025-11-18 17:39:52.852 10942-10952 chromium                com.android.chrome_zygote            I  [INFO:child_process_service.cc(73)] ChildProcessService: Exiting child process.
-2025-11-18 17:39:52.855   754-2699  ActivityManager         system_server                        I  Killing 10942:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1/u0a150i-8999 (adj 0): isolated not needed
-2025-11-18 17:39:53.359 10822-10822 chromium                com.android.chrome                   W  [WARNING:controller_impl.cc(1187)] Background download complete, client: 6, completion type: 0, file size:214315
-2025-11-18 17:39:53.359 10822-10822 JobInfo                 com.android.chrome                   W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
-2025-11-18 17:39:53.360   754-2699  JobInfo                 system_server                        W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
-2025-11-18 17:39:53.416   754-2699  ActivityManager         system_server                        I  Start proc 10958:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:2/u0ai2 for  {com.android.chrome/org.chromium.content.app.SandboxedProcessService0:2}
-2025-11-18 17:39:53.441 10958-10958 cr_SplitCompatApp       com.android.chrome_zygote            I  version=133.0.6943.137 (694313738) minSdkVersion=29 isBundle=false processName=com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:2 isIsolatedProcess=true
-2025-11-18 17:39:53.515 10958-10968 chromium                com.android.chrome_zygote            I  [INFO:child_process_service.cc(73)] ChildProcessService: Exiting child process.
-2025-11-18 17:39:53.519   754-2697  ActivityManager         system_server                        I  Killing 10958:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:2/u0a150i-8998 (adj 0): isolated not needed
-2025-11-18 17:39:53.868 10822-10822 chromium                com.android.chrome                   W  [WARNING:controller_impl.cc(1187)] Background download complete, client: 6, completion type: 0, file size:24028
-2025-11-18 17:39:53.869 10822-10822 JobInfo                 com.android.chrome                   W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
-2025-11-18 17:39:53.870   754-2699  JobInfo                 system_server                        W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
-2025-11-18 17:39:53.936   754-2700  ActivityManager         system_server                        I  Start proc 10974:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:3/u0ai3 for  {com.android.chrome/org.chromium.content.app.SandboxedProcessService0:3}
-2025-11-18 17:39:53.974 10974-10974 cr_SplitCompatApp       com.android.chrome_zygote            I  version=133.0.6943.137 (694313738) minSdkVersion=29 isBundle=false processName=com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:3 isIsolatedProcess=true
-2025-11-18 17:39:53.978 10822-10822 chromium                com.android.chrome                   W  [WARNING:controller_impl.cc(1187)] Background download complete, client: 6, completion type: 0, file size:2992963
-2025-11-18 17:39:53.978 10822-10822 JobInfo                 com.android.chrome                   W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
-2025-11-18 17:39:53.981   754-2699  JobInfo                 system_server                        W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
-2025-11-18 17:39:54.044 10974-10984 chromium                com.android.chrome_zygote            I  [INFO:child_process_service.cc(73)] ChildProcessService: Exiting child process.
-2025-11-18 17:39:54.047   754-2697  ActivityManager         system_server                        I  Killing 10974:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:3/u0a150i-8997 (adj 0): isolated not needed
-2025-11-18 17:39:54.114   754-2700  ActivityManager         system_server                        I  Start proc 10990:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:4/u0ai4 for  {com.android.chrome/org.chromium.content.app.SandboxedProcessService0:4}
-2025-11-18 17:39:54.150 10990-10990 cr_SplitCompatApp       com.android.chrome_zygote            I  version=133.0.6943.137 (694313738) minSdkVersion=29 isBundle=false processName=com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:4 isIsolatedProcess=true
-2025-11-18 17:39:54.203 10822-10822 chromium                com.android.chrome                   W  [WARNING:controller_impl.cc(1187)] Background download complete, client: 6, completion type: 0, file size:24028
-2025-11-18 17:39:54.205 10822-10822 JobInfo                 com.android.chrome                   W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
-2025-11-18 17:39:54.206   754-1782  JobInfo                 system_server                        W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
-2025-11-18 17:39:54.290   754-2699  ActivityManager         system_server                        I  Start proc 11006:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:5/u0ai5 for  {com.android.chrome/org.chromium.content.app.SandboxedProcessService0:5}
-2025-11-18 17:39:54.328 11006-11006 cr_SplitCompatApp       com.android.chrome_zygote            I  version=133.0.6943.137 (694313738) minSdkVersion=29 isBundle=false processName=com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:5 isIsolatedProcess=true
-2025-11-18 17:39:54.408 11006-11016 chromium                com.android.chrome_zygote            I  [INFO:child_process_service.cc(73)] ChildProcessService: Exiting child process.
-2025-11-18 17:39:54.417   754-1782  ActivityManager         system_server                        I  Killing 11006:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:5/u0a150i-8995 (adj 0): isolated not needed
-2025-11-18 17:39:54.419 10990-11000 chromium                com.android.chrome_zygote            I  [INFO:child_process_service.cc(73)] ChildProcessService: Exiting child process.
-2025-11-18 17:39:54.422   754-1782  ActivityManager         system_server                        I  Killing 10990:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:4/u0a150i-8996 (adj 0): isolated not needed
-2025-11-18 17:39:57.107 10822-10822 chromium                com.android.chrome                   W  [WARNING:controller_impl.cc(1187)] Background download complete, client: 6, completion type: 0, file size:2992963
-2025-11-18 17:39:57.108 10822-10822 JobInfo                 com.android.chrome                   W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
-2025-11-18 17:39:57.108   754-2699  JobInfo                 system_server                        W  Job 'com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService#54' has a deadline with no functional constraints. The deadline won't improve job execution latency. Consider removing the deadline.
-2025-11-18 17:39:57.141   754-1782  JobScheduler            system_server                        W  Job didn't exist in JobStore: 4489c55 #u0a150/53 com.android.chrome/org.chromium.components.background_task_scheduler.internal.BackgroundTaskJobService
-2025-11-18 17:39:57.223   754-1782  ActivityManager         system_server                        I  Start proc 11022:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:6/u0ai6 for  {com.android.chrome/org.chromium.content.app.SandboxedProcessService0:6}
-2025-11-18 17:39:57.246 11022-11022 cr_SplitCompatApp       com.android.chrome_zygote            I  version=133.0.6943.137 (694313738) minSdkVersion=29 isBundle=false processName=com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:6 isIsolatedProcess=true
-2025-11-18 17:39:57.358 11022-11032 chromium                com.android.chrome_zygote            I  [INFO:child_process_service.cc(73)] ChildProcessService: Exiting child process.
-2025-11-18 17:39:57.362   754-1782  ActivityManager         system_server                        I  Killing 11022:com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:6/u0a150i-8994 (adj 0): isolated not needed
+Updating/initializing submodules...
+Updated submodules
 
+Executing "step_script" stage of the job script
+$ pre-build
+[16:53:44]: Building project....
+$ run "fetch-updates"
+Checking for build process updates...
+$ run "build-android"
+[16:53:46]: ---------------------------------
+[16:53:46]: --- Step: add_extra_platforms ---
+[16:53:46]: ---------------------------------
+[16:53:46]: Setting '[:web]' as extra SupportedPlatforms
+/builds/jota1235/pruebaagenda/fastlane/outsystems/errors/detectors/pdm_plugins.rb:8: warning: character class has '-' without escape
+/builds/jota1235/pruebaagenda/fastlane/outsystems/errors/detectors/pdm_plugins.rb:15: warning: character class has '-' without escape
+[16:53:46]: ------------------------------
+[16:53:46]: --- Step: default_platform ---
+[16:53:46]: ------------------------------
+[16:53:46]: Driving the lane 'android build_capacitor' 🚀
+[16:53:46]: ---------------------------------
+[16:53:46]: --- Step: prepare_environment ---
+[16:53:46]: ---------------------------------
+[16:53:46]: Setting default environment variables to tidy up logs. These can be overridden by setting them in Appflow.
+[16:53:46]: 
+[16:53:46]: Set COREPACK_ENABLE_AUTO_PIN=0 (Suppress yarn warnings)
+[16:53:46]: -------------------------
+[16:53:46]: --- Step: sentry_init ---
+[16:53:46]: -------------------------
+[16:53:46]: ----------------------------
+[16:53:46]: --- Step: begin_building ---
+[16:53:46]: ----------------------------
+[16:53:46]: Began building @ 2025-11-19T16:53:46
+[16:53:47]: ---------------------------
+[16:53:47]: --- Step: build_summary ---
+[16:53:47]: ---------------------------
 
++---------------------------------------------------+
+|                   Build Summary                   |
++---------------------+-----------------------------+
+| Runners Revision    | Latest                      |
+| Job ID              | 10579133                    |
+| Node.js version     | v20.19.3                    |
+| Cordova CLI version | 12.0.0 (cordova-lib@12.0.2) |
+| npm version         | 10.8.2                      |
+| yarn version        | 1.22.22                     |
++---------------------+-----------------------------+
 
+[16:53:48]: No build credential specified
+[16:53:48]: ---------------------------
+[16:53:48]: --- Step: set_ionic_cli ---
+[16:53:48]: ---------------------------
+[16:53:49]: Preinstalled @ionic/cli compatible with project `angular-standalone`
+[16:53:49]: ------------------------------------
+[16:53:49]: --- Step: detect_package_manager ---
+[16:53:49]: ------------------------------------
+[16:53:49]: Detecting package manager
+[16:53:49]: Defaulting to npm
+[16:53:49]: ---------------------------------
+[16:53:49]: --- Step: add_git_credentials ---
+[16:53:49]: ---------------------------------
+[16:53:49]: Writing git-credentials files
+[16:53:49]: git-credentials successfully added to project
+[16:53:49]: --------------------------------
+[16:53:49]: --- Step: get_appflow_config ---
+[16:53:49]: --------------------------------
+[16:53:49]: Checking for appflow.config.json
+[16:53:49]: Appflow config not detected
+[16:53:49]: --------------------------------
+[16:53:49]: --- Step: dependency_install ---
+[16:53:49]: --------------------------------
+[16:53:49]: Installing Dependencies (in /builds/jota1235/pruebaagenda)
+[16:53:49]: $ npm ci --quiet 
+[16:53:53]: ▸ npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+[16:53:53]: ▸ npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+[16:53:53]: ▸ npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+[16:54:11]: ▸ added 1255 packages, and audited 1256 packages in 22s
+[16:54:11]: ▸ 257 packages are looking for funding
+[16:54:11]: ▸ run `npm fund` for details
+[16:54:11]: ▸ 2 vulnerabilities (1 moderate, 1 high)
+[16:54:11]: ▸ To address all issues, run:
+[16:54:11]: ▸ npm audit fix
+[16:54:11]: ▸ Run `npm audit` for details.
+[16:54:11]: -------------------------------------
+[16:54:11]: --- Step: create_capacitor_config ---
+[16:54:11]: -------------------------------------
+[16:54:12]: Created capacitor.config.json from capacitor.config.ts/js
+[16:54:12]: -------------------------
+[16:54:12]: --- Step: get_web_dir ---
+[16:54:12]: -------------------------
+[16:54:12]: webDir is `www`
+[16:54:12]: -----------------------------------
+[16:54:12]: --- Step: modify_cap_web_config ---
+[16:54:12]: -----------------------------------
+[16:54:12]: No custom native config detected.
+[16:54:12]: ---------------------------
+[16:54:12]: --- Step: set_java_home ---
+[16:54:12]: ---------------------------
+[16:54:12]: Try to detect the android gradle plugin version
+[16:54:12]: Project Android Gradle Plug-in version is 8.7.2: set Java to 21
+[16:54:12]: ---------------------------
+[16:54:12]: --- Step: build_pro_app ---
+[16:54:12]: ---------------------------
+[16:54:12]: Building app from /builds/jota1235/pruebaagenda
+[16:54:12]: Build script detected...
+[16:54:12]: $ npm run build
+[16:54:12]: ▸ > agenda@0.0.2 build
+[16:54:12]: ▸ > ng build
+[16:54:13]: ▸ ❯ Building...
+[16:54:29]: ▸ ✔ Building...
+[16:54:29]: ▸ Initial chunk files   | Names               |  Raw size | Estimated transfer size
+[16:54:29]: ▸ chunk-MBO35FD2.js     | -                   | 981.15 kB |               171.96 kB
+[16:54:29]: ▸ main-7M7R6C2U.js      | main                | 312.87 kB |                75.22 kB
+[16:54:29]: ▸ chunk-RADHBB3Y.js     | -                   |  58.49 kB |                19.02 kB
+[16:54:29]: ▸ styles-UQQDUNKQ.css   | styles              |  48.34 kB |                 5.90 kB
+[16:54:29]: ▸ polyfills-TDCRLYKL.js | polyfills           |  34.65 kB |                11.33 kB
+[16:54:29]: ▸ chunk-APCB5YTZ.js     | -                   |  14.53 kB |                 5.67 kB
+[16:54:29]: ▸ chunk-TTMPSIEY.js     | -                   |  10.25 kB |                 2.66 kB
+[16:54:29]: ▸ chunk-VP35GXEB.js     | -                   |   9.52 kB |                 3.56 kB
+[16:54:29]: ▸ chunk-AWFO5LBT.js     | -                   |   8.14 kB |                 2.88 kB
+[16:54:29]: ▸ chunk-M2X7KQLB.js     | -                   |   5.80 kB |                 2.14 kB
+[16:54:29]: ▸ chunk-YAUMUHNT.js     | -                   |   2.46 kB |               971 bytes
+[16:54:29]: ▸ chunk-OZYWYLNK.js     | -                   |   1.32 kB |               588 bytes
+[16:54:29]: ▸ chunk-MCHWYEYM.js     | -                   |   1.18 kB |               527 bytes
+[16:54:29]: ▸ chunk-DVVH2KKN.js     | -                   |   1.02 kB |                 1.02 kB
+[16:54:29]: ▸ chunk-JHFNTCF2.js     | -                   | 973 bytes |               973 bytes
+[16:54:29]: ▸ chunk-ILB7YEDF.js     | -                   | 936 bytes |               936 bytes
+[16:54:29]: ▸ chunk-7KGURMOZ.js     | -                   | 908 bytes |               908 bytes
+[16:54:29]: ▸ chunk-63B6JYMJ.js     | -                   | 863 bytes |               863 bytes
+[16:54:29]: ▸ chunk-KZ6UWTCU.js     | -                   | 858 bytes |               858 bytes
+[16:54:29]: ▸ chunk-NV3QH4JK.js     | -                   | 545 bytes |               545 bytes
+[16:54:29]: ▸ chunk-4WFVMWDK.js     | -                   | 103 bytes |               103 bytes
+[16:54:29]: ▸ chunk-42C7ZIID.js     | -                   |  99 bytes |                99 bytes
+[16:54:29]: ▸                       | Initial total       |   1.50 MB |               308.74 kB
+[16:54:29]: ▸ Lazy chunk files      | Names               |  Raw size | Estimated transfer size
+[16:54:29]: ▸ chunk-OSA6FEEZ.js     | jeep-sqlite-entry   | 303.98 kB |                73.11 kB
+[16:54:29]: ▸ chunk-XBEJP3XG.js     | agenda-main-page    | 153.65 kB |                28.13 kB
+[16:54:29]: ▸ chunk-7LHROFSK.js     | -                   |  27.33 kB |                 5.58 kB
+[16:54:29]: ▸ chunk-FNFJVUCK.js     | profile-main-page   |  18.14 kB |                 3.96 kB
+[16:54:29]: ▸ chunk-P5FSFHDJ.js     | settings-main-page  |  17.63 kB |                 4.06 kB
+[16:54:29]: ▸ chunk-A45PFUYR.js     | login-page          |  14.38 kB |                 3.58 kB
+[16:54:29]: ▸ chunk-KHWVPU3G.js     | home-page           |  13.41 kB |                 2.78 kB
+[16:54:29]: ▸ chunk-B4Z4XOF3.js     | web                 |  11.15 kB |                 1.22 kB
+[16:54:29]: ▸ chunk-QP2SE3XC.js     | splash-page         |   6.12 kB |                 1.79 kB
+[16:54:29]: ▸ chunk-WUR6VCJJ.js     | input-shims         |   5.10 kB |                 1.97 kB
+[16:54:29]: ▸ chunk-ZXTMT2QT.js     | -                   |   3.78 kB |               853 bytes
+[16:54:29]: ▸ chunk-FAJR3QGY.js     | servicios-test-page |   2.77 kB |                 1.14 kB
+[16:54:29]: ▸ chunk-B7ZGIUDU.js     | clientes-test-page  |   2.68 kB |                 1.10 kB
+[16:54:29]: ▸ chunk-R7YJZKQJ.js     | personal-test-page  |   2.64 kB |                 1.10 kB
+[16:54:29]: ▸ chunk-N3EYWWDQ.js     | index7              |   1.63 kB |               761 bytes
+[16:54:29]: ▸ ...and 8 more lazy chunks files. Use "--verbose" to show all the files.
+[16:54:29]: ▸ Application bundle generation complete. [15.510 seconds] - 2025-11-19T16:54:29.067Z
+[16:54:29]: ▸ ▲ [WARNING] The glob pattern import("./**/*.entry.js*") did not match any files [empty-glob]
+[16:54:29]: ▸ node_modules/@stencil/core/internal/client/index.js:169:2:
+[16:54:29]: ▸       169 │   `./${bundleId}.entry.js${BUILD5.hotModuleReplacement && hmrVers...
+[16:54:29]: ▸ ╵   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[16:54:29]: ▸ ▲ [WARNING] NG8113: IonBadge is not used within the template of CalendarModalComponent [plugin angular-compiler]
+[16:54:29]: ▸ src/app/features/agenda/components/calendar-modal/calendar-modal.component.ts:62:4:
+[16:54:29]: ▸       62 │     IonBadge
+[16:54:29]: ▸ ╵     ~~~~~~~~
+[16:54:29]: ▸ ▲ [WARNING] NG8113: IonBackButton is not used within the template of ProfileMainPage [plugin angular-compiler]
+[16:54:29]: ▸ src/app/features/profile/pages/profile-main/profile-main.page.ts:100:4:
+[16:54:29]: ▸       100 │     IonBackButton
+[16:54:29]: ▸ ╵     ~~~~~~~~~~~~~
+[16:54:29]: ▸ ▲ [WARNING] NG8113: IonNote is not used within the template of SettingsMainPage [plugin angular-compiler]
+[16:54:29]: ▸ src/app/features/settings/pages/settings-main/settings-main.page.ts:75:4:
+[16:54:29]: ▸       75 │     IonNote,
+[16:54:29]: ▸ ╵     ~~~~~~~
+[16:54:29]: ▸ ▲ [WARNING] NG8113: IonItemDivider is not used within the template of SettingsMainPage [plugin angular-compiler]
+[16:54:29]: ▸ src/app/features/settings/pages/settings-main/settings-main.page.ts:76:4:
+[16:54:29]: ▸       76 │     IonItemDivider,
+[16:54:29]: ▸ ╵     ~~~~~~~~~~~~~~
+[16:54:29]: ▸ ▲ [WARNING] NG8113: IonButton is not used within the template of ClientesTestPage [plugin angular-compiler]
+[16:54:29]: ▸ src/app/features/test-pages/clientes-test.page.ts:31:4:
+[16:54:29]: ▸       31 │     IonButton,
+[16:54:29]: ▸ ╵     ~~~~~~~~~
+[16:54:29]: ▸ ▲ [WARNING] NG8113: IonButton is not used within the template of PersonalTestPage [plugin angular-compiler]
+[16:54:29]: ▸ src/app/features/test-pages/personal-test.page.ts:31:4:
+[16:54:29]: ▸       31 │     IonButton,
+[16:54:29]: ▸ ╵     ~~~~~~~~~
+[16:54:29]: ▸ ▲ [WARNING] NG8113: IonButton is not used within the template of ServiciosTestPage [plugin angular-compiler]
+[16:54:29]: ▸ src/app/features/test-pages/servicios-test.page.ts:31:4:
+[16:54:29]: ▸       31 │     IonButton,
+[16:54:29]: ▸ ╵     ~~~~~~~~~
+[16:54:29]: ▸ ▲ [WARNING] src/app/features/agenda/pages/agenda-main/agenda-main.page.scss exceeded maximum budget. Budget 15.00 kB was not met by 2.08 kB with a total of 17.09 kB.
+[16:54:29]: ▸ 
+[16:54:29]: ▸ Output location: /builds/jota1235/pruebaagenda/www
+[16:54:29]: $ ionic info
+[16:54:30]: ▸ Ionic:
+[16:54:30]: ▸ Ionic CLI                     : 7.2.1 (/usr/local/nvm/versions/node/v20.19.3/lib/node_modules/@ionic/cli)
+[16:54:30]: ▸ Ionic Framework               : @ionic/angular 8.7.9
+[16:54:30]: ▸ @angular-devkit/build-angular : 20.3.9
+[16:54:30]: ▸ @angular-devkit/schematics    : 20.3.10
+[16:54:30]: ▸ @angular/cli                  : 20.3.10
+[16:54:30]: ▸ @ionic/angular-toolkit        : 12.3.0
+[16:54:30]: ▸ Capacitor:
+[16:54:30]: ▸ Capacitor CLI      : 7.4.4
+[16:54:30]: ▸ @capacitor/android : 7.4.4
+[16:54:30]: ▸ @capacitor/core    : 7.4.4
+[16:54:30]: ▸ @capacitor/ios     : 7.4.4
+[16:54:30]: ▸ Utility:
+[16:54:30]: ▸ cordova-res : not installed globally
+[16:54:30]: ▸ native-run  : 2.0.1
+[16:54:30]: ▸ System:
+[16:54:30]: ▸ NodeJS : v20.19.3 (/usr/local/nvm/versions/node/v20.19.3/bin/node)
+[16:54:30]: ▸ npm    : 10.8.2
+[16:54:30]: ▸ OS     : Linux 5.10
+[16:54:30]: Generating app manifest...
+[16:54:31]: ----------------------
+[16:54:31]: --- Step: cap_sync ---
+[16:54:31]: ----------------------
+[16:54:31]: $ npx cap sync android
+[16:54:32]: ▸ ✔ Copying web assets from www to android/app/src/main/assets/public in 14.27ms
+[16:54:32]: ▸ ✔ Creating capacitor.config.json in android/app/src/main/assets in 1.22ms
+[16:54:32]: ▸ ✔ copy android in 46.35ms
+[16:54:32]: ▸ ✔ Updating Android plugins in 7.87ms
+[16:54:32]: ▸ [info] Found 5 Capacitor plugins for android:
+[16:54:32]: ▸ @capacitor-community/sqlite@7.0.2
+[16:54:32]: ▸ @capacitor/app@7.1.0
+[16:54:32]: ▸ @capacitor/haptics@7.0.2
+[16:54:32]: ▸ @capacitor/keyboard@7.0.3
+[16:54:32]: ▸ @capacitor/status-bar@7.0.3
+[16:54:32]: ▸ ✔ update android in 77.35ms
+[16:54:32]: ▸ [info] Sync finished in 0.192s
+[16:54:32]: -------------------------------
+[16:54:32]: --- Step: cap_custom_deploy ---
+[16:54:32]: -------------------------------
+[16:54:32]: No custom native config detected.
+[16:54:32]: ----------------------------------
+[16:54:32]: --- Step: modify_gradle_config ---
+[16:54:32]: ----------------------------------
+[16:54:32]: No custom native config found... skipping
+[16:54:32]: Building android (in /builds/jota1235/pruebaagenda/android)...
+[16:54:32]: -------------------------
+[16:54:32]: --- Step: bundledebug ---
+[16:54:32]: -------------------------
+[16:54:33]: ▸ Downloading https://services.gradle.org/distributions/gradle-8.11.1-all.zip
+[16:54:35]: ▸ .....................10%......................20%......................30%......................40%......................50%......................60%......................70%......................80%......................90%......................100%
+[16:54:39]: ▸ Welcome to Gradle 8.11.1!
+[16:54:39]: ▸ Here are the highlights of this release:
+[16:54:39]: ▸ - Parallel load and store for Configuration Cache
+[16:54:39]: ▸ - Java compilation errors at the end of the build output
+[16:54:39]: ▸ - Consolidated report for warnings and deprecations
+[16:54:39]: ▸ For more details see https://docs.gradle.org/8.11.1/release-notes.html
+[16:54:39]: ▸ Starting a Gradle Daemon (subsequent builds will be faster)
+[16:55:32]: ▸ > Configure project :app
+[16:55:32]: ▸ WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+[16:56:03]: ▸ > Configure project :capacitor-cordova-android-plugins
+[16:56:03]: ▸ WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+[16:56:07]: ▸ > Task :app:preBuild UP-TO-DATE
+[16:56:07]: ▸ > Task :app:preDebugBuild UP-TO-DATE
+[16:56:07]: ▸ > Task :app:generateDebugResValues
+[16:56:07]: ▸ > Task :capacitor-android:preBuild UP-TO-DATE
+[16:56:07]: ▸ > Task :capacitor-android:preDebugBuild UP-TO-DATE
+[16:56:07]: ▸ > Task :capacitor-android:generateDebugResValues
+[16:56:07]: ▸ > Task :capacitor-android:generateDebugResources
+[16:56:07]: ▸ > Task :capacitor-android:packageDebugResources
+[16:56:07]: ▸ > Task :capacitor-app:preBuild UP-TO-DATE
+[16:56:07]: ▸ > Task :capacitor-app:preDebugBuild UP-TO-DATE
+[16:56:07]: ▸ > Task :capacitor-app:generateDebugResValues
+[16:56:08]: ▸ > Task :capacitor-app:generateDebugResources
+[16:56:08]: ▸ > Task :capacitor-app:packageDebugResources
+[16:56:08]: ▸ > Task :capacitor-community-sqlite:preBuild UP-TO-DATE
+[16:56:08]: ▸ > Task :capacitor-community-sqlite:preDebugBuild UP-TO-DATE
+[16:56:08]: ▸ > Task :capacitor-community-sqlite:generateDebugResValues
+[16:56:08]: ▸ > Task :capacitor-community-sqlite:generateDebugResources
+[16:56:08]: ▸ > Task :capacitor-community-sqlite:packageDebugResources
+[16:56:08]: ▸ > Task :capacitor-cordova-android-plugins:preBuild UP-TO-DATE
+[16:56:08]: ▸ > Task :capacitor-cordova-android-plugins:preDebugBuild UP-TO-DATE
+[16:56:08]: ▸ > Task :capacitor-cordova-android-plugins:generateDebugResValues
+[16:56:08]: ▸ > Task :capacitor-cordova-android-plugins:generateDebugResources
+[16:56:08]: ▸ > Task :capacitor-cordova-android-plugins:packageDebugResources
+[16:56:08]: ▸ > Task :capacitor-haptics:preBuild UP-TO-DATE
+[16:56:08]: ▸ > Task :capacitor-haptics:preDebugBuild UP-TO-DATE
+[16:56:08]: ▸ > Task :capacitor-haptics:generateDebugResValues
+[16:56:08]: ▸ > Task :capacitor-haptics:generateDebugResources
+[16:56:08]: ▸ > Task :capacitor-haptics:packageDebugResources
+[16:56:08]: ▸ > Task :capacitor-keyboard:preBuild UP-TO-DATE
+[16:56:08]: ▸ > Task :capacitor-keyboard:preDebugBuild UP-TO-DATE
+[16:56:08]: ▸ > Task :capacitor-keyboard:generateDebugResValues
+[16:56:08]: ▸ > Task :capacitor-keyboard:generateDebugResources
+[16:56:08]: ▸ > Task :capacitor-keyboard:packageDebugResources
+[16:56:08]: ▸ > Task :capacitor-status-bar:preBuild UP-TO-DATE
+[16:56:08]: ▸ > Task :capacitor-status-bar:preDebugBuild UP-TO-DATE
+[16:56:08]: ▸ > Task :capacitor-status-bar:generateDebugResValues
+[16:56:08]: ▸ > Task :capacitor-status-bar:generateDebugResources
+[16:56:08]: ▸ > Task :capacitor-status-bar:packageDebugResources
+[16:56:38]: ▸ > Task :app:mapDebugSourceSetPaths
+[16:56:42]: ▸ > Task :app:generateDebugResources
+[16:56:44]: ▸ > Task :app:createDebugCompatibleScreenManifests
+[16:56:44]: ▸ > Task :app:extractDeepLinksDebug
+[16:56:44]: ▸ > Task :capacitor-android:extractDeepLinksDebug
+[16:56:44]: ▸ > Task :capacitor-app:extractDeepLinksDebug
+[16:56:44]: ▸ > Task :capacitor-community-sqlite:extractDeepLinksDebug
+[16:56:44]: ▸ > Task :capacitor-cordova-android-plugins:extractDeepLinksDebug
+[16:56:44]: ▸ > Task :capacitor-haptics:extractDeepLinksDebug
+[16:56:44]: ▸ > Task :capacitor-keyboard:extractDeepLinksDebug
+[16:56:45]: ▸ > Task :capacitor-status-bar:extractDeepLinksDebug
+[16:56:45]: ▸ > Task :capacitor-haptics:processDebugManifest
+[16:56:45]: ▸ > Task :capacitor-keyboard:processDebugManifest
+[16:56:45]: ▸ > Task :capacitor-status-bar:processDebugManifest
+[16:56:45]: ▸ > Task :capacitor-community-sqlite:processDebugManifest
+[16:56:45]: ▸ > Task :capacitor-cordova-android-plugins:processDebugManifest
+[16:56:45]: ▸ > Task :capacitor-android:processDebugManifest
+[16:56:45]: ▸ > Task :capacitor-app:processDebugManifest
+[16:56:45]: ▸ > Task :capacitor-android:writeDebugAarMetadata
+[16:56:45]: ▸ > Task :app:mergeDebugResources
+[16:56:46]: ▸ > Task :app:processDebugMainManifest
+[16:56:46]: ▸ > Task :app:processDebugManifest
+[16:56:46]: ▸ > Task :app:processApplicationManifestDebugForBundle
+[16:56:46]: ▸ > Task :capacitor-community-sqlite:writeDebugAarMetadata
+[16:56:46]: ▸ > Task :capacitor-app:writeDebugAarMetadata
+[16:56:46]: ▸ > Task :capacitor-haptics:writeDebugAarMetadata
+[16:56:46]: ▸ > Task :capacitor-cordova-android-plugins:writeDebugAarMetadata
+[16:56:46]: ▸ > Task :capacitor-keyboard:writeDebugAarMetadata
+[16:56:46]: ▸ > Task :capacitor-status-bar:writeDebugAarMetadata
+[16:56:46]: ▸ > Task :app:packageDebugResources
+[16:56:47]: ▸ > Task :app:checkDebugAarMetadata
+[16:56:47]: ▸ > Task :app:parseDebugLocalResources
+[16:56:48]: ▸ > Task :capacitor-android:compileDebugLibraryResources
+[16:56:48]: ▸ > Task :capacitor-app:compileDebugLibraryResources
+[16:56:48]: ▸ > Task :capacitor-android:parseDebugLocalResources
+[16:56:48]: ▸ > Task :capacitor-app:parseDebugLocalResources
+[16:56:48]: ▸ > Task :capacitor-community-sqlite:compileDebugLibraryResources
+[16:56:48]: ▸ > Task :capacitor-community-sqlite:parseDebugLocalResources
+[16:56:48]: ▸ > Task :capacitor-app:generateDebugRFile
+[16:56:48]: ▸ > Task :capacitor-cordova-android-plugins:compileDebugLibraryResources
+[16:56:48]: ▸ > Task :capacitor-android:generateDebugRFile
+[16:56:48]: ▸ > Task :capacitor-community-sqlite:generateDebugRFile
+[16:56:48]: ▸ > Task :capacitor-cordova-android-plugins:parseDebugLocalResources
+[16:56:48]: ▸ > Task :capacitor-haptics:compileDebugLibraryResources
+[16:56:48]: ▸ > Task :capacitor-cordova-android-plugins:generateDebugRFile
+[16:56:48]: ▸ > Task :capacitor-haptics:parseDebugLocalResources
+[16:56:48]: ▸ > Task :capacitor-keyboard:compileDebugLibraryResources
+[16:56:48]: ▸ > Task :app:processDebugManifestForPackage
+[16:56:48]: ▸ > Task :capacitor-haptics:generateDebugRFile
+[16:56:48]: ▸ > Task :capacitor-keyboard:parseDebugLocalResources
+[16:56:48]: ▸ > Task :capacitor-status-bar:compileDebugLibraryResources
+[16:56:48]: ▸ > Task :capacitor-status-bar:parseDebugLocalResources
+[16:56:48]: ▸ > Task :capacitor-keyboard:generateDebugRFile
+[16:56:48]: ▸ > Task :app:mergeDebugShaders
+[16:56:48]: ▸ > Task :capacitor-status-bar:generateDebugRFile
+[16:56:48]: ▸ > Task :app:compileDebugShaders NO-SOURCE
+[16:56:50]: ▸ > Task :app:generateDebugAssets UP-TO-DATE
+[16:56:50]: ▸ > Task :capacitor-android:mergeDebugShaders
+[16:56:50]: ▸ > Task :capacitor-android:compileDebugShaders NO-SOURCE
+[16:56:50]: ▸ > Task :capacitor-android:generateDebugAssets UP-TO-DATE
+[16:56:50]: ▸ > Task :capacitor-android:packageDebugAssets
+[16:56:50]: ▸ > Task :capacitor-app:mergeDebugShaders
+[16:56:50]: ▸ > Task :capacitor-app:compileDebugShaders NO-SOURCE
+[16:56:50]: ▸ > Task :capacitor-app:generateDebugAssets UP-TO-DATE
+[16:56:50]: ▸ > Task :capacitor-app:packageDebugAssets
+[16:56:50]: ▸ > Task :capacitor-community-sqlite:mergeDebugShaders
+[16:56:50]: ▸ > Task :capacitor-community-sqlite:compileDebugShaders NO-SOURCE
+[16:56:50]: ▸ > Task :capacitor-community-sqlite:generateDebugAssets UP-TO-DATE
+[16:56:50]: ▸ > Task :capacitor-community-sqlite:packageDebugAssets
+[16:56:50]: ▸ > Task :capacitor-cordova-android-plugins:mergeDebugShaders
+[16:56:50]: ▸ > Task :capacitor-cordova-android-plugins:compileDebugShaders NO-SOURCE
+[16:56:50]: ▸ > Task :capacitor-cordova-android-plugins:generateDebugAssets UP-TO-DATE
+[16:56:50]: ▸ > Task :capacitor-cordova-android-plugins:packageDebugAssets
+[16:56:50]: ▸ > Task :capacitor-haptics:mergeDebugShaders
+[16:56:50]: ▸ > Task :capacitor-haptics:compileDebugShaders NO-SOURCE
+[16:56:50]: ▸ > Task :capacitor-haptics:generateDebugAssets UP-TO-DATE
+[16:56:50]: ▸ > Task :capacitor-haptics:packageDebugAssets
+[16:56:50]: ▸ > Task :capacitor-keyboard:mergeDebugShaders
+[16:56:50]: ▸ > Task :capacitor-keyboard:compileDebugShaders NO-SOURCE
+[16:56:50]: ▸ > Task :capacitor-keyboard:generateDebugAssets UP-TO-DATE
+[16:56:50]: ▸ > Task :capacitor-keyboard:packageDebugAssets
+[16:56:50]: ▸ > Task :capacitor-status-bar:mergeDebugShaders
+[16:56:50]: ▸ > Task :capacitor-status-bar:compileDebugShaders NO-SOURCE
+[16:56:50]: ▸ > Task :capacitor-status-bar:generateDebugAssets UP-TO-DATE
+[16:56:50]: ▸ > Task :capacitor-status-bar:packageDebugAssets
+[16:56:51]: ▸ > Task :app:processDebugResources
+[16:56:51]: ▸ > Task :app:mergeDebugAssets
+[16:56:51]: ▸ > Task :capacitor-android:javaPreCompileDebug
+[16:56:51]: ▸ > Task :app:bundleDebugResources
+[16:56:56]: ▸ > Task :capacitor-community-sqlite:javaPreCompileDebug
+[16:57:03]: ▸ > Task :capacitor-android:compileDebugJavaWithJavac
+[16:57:03]: ▸ Note: Some input files use unchecked or unsafe operations.
+[16:57:03]: ▸ Note: Recompile with -Xlint:unchecked for details.
+[16:57:24]: ▸ > Task :capacitor-app:javaPreCompileDebug
+[16:57:24]: ▸ > Task :capacitor-haptics:javaPreCompileDebug
+[16:57:24]: ▸ > Task :capacitor-keyboard:javaPreCompileDebug
+[16:57:24]: ▸ > Task :capacitor-android:bundleLibRuntimeToJarDebug
+[16:57:24]: ▸ > Task :capacitor-android:bundleLibCompileToJarDebug
+[16:57:24]: ▸ > Task :capacitor-status-bar:javaPreCompileDebug
+[16:57:27]: ▸ > Task :capacitor-community-sqlite:compileDebugJavaWithJavac
+[16:57:27]: ▸ Note: Some input files use unchecked or unsafe operations.
+[16:57:27]: ▸ Note: Recompile with -Xlint:unchecked for details.
+[16:57:28]: ▸ > Task :capacitor-community-sqlite:bundleLibRuntimeToJarDebug
+[16:57:29]: ▸ > Task :capacitor-app:compileDebugJavaWithJavac
+[16:57:29]: ▸ > Task :capacitor-app:bundleLibRuntimeToJarDebug
+[16:57:29]: ▸ > Task :capacitor-haptics:compileDebugJavaWithJavac
+[16:57:29]: ▸ > Task :capacitor-haptics:bundleLibRuntimeToJarDebug
+[16:57:29]: ▸ > Task :capacitor-keyboard:compileDebugJavaWithJavac
+[16:57:29]: ▸ > Task :capacitor-keyboard:bundleLibRuntimeToJarDebug
+[16:57:30]: ▸ > Task :capacitor-status-bar:compileDebugJavaWithJavac
+[16:57:30]: ▸ Note: /builds/jota1235/pruebaagenda/node_modules/@capacitor/status-bar/android/src/main/java/com/capacitorjs/plugins/statusbar/StatusBar.java uses or overrides a deprecated API.
+[16:57:30]: ▸ Note: Recompile with -Xlint:deprecation for details.
+[16:57:30]: ▸ > Task :capacitor-status-bar:bundleLibRuntimeToJarDebug
+[16:57:30]: ▸ > Task :capacitor-cordova-android-plugins:javaPreCompileDebug
+[16:57:31]: ▸ > Task :app:desugarDebugFileDependencies
+[16:57:31]: ▸ > Task :capacitor-cordova-android-plugins:compileDebugJavaWithJavac NO-SOURCE
+[16:57:31]: ▸ > Task :capacitor-cordova-android-plugins:bundleLibRuntimeToJarDebug
+[16:57:31]: ▸ > Task :app:javaPreCompileDebug
+[16:57:31]: ▸ > Task :capacitor-app:bundleLibCompileToJarDebug
+[16:57:31]: ▸ > Task :capacitor-community-sqlite:bundleLibCompileToJarDebug
+[16:57:31]: ▸ > Task :capacitor-cordova-android-plugins:bundleLibCompileToJarDebug
+[16:57:31]: ▸ > Task :capacitor-haptics:bundleLibCompileToJarDebug
+[16:57:31]: ▸ > Task :capacitor-keyboard:bundleLibCompileToJarDebug
+[16:57:31]: ▸ > Task :capacitor-status-bar:bundleLibCompileToJarDebug
+[16:57:32]: ▸ > Task :app:compileDebugJavaWithJavac
+[16:57:32]: ▸ > Task :app:dexBuilderDebug
+[16:57:56]: ▸ > Task :app:processDebugJavaRes NO-SOURCE
+[16:57:56]: ▸ > Task :capacitor-android:processDebugJavaRes NO-SOURCE
+[16:57:56]: ▸ > Task :capacitor-app:processDebugJavaRes NO-SOURCE
+[16:57:56]: ▸ > Task :capacitor-community-sqlite:processDebugJavaRes
+[16:57:56]: ▸ > Task :app:mergeDebugGlobalSynthetics
+[16:57:56]: ▸ > Task :capacitor-cordova-android-plugins:processDebugJavaRes NO-SOURCE
+[16:57:57]: ▸ > Task :capacitor-haptics:processDebugJavaRes NO-SOURCE
+[16:57:57]: ▸ > Task :capacitor-keyboard:processDebugJavaRes NO-SOURCE
+[16:57:57]: ▸ > Task :capacitor-status-bar:processDebugJavaRes NO-SOURCE
+[16:57:57]: ▸ > Task :app:mergeDebugJniLibFolders
+[16:57:57]: ▸ > Task :app:checkDebugDuplicateClasses
+[16:57:57]: ▸ > Task :capacitor-android:mergeDebugJniLibFolders
+[16:57:58]: ▸ > Task :app:mergeDebugJavaResource
+[16:57:58]: ▸ > Task :capacitor-android:mergeDebugNativeLibs NO-SOURCE
+[16:57:58]: ▸ > Task :capacitor-android:copyDebugJniLibsProjectOnly
+[16:57:58]: ▸ > Task :capacitor-app:mergeDebugJniLibFolders
+[16:57:58]: ▸ > Task :capacitor-app:mergeDebugNativeLibs NO-SOURCE
+[16:57:58]: ▸ > Task :capacitor-app:copyDebugJniLibsProjectOnly
+[16:57:58]: ▸ > Task :capacitor-community-sqlite:mergeDebugJniLibFolders
+[16:57:58]: ▸ > Task :capacitor-community-sqlite:mergeDebugNativeLibs NO-SOURCE
+[16:57:58]: ▸ > Task :capacitor-community-sqlite:copyDebugJniLibsProjectOnly
+[16:57:58]: ▸ > Task :capacitor-cordova-android-plugins:mergeDebugJniLibFolders
+[16:57:58]: ▸ > Task :capacitor-cordova-android-plugins:mergeDebugNativeLibs NO-SOURCE
+[16:57:58]: ▸ > Task :capacitor-cordova-android-plugins:copyDebugJniLibsProjectOnly
+[16:57:58]: ▸ > Task :capacitor-haptics:mergeDebugJniLibFolders
+[16:57:58]: ▸ > Task :capacitor-haptics:mergeDebugNativeLibs NO-SOURCE
+[16:57:58]: ▸ > Task :capacitor-haptics:copyDebugJniLibsProjectOnly
+[16:57:58]: ▸ > Task :capacitor-keyboard:mergeDebugJniLibFolders
+[16:57:58]: ▸ > Task :capacitor-keyboard:mergeDebugNativeLibs NO-SOURCE
+[16:57:58]: ▸ > Task :capacitor-keyboard:copyDebugJniLibsProjectOnly
+[16:57:58]: ▸ > Task :capacitor-status-bar:mergeDebugJniLibFolders
+[16:57:58]: ▸ > Task :capacitor-status-bar:mergeDebugNativeLibs NO-SOURCE
+[16:57:58]: ▸ > Task :capacitor-status-bar:copyDebugJniLibsProjectOnly
+[16:57:58]: ▸ > Task :app:writeDebugAppMetadata
+[16:57:58]: ▸ > Task :app:mergeProjectDexDebug
+[16:57:58]: ▸ > Task :app:mergeLibDexDebug
+[16:57:58]: ▸ > Task :app:parseDebugIntegrityConfig
+[16:57:58]: ▸ > Task :app:mergeDebugNativeLibs
+[16:57:58]: ▸ > Task :app:stripDebugDebugSymbols
+[16:57:58]: ▸ Unable to strip the following libraries, packaging them as they are: libsqlcipher.so.
+[16:58:01]: ▸ > Task :app:mergeExtDexDebug
+[16:58:01]: ▸ > Task :app:buildDebugPreBundle
+[16:58:02]: ▸ > Task :app:packageDebugBundle
+[16:58:04]: ▸ > Task :app:signDebugBundle
+[16:58:04]: ▸ > Task :app:produceDebugBundleIdeListingFile
+[16:58:05]: ▸ > Task :app:createDebugBundleListingFileRedirect
+[16:58:05]: ▸ > Task :app:bundleDebug
+[16:58:05]: ▸ [Incubating] Problems report is available at: file:///builds/jota1235/pruebaagenda/android/build/reports/problems/problems-report.html
+[16:58:05]: ▸ BUILD SUCCESSFUL in 3m 31s
+[16:58:05]: ▸ 156 actionable tasks: 156 executed
+[16:58:05]: ---------------------------
+[16:58:05]: --- Step: assembledebug ---
+[16:58:05]: ---------------------------
+[16:58:07]: ▸ > Configure project :app
+[16:58:07]: ▸ WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+[16:58:09]: ▸ > Configure project :capacitor-cordova-android-plugins
+[16:58:09]: ▸ WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+[16:58:10]: ▸ > Task :app:preBuild UP-TO-DATE
+[16:58:10]: ▸ > Task :app:preDebugBuild UP-TO-DATE
+[16:58:10]: ▸ > Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+[16:58:10]: ▸ > Task :app:javaPreCompileDebug UP-TO-DATE
+[16:58:10]: ▸ > Task :capacitor-android:preBuild UP-TO-DATE
+[16:58:10]: ▸ > Task :capacitor-android:preDebugBuild UP-TO-DATE
+[16:58:10]: ▸ > Task :capacitor-android:writeDebugAarMetadata UP-TO-DATE
+[16:58:10]: ▸ > Task :capacitor-app:preBuild UP-TO-DATE
+[16:58:10]: ▸ > Task :capacitor-app:preDebugBuild UP-TO-DATE
+[16:58:10]: ▸ > Task :capacitor-app:writeDebugAarMetadata UP-TO-DATE
+[16:58:10]: ▸ > Task :capacitor-community-sqlite:preBuild UP-TO-DATE
+[16:58:10]: ▸ > Task :capacitor-community-sqlite:preDebugBuild UP-TO-DATE
+[16:58:10]: ▸ > Task :capacitor-community-sqlite:writeDebugAarMetadata UP-TO-DATE
+[16:58:10]: ▸ > Task :capacitor-cordova-android-plugins:preBuild UP-TO-DATE
+[16:58:10]: ▸ > Task :capacitor-cordova-android-plugins:preDebugBuild UP-TO-DATE
+[16:58:10]: ▸ > Task :capacitor-cordova-android-plugins:writeDebugAarMetadata UP-TO-DATE
+[16:58:10]: ▸ > Task :capacitor-haptics:preBuild UP-TO-DATE
+[16:58:10]: ▸ > Task :capacitor-haptics:preDebugBuild UP-TO-DATE
+[16:58:10]: ▸ > Task :capacitor-haptics:writeDebugAarMetadata UP-TO-DATE
+[16:58:10]: ▸ > Task :capacitor-keyboard:preBuild UP-TO-DATE
+[16:58:10]: ▸ > Task :capacitor-keyboard:preDebugBuild UP-TO-DATE
+[16:58:10]: ▸ > Task :capacitor-keyboard:writeDebugAarMetadata UP-TO-DATE
+[16:58:10]: ▸ > Task :capacitor-status-bar:preBuild UP-TO-DATE
+[16:58:10]: ▸ > Task :capacitor-status-bar:preDebugBuild UP-TO-DATE
+[16:58:10]: ▸ > Task :capacitor-status-bar:writeDebugAarMetadata UP-TO-DATE
+[16:58:12]: ▸ > Task :app:checkDebugAarMetadata UP-TO-DATE
+[16:58:12]: ▸ > Task :app:generateDebugResValues UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-android:generateDebugResValues UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-android:generateDebugResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-android:packageDebugResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-app:generateDebugResValues UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-app:generateDebugResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-app:packageDebugResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-community-sqlite:generateDebugResValues UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-community-sqlite:generateDebugResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-community-sqlite:packageDebugResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-cordova-android-plugins:generateDebugResValues UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-cordova-android-plugins:generateDebugResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-cordova-android-plugins:packageDebugResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-haptics:generateDebugResValues UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-haptics:generateDebugResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-haptics:packageDebugResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-keyboard:generateDebugResValues UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-keyboard:generateDebugResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-keyboard:packageDebugResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-status-bar:generateDebugResValues UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-status-bar:generateDebugResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-status-bar:packageDebugResources UP-TO-DATE
+[16:58:12]: ▸ > Task :app:mapDebugSourceSetPaths UP-TO-DATE
+[16:58:12]: ▸ > Task :app:generateDebugResources UP-TO-DATE
+[16:58:12]: ▸ > Task :app:mergeDebugResources UP-TO-DATE
+[16:58:12]: ▸ > Task :app:packageDebugResources UP-TO-DATE
+[16:58:12]: ▸ > Task :app:parseDebugLocalResources UP-TO-DATE
+[16:58:12]: ▸ > Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+[16:58:12]: ▸ > Task :app:extractDeepLinksDebug UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-android:extractDeepLinksDebug UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-android:processDebugManifest UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-app:extractDeepLinksDebug UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-app:processDebugManifest UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-community-sqlite:extractDeepLinksDebug UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-community-sqlite:processDebugManifest UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-cordova-android-plugins:extractDeepLinksDebug UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-cordova-android-plugins:processDebugManifest UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-haptics:extractDeepLinksDebug UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-haptics:processDebugManifest UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-keyboard:extractDeepLinksDebug UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-keyboard:processDebugManifest UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-status-bar:extractDeepLinksDebug UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-status-bar:processDebugManifest UP-TO-DATE
+[16:58:12]: ▸ > Task :app:processDebugMainManifest UP-TO-DATE
+[16:58:12]: ▸ > Task :app:processDebugManifest UP-TO-DATE
+[16:58:12]: ▸ > Task :app:processDebugManifestForPackage UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-android:compileDebugLibraryResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-android:parseDebugLocalResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-android:generateDebugRFile UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-app:compileDebugLibraryResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-app:parseDebugLocalResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-app:generateDebugRFile UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-community-sqlite:compileDebugLibraryResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-community-sqlite:parseDebugLocalResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-community-sqlite:generateDebugRFile UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-cordova-android-plugins:compileDebugLibraryResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-cordova-android-plugins:parseDebugLocalResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-cordova-android-plugins:generateDebugRFile UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-haptics:compileDebugLibraryResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-haptics:parseDebugLocalResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-haptics:generateDebugRFile UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-keyboard:compileDebugLibraryResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-keyboard:parseDebugLocalResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-keyboard:generateDebugRFile UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-status-bar:compileDebugLibraryResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-status-bar:parseDebugLocalResources UP-TO-DATE
+[16:58:12]: ▸ > Task :capacitor-status-bar:generateDebugRFile UP-TO-DATE
+[16:58:13]: ▸ > Task :app:processDebugResources UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-android:javaPreCompileDebug UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-android:compileDebugJavaWithJavac UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-android:bundleLibCompileToJarDebug UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-app:javaPreCompileDebug UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-app:compileDebugJavaWithJavac UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-app:bundleLibCompileToJarDebug UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-community-sqlite:javaPreCompileDebug UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-community-sqlite:compileDebugJavaWithJavac UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-community-sqlite:bundleLibCompileToJarDebug UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-cordova-android-plugins:javaPreCompileDebug UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-cordova-android-plugins:compileDebugJavaWithJavac NO-SOURCE
+[16:58:13]: ▸ > Task :capacitor-cordova-android-plugins:bundleLibCompileToJarDebug UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-haptics:javaPreCompileDebug UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-haptics:compileDebugJavaWithJavac UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-haptics:bundleLibCompileToJarDebug UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-keyboard:javaPreCompileDebug UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-keyboard:compileDebugJavaWithJavac UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-keyboard:bundleLibCompileToJarDebug UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-status-bar:javaPreCompileDebug UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-status-bar:compileDebugJavaWithJavac UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-status-bar:bundleLibCompileToJarDebug UP-TO-DATE
+[16:58:13]: ▸ > Task :app:compileDebugJavaWithJavac UP-TO-DATE
+[16:58:13]: ▸ > Task :app:mergeDebugShaders UP-TO-DATE
+[16:58:13]: ▸ > Task :app:compileDebugShaders NO-SOURCE
+[16:58:13]: ▸ > Task :app:generateDebugAssets UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-android:mergeDebugShaders UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-android:compileDebugShaders NO-SOURCE
+[16:58:13]: ▸ > Task :capacitor-android:generateDebugAssets UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-android:packageDebugAssets UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-app:mergeDebugShaders UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-app:compileDebugShaders NO-SOURCE
+[16:58:13]: ▸ > Task :capacitor-app:generateDebugAssets UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-app:packageDebugAssets UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-community-sqlite:mergeDebugShaders UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-community-sqlite:compileDebugShaders NO-SOURCE
+[16:58:13]: ▸ > Task :capacitor-community-sqlite:generateDebugAssets UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-community-sqlite:packageDebugAssets UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-cordova-android-plugins:mergeDebugShaders UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-cordova-android-plugins:compileDebugShaders NO-SOURCE
+[16:58:13]: ▸ > Task :capacitor-cordova-android-plugins:generateDebugAssets UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-cordova-android-plugins:packageDebugAssets UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-haptics:mergeDebugShaders UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-haptics:compileDebugShaders NO-SOURCE
+[16:58:13]: ▸ > Task :capacitor-haptics:generateDebugAssets UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-haptics:packageDebugAssets UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-keyboard:mergeDebugShaders UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-keyboard:compileDebugShaders NO-SOURCE
+[16:58:13]: ▸ > Task :capacitor-keyboard:generateDebugAssets UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-keyboard:packageDebugAssets UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-status-bar:mergeDebugShaders UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-status-bar:compileDebugShaders NO-SOURCE
+[16:58:13]: ▸ > Task :capacitor-status-bar:generateDebugAssets UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-status-bar:packageDebugAssets UP-TO-DATE
+[16:58:13]: ▸ > Task :app:mergeDebugAssets UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-community-sqlite:bundleLibRuntimeToJarDebug UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-android:bundleLibRuntimeToJarDebug UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-app:bundleLibRuntimeToJarDebug UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-haptics:bundleLibRuntimeToJarDebug UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-keyboard:bundleLibRuntimeToJarDebug UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-status-bar:bundleLibRuntimeToJarDebug UP-TO-DATE
+[16:58:13]: ▸ > Task :capacitor-cordova-android-plugins:bundleLibRuntimeToJarDebug UP-TO-DATE
+[16:58:13]: ▸ > Task :app:compressDebugAssets
+[16:58:13]: ▸ > Task :app:desugarDebugFileDependencies UP-TO-DATE
+[16:58:14]: ▸ > Task :app:dexBuilderDebug UP-TO-DATE
+[16:58:14]: ▸ > Task :app:mergeDebugGlobalSynthetics UP-TO-DATE
+[16:58:14]: ▸ > Task :app:processDebugJavaRes NO-SOURCE
+[16:58:14]: ▸ > Task :capacitor-android:processDebugJavaRes NO-SOURCE
+[16:58:14]: ▸ > Task :capacitor-app:processDebugJavaRes NO-SOURCE
+[16:58:14]: ▸ > Task :capacitor-community-sqlite:processDebugJavaRes UP-TO-DATE
+[16:58:14]: ▸ > Task :capacitor-cordova-android-plugins:processDebugJavaRes NO-SOURCE
+[16:58:14]: ▸ > Task :capacitor-haptics:processDebugJavaRes NO-SOURCE
+[16:58:14]: ▸ > Task :capacitor-keyboard:processDebugJavaRes NO-SOURCE
+[16:58:14]: ▸ > Task :capacitor-status-bar:processDebugJavaRes NO-SOURCE
+[16:58:14]: ▸ > Task :app:mergeDebugJavaResource UP-TO-DATE
+[16:58:14]: ▸ > Task :app:checkDebugDuplicateClasses UP-TO-DATE
+[16:58:14]: ▸ > Task :app:mergeExtDexDebug UP-TO-DATE
+[16:58:14]: ▸ > Task :app:mergeLibDexDebug UP-TO-DATE
+[16:58:14]: ▸ > Task :app:mergeProjectDexDebug UP-TO-DATE
+[16:58:14]: ▸ > Task :app:mergeDebugJniLibFolders UP-TO-DATE
+[16:58:14]: ▸ > Task :capacitor-android:mergeDebugJniLibFolders UP-TO-DATE
+[16:58:14]: ▸ > Task :capacitor-android:mergeDebugNativeLibs NO-SOURCE
+[16:58:14]: ▸ > Task :capacitor-android:copyDebugJniLibsProjectOnly UP-TO-DATE
+[16:58:14]: ▸ > Task :capacitor-app:mergeDebugJniLibFolders UP-TO-DATE
+[16:58:14]: ▸ > Task :capacitor-app:mergeDebugNativeLibs NO-SOURCE
+[16:58:14]: ▸ > Task :capacitor-app:copyDebugJniLibsProjectOnly UP-TO-DATE
+[16:58:14]: ▸ > Task :capacitor-community-sqlite:mergeDebugJniLibFolders UP-TO-DATE
+[16:58:14]: ▸ > Task :capacitor-community-sqlite:mergeDebugNativeLibs NO-SOURCE
+[16:58:14]: ▸ > Task :capacitor-community-sqlite:copyDebugJniLibsProjectOnly UP-TO-DATE
+[16:58:14]: ▸ > Task :capacitor-cordova-android-plugins:mergeDebugJniLibFolders UP-TO-DATE
+[16:58:14]: ▸ > Task :capacitor-cordova-android-plugins:mergeDebugNativeLibs NO-SOURCE
+[16:58:14]: ▸ > Task :capacitor-cordova-android-plugins:copyDebugJniLibsProjectOnly UP-TO-DATE
+[16:58:14]: ▸ > Task :capacitor-haptics:mergeDebugJniLibFolders UP-TO-DATE
+[16:58:14]: ▸ > Task :capacitor-haptics:mergeDebugNativeLibs NO-SOURCE
+[16:58:14]: ▸ > Task :capacitor-haptics:copyDebugJniLibsProjectOnly UP-TO-DATE
+[16:58:14]: ▸ > Task :capacitor-keyboard:mergeDebugJniLibFolders UP-TO-DATE
+[16:58:14]: ▸ > Task :capacitor-keyboard:mergeDebugNativeLibs NO-SOURCE
+[16:58:14]: ▸ > Task :capacitor-keyboard:copyDebugJniLibsProjectOnly UP-TO-DATE
+[16:58:14]: ▸ > Task :capacitor-status-bar:mergeDebugJniLibFolders UP-TO-DATE
+[16:58:14]: ▸ > Task :capacitor-status-bar:mergeDebugNativeLibs NO-SOURCE
+[16:58:14]: ▸ > Task :capacitor-status-bar:copyDebugJniLibsProjectOnly UP-TO-DATE
+[16:58:14]: ▸ > Task :app:mergeDebugNativeLibs UP-TO-DATE
+[16:58:14]: ▸ > Task :app:stripDebugDebugSymbols UP-TO-DATE
+[16:58:15]: ▸ > Task :app:validateSigningDebug
+[16:58:15]: ▸ > Task :app:writeDebugAppMetadata UP-TO-DATE
+[16:58:15]: ▸ > Task :app:writeDebugSigningConfigVersions
+[16:58:15]: ▸ > Task :capacitor-android:stripDebugDebugSymbols NO-SOURCE
+[16:58:15]: ▸ > Task :capacitor-android:copyDebugJniLibsProjectAndLocalJars
+[16:58:22]: ▸ > Task :capacitor-android:extractDebugAnnotations
+[16:58:22]: ▸ > Task :capacitor-android:extractDeepLinksForAarDebug
+[16:58:22]: ▸ > Task :capacitor-android:mergeDebugGeneratedProguardFiles
+[16:58:22]: ▸ > Task :capacitor-android:mergeDebugConsumerProguardFiles
+[16:58:22]: ▸ > Task :capacitor-android:prepareDebugArtProfile
+[16:58:22]: ▸ > Task :capacitor-android:prepareLintJarForPublish
+[16:58:22]: ▸ > Task :app:packageDebug
+[16:58:22]: ▸ > Task :app:createDebugApkListingFileRedirect
+[16:58:22]: ▸ > Task :app:assembleDebug
+[16:58:22]: ▸ > Task :capacitor-app:stripDebugDebugSymbols NO-SOURCE
+[16:58:22]: ▸ > Task :capacitor-android:mergeDebugJavaResource
+[16:58:22]: ▸ > Task :capacitor-app:copyDebugJniLibsProjectAndLocalJars
+[16:58:22]: ▸ > Task :capacitor-android:syncDebugLibJars
+[16:58:22]: ▸ > Task :capacitor-android:bundleDebugAar
+[16:58:22]: ▸ > Task :capacitor-android:assembleDebug
+[16:58:22]: ▸ > Task :capacitor-app:extractDebugAnnotations
+[16:58:22]: ▸ > Task :capacitor-app:extractDeepLinksForAarDebug
+[16:58:22]: ▸ > Task :capacitor-app:mergeDebugGeneratedProguardFiles
+[16:58:22]: ▸ > Task :capacitor-app:mergeDebugConsumerProguardFiles
+[16:58:22]: ▸ > Task :capacitor-app:prepareDebugArtProfile
+[16:58:23]: ▸ > Task :capacitor-app:prepareLintJarForPublish
+[16:58:23]: ▸ > Task :capacitor-app:mergeDebugJavaResource
+[16:58:23]: ▸ > Task :capacitor-community-sqlite:stripDebugDebugSymbols NO-SOURCE
+[16:58:23]: ▸ > Task :capacitor-app:syncDebugLibJars
+[16:58:23]: ▸ > Task :capacitor-app:bundleDebugAar
+[16:58:23]: ▸ > Task :capacitor-app:assembleDebug
+[16:58:23]: ▸ > Task :capacitor-community-sqlite:copyDebugJniLibsProjectAndLocalJars
+[16:58:23]: ▸ > Task :capacitor-community-sqlite:extractDebugAnnotations
+[16:58:23]: ▸ > Task :capacitor-community-sqlite:extractDeepLinksForAarDebug
+[16:58:23]: ▸ > Task :capacitor-community-sqlite:mergeDebugGeneratedProguardFiles
+[16:58:23]: ▸ > Task :capacitor-community-sqlite:mergeDebugConsumerProguardFiles
+[16:58:23]: ▸ > Task :capacitor-community-sqlite:prepareDebugArtProfile
+[16:58:23]: ▸ > Task :capacitor-community-sqlite:prepareLintJarForPublish
+[16:58:23]: ▸ > Task :capacitor-cordova-android-plugins:stripDebugDebugSymbols NO-SOURCE
+[16:58:23]: ▸ > Task :capacitor-community-sqlite:mergeDebugJavaResource
+[16:58:23]: ▸ > Task :capacitor-cordova-android-plugins:copyDebugJniLibsProjectAndLocalJars
+[16:58:23]: ▸ > Task :capacitor-community-sqlite:syncDebugLibJars
+[16:58:23]: ▸ > Task :capacitor-community-sqlite:bundleDebugAar
+[16:58:23]: ▸ > Task :capacitor-community-sqlite:assembleDebug
+[16:58:28]: ▸ > Task :capacitor-cordova-android-plugins:extractDebugAnnotations
+[16:58:28]: ▸ > Task :capacitor-cordova-android-plugins:extractDeepLinksForAarDebug
+[16:58:28]: ▸ > Task :capacitor-cordova-android-plugins:mergeDebugGeneratedProguardFiles
+[16:58:28]: ▸ > Task :capacitor-cordova-android-plugins:mergeDebugConsumerProguardFiles
+[16:58:28]: ▸ > Task :capacitor-cordova-android-plugins:prepareDebugArtProfile
+[16:58:28]: ▸ > Task :capacitor-cordova-android-plugins:prepareLintJarForPublish
+[16:58:28]: ▸ > Task :capacitor-cordova-android-plugins:mergeDebugJavaResource
+[16:58:28]: ▸ > Task :capacitor-haptics:stripDebugDebugSymbols NO-SOURCE
+[16:58:28]: ▸ > Task :capacitor-cordova-android-plugins:syncDebugLibJars
+[16:58:28]: ▸ > Task :capacitor-cordova-android-plugins:bundleDebugAar
+[16:58:28]: ▸ > Task :capacitor-cordova-android-plugins:assembleDebug
+[16:58:28]: ▸ > Task :capacitor-haptics:copyDebugJniLibsProjectAndLocalJars
+[16:58:28]: ▸ > Task :capacitor-haptics:extractDebugAnnotations
+[16:58:28]: ▸ > Task :capacitor-haptics:extractDeepLinksForAarDebug
+[16:58:28]: ▸ > Task :capacitor-haptics:mergeDebugGeneratedProguardFiles
+[16:58:28]: ▸ > Task :capacitor-haptics:mergeDebugConsumerProguardFiles
+[16:58:28]: ▸ > Task :capacitor-haptics:prepareDebugArtProfile
+[16:58:28]: ▸ > Task :capacitor-haptics:prepareLintJarForPublish
+[16:58:28]: ▸ > Task :capacitor-keyboard:stripDebugDebugSymbols NO-SOURCE
+[16:58:28]: ▸ > Task :capacitor-haptics:mergeDebugJavaResource
+[16:58:29]: ▸ > Task :capacitor-haptics:syncDebugLibJars
+[16:58:29]: ▸ > Task :capacitor-haptics:bundleDebugAar
+[16:58:29]: ▸ > Task :capacitor-haptics:assembleDebug
+[16:58:29]: ▸ > Task :capacitor-keyboard:copyDebugJniLibsProjectAndLocalJars
+[16:58:29]: ▸ > Task :capacitor-keyboard:extractDebugAnnotations
+[16:58:29]: ▸ > Task :capacitor-keyboard:extractDeepLinksForAarDebug
+[16:58:29]: ▸ > Task :capacitor-keyboard:mergeDebugGeneratedProguardFiles
+[16:58:29]: ▸ > Task :capacitor-keyboard:mergeDebugConsumerProguardFiles
+[16:58:29]: ▸ > Task :capacitor-keyboard:prepareDebugArtProfile
+[16:58:29]: ▸ > Task :capacitor-keyboard:prepareLintJarForPublish
+[16:58:29]: ▸ > Task :capacitor-status-bar:stripDebugDebugSymbols NO-SOURCE
+[16:58:29]: ▸ > Task :capacitor-keyboard:mergeDebugJavaResource
+[16:58:29]: ▸ > Task :capacitor-status-bar:copyDebugJniLibsProjectAndLocalJars
+[16:58:29]: ▸ > Task :capacitor-keyboard:syncDebugLibJars
+[16:58:29]: ▸ > Task :capacitor-keyboard:bundleDebugAar
+[16:58:29]: ▸ > Task :capacitor-keyboard:assembleDebug
+[16:58:29]: ▸ > Task :capacitor-status-bar:extractDebugAnnotations
+[16:58:29]: ▸ > Task :capacitor-status-bar:extractDeepLinksForAarDebug
+[16:58:29]: ▸ > Task :capacitor-status-bar:mergeDebugGeneratedProguardFiles
+[16:58:29]: ▸ > Task :capacitor-status-bar:mergeDebugConsumerProguardFiles
+[16:58:29]: ▸ > Task :capacitor-status-bar:prepareDebugArtProfile
+[16:58:29]: ▸ > Task :capacitor-status-bar:prepareLintJarForPublish
+[16:58:29]: ▸ > Task :capacitor-status-bar:mergeDebugJavaResource
+[16:58:29]: ▸ > Task :capacitor-status-bar:syncDebugLibJars
+[16:58:29]: ▸ > Task :capacitor-status-bar:bundleDebugAar
+[16:58:29]: ▸ > Task :capacitor-status-bar:assembleDebug
+[16:58:29]: ▸ BUILD SUCCESSFUL in 23s
+[16:58:29]: ▸ 223 actionable tasks: 75 executed, 148 up-to-date
+[16:58:29]: -----------------------------------
+[16:58:29]: --- Step: get_filenames_android ---
+[16:58:29]: -----------------------------------
+[16:58:29]: Checking for apk file /builds/jota1235/pruebaagenda/android/app/build/outputs/apk/debug/app-debug.apk
+[16:58:29]: Detected apk file
+[16:58:29]: Checking for aab file /builds/jota1235/pruebaagenda/android/app/build/outputs/bundle/debug/app-debug.aab
+[16:58:29]: Detected aab file
+[16:58:29]: -----------------------------------------
+[16:58:29]: --- Step: upload_binary_to_play_store ---
+[16:58:29]: -----------------------------------------
+[16:58:29]: ----------------------------------
+[16:58:29]: --- Step: upload_android_files ---
+[16:58:29]: ----------------------------------
+[16:58:31]: Uploaded APK successfully.
+[16:58:33]: Uploaded AAB successfully.
+[16:58:33]: --------------------------------
+[16:58:33]: --- Step: upload_source_maps ---
+[16:58:33]: --------------------------------
+[16:58:33]: No .sourcemaps directory found. Skipping sourcemaps upload.
+[16:58:33]: -------------------------
+[16:58:33]: --- Step: upload_logs ---
+[16:58:33]: -------------------------
 
++--------------------------------------------------+
+|                 fastlane summary                 |
++------+-----------------------------+-------------+
+| Step | Action                      | Time (in s) |
++------+-----------------------------+-------------+
+| 1    | add_extra_platforms         | 0           |
+| 2    | default_platform            | 0           |
+| 3    | prepare_environment         | 0           |
+| 4    | sentry_init                 | 0           |
+| 5    | begin_building              | 0           |
+| 6    | build_summary               | 1           |
+| 7    | set_ionic_cli               | 1           |
+| 8    | detect_package_manager      | 0           |
+| 9    | add_git_credentials         | 0           |
+| 10   | get_appflow_config          | 0           |
+| 11   | dependency_install          | 21          |
+| 12   | create_capacitor_config     | 0           |
+| 13   | get_web_dir                 | 0           |
+| 14   | modify_cap_web_config       | 0           |
+| 15   | set_java_home               | 0           |
+| 16   | build_pro_app               | 18          |
+| 17   | cap_sync                    | 1           |
+| 18   | cap_custom_deploy           | 0           |
+| 19   | modify_gradle_config        | 0           |
+| 20   | bundledebug                 | 212         |
+| 21   | assembledebug               | 23          |
+| 22   | get_filenames_android       | 0           |
+| 23   | upload_binary_to_play_store | 0           |
+| 24   | upload_android_files        | 4           |
+| 25   | upload_source_maps          | 0           |
+| 26   | upload_logs                 | 6           |
++------+-----------------------------+-------------+
+
+[16:58:40]: fastlane.tools finished successfully 🎉
+
+Running after_script
+Running after script...
+$ run "clean-up"
+
+Cleaning up project directory and file based variables
+
+Job succeeded
 
 
 ------------------- PROCESS STARTED (10606) for package io.ionic.starter ----------------------------

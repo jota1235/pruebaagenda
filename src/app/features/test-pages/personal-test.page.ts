@@ -11,8 +11,10 @@ import {
   IonButton,
   IonButtons,
   IonBackButton,
-  IonSpinner
+  IonSpinner,
+  IonBadge
 } from '@ionic/angular/standalone';
+import { DatabaseService } from '../../core/services/database.service';
 import { AgendaSimpleService } from '../../core/services/agenda-simple.service';
 
 @Component({
@@ -31,14 +33,19 @@ import { AgendaSimpleService } from '../../core/services/agenda-simple.service';
     IonButton,
     IonButtons,
     IonBackButton,
-    IonSpinner
+    IonSpinner,
+    IonBadge
   ]
 })
 export class PersonalTestPage implements OnInit {
   personal: any[] = [];
   isLoading = true;
+  source = ''; // 'SQLite' o 'localStorage'
 
-  constructor(private agendaService: AgendaSimpleService) {}
+  constructor(
+    private databaseService: DatabaseService,
+    private agendaSimpleService: AgendaSimpleService
+  ) {}
 
   async ngOnInit() {
     await this.loadPersonal();
@@ -47,10 +54,31 @@ export class PersonalTestPage implements OnInit {
   async loadPersonal() {
     try {
       this.isLoading = true;
-      this.personal = await this.agendaService.getPersonalAgenda();
-      console.log('Personal cargado desde localStorage:', this.personal);
+
+      // Verificar si SQLite está disponible
+      if (this.databaseService.isReady()) {
+        console.log('📱 Cargando personal desde SQLite...');
+        this.source = 'SQLite';
+        const personalRaw = await this.databaseService.getPersonal();
+
+        // Transformar formato SQLite al formato esperado por la UI
+        this.personal = personalRaw.map(p => ({
+          id: p.id,
+          nombre: p.apellidos ? `${p.nombre} ${p.apellidos}` : p.nombre,
+          activo: 'SI'
+        }));
+
+        console.log(`✅ ${this.personal.length} personal cargado desde SQLite`);
+      } else {
+        console.log('💾 SQLite no disponible, cargando desde localStorage...');
+        this.source = 'localStorage';
+        this.personal = await this.agendaSimpleService.getPersonalAgenda();
+        console.log(`✅ ${this.personal.length} personal cargado desde localStorage`);
+      }
+
     } catch (error) {
-      console.error('Error cargando personal:', error);
+      console.error('❌ Error cargando personal:', error);
+      this.source = 'Error';
     } finally {
       this.isLoading = false;
     }

@@ -1,8 +1,8 @@
 # 📱 DOCUMENTACIÓN DEL PROYECTO - AGENDA OFFLINE SYSERV
 
-**Última actualización**: 2025-11-10
+**Última actualización**: 2025-11-20
 **Versión**: 0.0.1
-**Estado**: En Desarrollo - Fase de Diseño UI Completo
+**Estado**: En Desarrollo - Migración a localStorage Completa
 
 ---
 
@@ -46,7 +46,8 @@ Esta app es un **complemento del sistema web SyServ existente**, no un reemplazo
 | Framework Principal | Angular | 20.0.0 |
 | UI Framework | Ionic | 8.0.0 |
 | Plataforma Nativa | Capacitor | 7.4.4 |
-| Base de Datos Local | SQLite | 7.0.2 |
+| Almacenamiento Local | localStorage | HTML5 API |
+| Base de Datos Local | SQLite (comentado) | 7.0.2 |
 | Lenguaje | TypeScript | 5.8.0 |
 | Gestión de Estado | RxJS Observables | 7.8.0 |
 
@@ -72,9 +73,32 @@ Esta app es un **complemento del sistema web SyServ existente**, no un reemplazo
 
 ### Resumen General
 **Progreso UI/Diseño**: 85%
-**Progreso Lógica de Negocio**: 15%
+**Progreso Lógica de Negocio**: 40%
 **Progreso Integración APIs**: 0%
-**Progreso Sistema Offline**: 5%
+**Progreso Sistema Offline**: 30%
+
+### ⚡ Cambio Crítico Reciente: Migración a localStorage
+**Fecha**: 2025-11-20 | **Commit**: 390b1ab
+
+Se completó la migración de SQLite a localStorage como sistema de almacenamiento primario debido a problemas de inicialización de SQLite en dispositivos Android. La agenda ahora funciona correctamente tanto en navegador web como en APK de Android.
+
+**Razones del cambio**:
+- SQLite presentaba problemas de inicialización en Android (DatabaseService no se inicializaba correctamente)
+- Código con condicionales de plataforma (`Capacitor.getPlatform()`) causaba comportamiento divergente
+- En web funcionaba con datos mock de localStorage ✓
+- En Android intentaba usar SQLite que fallaba → agenda vacía ✗
+- localStorage es más simple y suficiente para el alcance actual del proyecto
+
+**Estado actual**:
+- ✅ **localStorage**: Sistema primario funcional en todas las plataformas
+- 🔄 **SQLite**: Código completo preservado en comentarios para futura depuración
+- ✅ **Formulario de citas**: Muestra datos de personal, clientes y servicios correctamente
+- ✅ **Vista de agenda**: Despliega configuración y citas en web y Android
+
+**Servicios afectados**:
+- `AgendaService`: Métodos `readConfigAgenda()` y `readReservas()` ahora usan localStorage exclusivamente
+- `SeedSimpleService`: Incluye población automática de `config_agenda` en localStorage
+- `DatabaseService`: Preservado completo en comentarios (17 tablas, 16 índices)
 
 ### Módulos Completados
 
@@ -304,17 +328,28 @@ localStorage.setItem('notificationSettings', JSON.stringify({
    - ❌ Filtros (servicio, personal, estatus)
    - ❌ Indicadores de conectividad
 
-#### ❌ No Implementados (CRÍTICOS)
+#### ✅ Parcialmente Implementados
 
-3. **Almacenamiento Local con SQLite** (0%)
-   - ❌ Inicialización de base de datos
-   - ❌ Esquema de tablas:
-     - `companies`, `branches`, `services`, `staff`
-     - `status`, `cancel_reasons`, `settings`
-     - `appointments`
-     - `outbox` (cola de sincronización)
-     - `sync_state` (marcas de sincronización)
-   - ❌ Namespacing por tenant (company_id)
+3. **Almacenamiento Local** (30%)
+   - ✅ **localStorage implementado y funcional**:
+     - ✅ StorageService con abstracción genérica
+     - ✅ Clientes, Personal, Productos/Servicios en localStorage
+     - ✅ Configuración de agenda (horarios, colores, terapeutas)
+     - ✅ Array de citas (actualmente vacío, listo para uso)
+     - ✅ SeedSimpleService poblando datos de prueba
+   - 🔄 **SQLite implementado pero comentado**:
+     - 17 tablas completas definidas
+     - 16 índices para optimización
+     - CRUD completo implementado
+     - Soporte multi-tenant preparado
+     - Código preservado para futura activación
+   - ❌ **Pendiente**:
+     - Resolver inicialización de SQLite en Android
+     - Sistema de migrations automáticas
+     - Tabla `outbox` para cola de sincronización
+     - Tabla `sync_state` para marcas de sincronización
+
+#### ❌ No Implementados (CRÍTICOS)
 
 4. **Sincronización Bidireccional** (0%)
    - ❌ Detección de conectividad
@@ -342,6 +377,7 @@ localStorage.setItem('notificationSettings', JSON.stringify({
 
 7. **Multi-tenant** (20%)
    - ✅ Campo `companyId` en User interface
+   - ✅ Campo `handel` y `id_empresa_base` en modelos
    - ❌ Aislamiento de datos en BD local
    - ❌ Filtrado por tenant en todas las queries
 
@@ -412,6 +448,67 @@ agenda/
 
 **Estado**: Mock funcional, listo para conectar con API
 
+#### StorageService (`core/services/storage.service.ts`)
+**Propósito**: Abstracción para almacenamiento en localStorage
+
+**Métodos Implementados**:
+- `set<T>(key: string, value: T)`: Guardar datos con tipo genérico
+- `get<T>(key: string, defaultValue?: T)`: Obtener datos con valor por defecto
+- `remove(key: string)`: Eliminar una clave específica
+- `clear()`: Limpiar todo el almacenamiento
+- `has(key: string)`: Verificar existencia de clave
+
+**Estado**: ✅ Funcional y en uso en toda la aplicación
+
+#### AgendaService (`core/services/agenda.service.ts`)
+**Propósito**: Gestión de agenda, citas y generación de calendario (2,277 líneas)
+
+**Métodos Clave Implementados**:
+- `readConfigAgenda(fecha: string)`: Lee configuración desde localStorage
+- `readReservas(fecha: string)`: Lee citas/reservas desde localStorage
+- `genCalendar(fecha: string)`: Algoritmo complejo de generación de calendario
+- `readHorariosAgenda(horaInicio, horaFin)`: Genera horarios disponibles
+- `setMinutosIncremento(minutos)`: Configuración de intervalos de tiempo
+
+**Características**:
+- Algoritmo traducido de PHP original de SyServ
+- Soporte para múltiples terapeutas/personal
+- Manejo de disponibilidad y citas
+- Intervalos configurables (15, 30, 60 minutos)
+- Colores por estado de cita (libre, reservada, confirmada, cancelada, cobrado)
+
+**Estado**: ✅ Funcional con localStorage en todas las plataformas (web + Android)
+
+#### SeedSimpleService (`core/services/seed-simple.service.ts`)
+**Propósito**: Población de datos de prueba en localStorage
+
+**Métodos Implementados**:
+- `hasData()`: Verifica si existen datos en localStorage
+- `seedDatabase()`: Puebla localStorage con datos de prueba
+- `clearAllData()`: Limpia todos los datos
+
+**Datos de prueba incluidos**:
+- 5 clientes de ejemplo (Juan Pérez, María González, etc.)
+- 4 personal/terapeutas (Dr. Rodríguez, Dra. Fernández, etc.)
+- 6 servicios (Masaje Relajante, Acupuntura, etc.)
+- Configuración completa de agenda (horarios, colores, incrementos)
+- Array vacío de citas (para ser llenado por el usuario)
+
+**Estado**: ✅ Funcional, se ejecuta automáticamente en primer inicio
+
+#### DatabaseService (`core/services/database.service.ts`)
+**Propósito**: Implementación completa de SQLite (ACTUALMENTE COMENTADO)
+
+**Estado**: 🔄 Preservado para futura depuración
+**Contenido**:
+- 17 tablas definidas (companies, branches, services, staff, appointments, etc.)
+- 16 índices para optimización
+- Métodos CRUD completos
+- Soporte multi-tenant
+- Sincronización preparada (outbox, sync_state)
+
+**Razón de estar comentado**: Problemas de inicialización en Android causaban que la agenda apareciera vacía en APK. Se preserva el código completo para futuro uso cuando se resuelvan los problemas de SQLite en Capacitor.
+
 ---
 
 ### Páginas
@@ -456,18 +553,23 @@ agenda/
 
 ### CRÍTICOS (Bloqueantes para funcionalidad offline)
 
-#### 1. Database Service
-**Prioridad**: 🔴 CRÍTICA
-**Archivos a crear**:
-- `src/app/core/services/database.service.ts`
-- `src/app/core/models/db-schema.ts`
+#### 1. Storage System ✅ RESUELTO CON localStorage
+**Prioridad**: 🟢 COMPLETADO
+**Archivos existentes**:
+- `src/app/core/services/storage.service.ts` ✅ Funcional
+- `src/app/core/services/database.service.ts` 🔄 Preservado en comentarios
 
-**Tareas**:
-- [ ] Inicializar SQLite con Capacitor
-- [ ] Definir esquema de tablas completo
-- [ ] Crear migrations
-- [ ] Implementar métodos CRUD base
-- [ ] Soporte multi-tenant (namespace por company_id)
+**Estado actual**:
+- ✅ localStorage implementado y funcional en todas las plataformas
+- ✅ StorageService proporciona abstracción limpia
+- ✅ Datos de prueba poblados automáticamente con SeedSimpleService
+- 🔄 SQLite completamente implementado pero comentado para futura migración
+
+**Tareas futuras (opcional - solo si se necesita SQLite)**:
+- [ ] Resolver problemas de inicialización de SQLite en Android
+- [ ] Descomentar y activar DatabaseService
+- [ ] Migrar datos de localStorage a SQLite
+- [ ] Implementar migrations automáticas
 
 **Tablas Requeridas**:
 ```sql
@@ -719,38 +821,46 @@ const config: CapacitorConfig = {
 
 ---
 
-### 🔄 FASE 1: Capa de Datos (EN CURSO)
-**Duración estimada**: 1.5 semanas
+### ✅ FASE 1: Capa de Datos (COMPLETADO CON localStorage)
+**Duración real**: 2 semanas
 **Prioridad**: CRÍTICA
-**Estado**: 🟡 0%
+**Estado**: ✅ 80% (localStorage funcional, SQLite pendiente)
 
-#### Objetivos
-Implementar la base de datos local y los servicios de persistencia.
+#### Objetivos Alcanzados
+Implementar almacenamiento local y servicios de persistencia funcionales en todas las plataformas.
 
-#### Tareas
-1. **DatabaseService** (3 días)
-   - [ ] Inicializar SQLite
-   - [ ] Crear esquema completo de tablas
-   - [ ] Implementar migrations
-   - [ ] Métodos CRUD genéricos
-   - [ ] Testing básico
+#### Tareas Completadas
+1. **StorageService** ✅
+   - [x] Abstracción genérica sobre localStorage
+   - [x] Métodos get/set con tipos TypeScript
+   - [x] Métodos clear/remove/has
+   - [x] Funcional en web y Android
 
-2. **AppointmentService** (2 días)
-   - [ ] CRUD de citas local
-   - [ ] Generación de UUIDs
-   - [ ] Queries por fecha/staff/servicio
-   - [ ] Manejo de sync_status
+2. **AgendaService** ✅
+   - [x] Lectura de configuración desde localStorage
+   - [x] Lectura de citas/reservas desde localStorage
+   - [x] Algoritmo completo de generación de calendario
+   - [x] Manejo de horarios y disponibilidad
+   - [x] 2,277 líneas de lógica compleja funcional
 
-3. **CatalogService** (2 días)
-   - [ ] Servicios desde BD local
-   - [ ] Staff desde BD local
-   - [ ] Sucursales, estatus, motivos
-   - [ ] Caché en memoria
+3. **SeedSimpleService** ✅
+   - [x] Población automática de datos de prueba
+   - [x] Clientes, Personal, Servicios
+   - [x] Configuración de agenda completa
+   - [x] Verificación de datos existentes
+
+4. **DatabaseService** 🔄
+   - [x] Esquema completo de 17 tablas definido
+   - [x] 16 índices implementados
+   - [x] Métodos CRUD completos
+   - [ ] Inicialización en Android (pendiente - problema con Capacitor)
+   - [x] Código preservado en comentarios para futura activación
 
 **Entregables**:
-- Base de datos SQLite funcional
-- Servicios de lectura/escritura local
-- Tests unitarios de servicios
+- ✅ Sistema de almacenamiento localStorage funcional
+- ✅ Servicios de lectura/escritura en todas las plataformas
+- ✅ Datos de prueba poblados automáticamente
+- 🔄 SQLite completamente implementado (código preservado)
 
 ---
 
@@ -878,6 +988,58 @@ Convertir los diseños en funcionalidad completa con datos reales.
 ---
 
 ## 📝 CHANGELOG
+
+### [2025-11-20] - Migración Completa a localStorage y Resolución de Problema en Android APK
+
+#### 🔴 Problema Crítico Resuelto
+**Síntoma**: La agenda aparecía vacía en dispositivos Android (APK) pero funcionaba correctamente en navegador web. El formulario de citas mostraba datos correctamente en ambas plataformas.
+
+**Causa Raíz**: Código con condicionales específicos de plataforma en `AgendaService`:
+- Métodos `readConfigAgenda()` y `readReservas()` tenían bloques `if (platform === 'web')`
+- En navegador: Usaba datos mock de localStorage → ✅ Funcionaba
+- En Android: Intentaba usar queries SQLite que fallaban → ❌ Agenda vacía
+- DatabaseService nunca se inicializaba correctamente en Android
+
+#### ✅ Solución Implementada (Commit 390b1ab)
+
+**Modificado**:
+- ✅ **AgendaService** (`src/app/core/services/agenda.service.ts`)
+  - `readConfigAgenda()`: Eliminados condicionales de plataforma, ahora usa localStorage universalmente
+  - `readReservas()`: Eliminados condicionales de plataforma, ahora usa localStorage universalmente
+  - Código SQLite preservado en comentarios con marcador "MANTENER PARA DEPURACIÓN"
+  - Agregados console.log para depuración
+
+- ✅ **SeedSimpleService** (`src/app/core/services/seed-simple.service.ts`)
+  - Agregado objeto `config_agenda` completo a `seedDatabase()`
+  - Incluye configuración de horarios, colores, terapeutas, disponibilidad
+  - Población automática en primer inicio
+
+**Archivos Preservados**:
+- ✅ **DatabaseService**: Código completo preservado (17 tablas, 16 índices, CRUD completo)
+- Se mantiene para futura depuración cuando se resuelvan problemas de SQLite + Capacitor
+
+#### 📊 Resultados
+- ✅ Agenda funciona en navegador web
+- ✅ Agenda funciona en APK de Android
+- ✅ Formulario de citas funciona en ambas plataformas
+- ✅ Configuración de agenda cargada correctamente
+- ✅ Compilación exitosa sin errores
+
+#### 🔧 Decisión Técnica
+**Por qué localStorage en lugar de SQLite (por ahora)**:
+- localStorage es más simple y directo
+- No requiere inicialización compleja con Capacitor
+- Suficiente para ~1000-2000 citas (5-10 MB límite típico)
+- SQLite se retomará cuando se resuelvan los problemas de inicialización en Android
+- Código SQLite completamente preservado para facilitar futura migración
+
+#### 📝 Lecciones Aprendidas
+1. **Evitar condicionales de plataforma**: Causan comportamiento divergente difícil de depurar
+2. **Unificar acceso a datos**: Un solo método de acceso a datos independiente de plataforma
+3. **Preservar código**: Comentar en lugar de eliminar para facilitar futuras iteraciones
+4. **Logs estratégicos**: console.log claros ayudan a diagnosticar problemas en producción
+
+---
 
 ### [2025-11-10] - Implementación Completa de UI Principal y Modo Oscuro
 
@@ -1029,10 +1191,28 @@ Convertir los diseños en funcionalidad completa con datos reales.
 **Razón**: Reactive programming, fácil de subscribirse desde múltiples componentes
 **Ejemplo**: `currentUser$`, `isAuthenticated$`
 
-#### 4. LocalStorage Temporal
-**Decisión actual**: localStorage para tokens (TEMPORAL)
-**Plan futuro**: Migrar a Capacitor SecureStorage
-**Razón**: localStorage no es seguro para tokens JWT en producción
+#### 4. localStorage como Almacenamiento Principal
+**Decisión actual**: localStorage para datos de aplicación y tokens
+**Razón**:
+- Más simple y directo que SQLite
+- No requiere inicialización compleja
+- Funciona consistentemente en todas las plataformas (web, Android, iOS)
+- Suficiente para ~1000-2000 citas (límite típico 5-10 MB)
+
+**Consideraciones**:
+- localStorage es síncrono (puede bloquear UI con grandes datasets)
+- Límite de almacenamiento ~5-10 MB dependiendo del navegador/plataforma
+- Datos almacenados como strings (requiere JSON.stringify/parse)
+
+**Plan futuro**:
+- Tokens: Migrar a Capacitor SecureStorage (más seguro)
+- Datos: Considerar SQLite si se necesita:
+  - Más de 2000 citas
+  - Queries complejas con joins
+  - Índices para búsquedas rápidas
+  - Transacciones atómicas
+
+**Migración a SQLite**: Código completo ya implementado y preservado en comentarios, listo para activarse cuando se resuelvan problemas de inicialización en Android
 
 #### 5. Sistema de Modo Oscuro
 **Decisión**: Implementación manual con clase `body.dark`
@@ -1100,7 +1280,140 @@ Orden recomendado:
 
 ---
 
-### Esquema de Base de Datos Local
+### Estructura de Datos en localStorage
+
+#### Claves Almacenadas
+
+**Datos de aplicación**:
+```typescript
+// Catálogos
+'clientes': Cliente[]           // Array de clientes
+'personal': Personal[]          // Array de personal/staff
+'productos': Producto[]         // Array de servicios/productos
+
+// Agenda
+'citas': Cita[]                // Array de citas/reservas
+'config_agenda': ConfigAgenda  // Configuración de agenda
+
+// Autenticación
+'user': User                   // Usuario actual
+'authToken': string           // Token JWT
+```
+
+**Configuración de usuario**:
+```typescript
+'darkMode': boolean            // Preferencia de tema
+'selectedLanguage': string     // Idioma ('es', 'en', 'pt')
+'notificationVolume': number   // Volumen 0-100
+'notificationSettings': {      // Preferencias de notificaciones
+  push: boolean,
+  email: boolean,
+  sms: boolean,
+  reminders: boolean
+}
+```
+
+#### Interfaces de Datos
+
+**Cliente**:
+```typescript
+interface Cliente {
+  id: number;
+  handel: number;
+  id_empresa_base: number;
+  nombre: string;
+  apaterno: string;
+  amaterno: string;
+  tel1: string;
+  email1: string;
+  activo: number;
+}
+```
+
+**Personal**:
+```typescript
+interface Personal {
+  id: number;
+  handel: number;
+  id_empresa_base: number;
+  alias: string;
+  nombre: string;
+  apellidos: string;
+  activo: number;
+  orden: number;
+}
+```
+
+**Producto (Servicio)**:
+```typescript
+interface Producto {
+  id: number;
+  handel: number;
+  id_empresa_base: number;
+  codigo: string;
+  nombre: string;
+  tipo: string;
+  n_duracion: number;  // Múltiplo de 30 min (1=30min, 2=60min, 3=90min)
+  precio: number;
+  activo: number;
+}
+```
+
+**ConfigAgenda**:
+```typescript
+interface ConfigAgenda {
+  puesto_servicio: string;
+  hora_inicio: number;
+  minutos_incremento: number;  // 15, 30, o 60
+  hora_fin: number;
+  color_libre: string;
+  color_reservada: string;
+  color_confirmada: string;
+  color_cancelada: string;
+  color_cobrado: string;
+  color_fuera_tiempo: string;
+  most_disponibilidad: boolean;
+  rangoManual: boolean;
+  rangoHora: boolean;
+  vizNombreTerapeuta: boolean;
+  num_columnas: number;
+  config_horario: {
+    horario_sabado: string;
+    horario_domingo: string;
+    formato_hora: string;
+    str_dias: string;
+  };
+  arrTerapeutas: Array<{id: number, alias: string, nombre: string}>;
+  arrLisTerapeutas: number[];
+  aliasTerapeutas: string[];
+  disponibilidad: {
+    hora_inicio: number;
+    hora_fin: number;
+    dia_habil: boolean;
+  };
+}
+```
+
+#### Limitaciones de localStorage
+
+**Capacidad**:
+- Típicamente 5-10 MB por dominio
+- ~1000-2000 citas estimadas antes de alcanzar límite
+- Considerar SQLite si se excede capacidad
+
+**Performance**:
+- API síncrona (puede bloquear UI thread)
+- JSON.parse/stringify en cada operación
+- No hay índices ni optimización de queries
+
+**Seguridad**:
+- Datos no encriptados
+- Accesible desde JavaScript
+- Tokens deberían migrar a SecureStorage
+
+---
+
+### Esquema de Base de Datos Local (SQLite - Preservado para Futuro)
 
 #### Consideraciones Multi-Tenant
 - **Todas las tablas** deben tener `company_id`
@@ -1383,12 +1696,59 @@ Para listas de más de 50 elementos, usar `ion-virtual-scroll`:
 - **Backend**: PHP (existente)
 - **Frontend**: Ionic + Angular
 
-### Próximos Pasos
-1. Revisar y aprobar este documento
-2. Iniciar Fase 1: Implementar DatabaseService
-3. Configurar entornos (dev/prod)
-4. Definir flujo de trabajo Git
+### Estado del Proyecto a la Fecha
+
+**Última compilación exitosa**: 2025-11-20
+**Último commit**: 390b1ab - "Fix agenda display in Android by migrating to localStorage"
+**Build generado**: AppFlow APK
+**Plataformas probadas**: Web (navegador) ✅ | Android (APK) ✅
+
+**Archivos clave modificados en último commit**:
+- `src/app/core/services/agenda.service.ts` (líneas 778-1083)
+- `src/app/core/services/seed-simple.service.ts` (líneas 204-245)
+
+### Próximos Pasos Recomendados
+
+**Inmediato (Alta prioridad)**:
+1. ✅ ~~Implementar almacenamiento local~~ (COMPLETADO con localStorage)
+2. ✅ ~~Resolver problema de agenda en Android~~ (RESUELTO)
+3. **Implementar formulario de creación de citas** (siguiente paso crítico)
+   - Usar datos de localStorage (clientes, personal, productos)
+   - Guardar citas en array 'citas' de localStorage
+   - Validaciones básicas de disponibilidad
+
+**Corto plazo (1-2 semanas)**:
+4. Implementar edición y cancelación de citas
+5. Agregar filtros en vista de agenda (por personal, servicio, estatus)
+6. Configurar entornos (dev/prod) en `environment.ts`
+7. Actualizar `capacitor.config.ts` con appId definitivo
+
+**Mediano plazo (2-4 semanas)**:
+8. Conectar AuthService con API real del backend PHP
+9. Implementar NetworkService para detección de conectividad
+10. Implementar SyncService básico (pull de datos desde API)
+11. Agregar indicadores visuales de estado online/offline
+
+**Largo plazo (opcional)**:
+12. Resolver inicialización de SQLite en Android si se requiere mayor capacidad
+13. Migrar de localStorage a SQLite cuando sea necesario
+14. Implementar sistema completo de sincronización bidireccional
+15. Implementar Outbox pattern para operaciones offline
+
+### Consideraciones Técnicas
+
+**localStorage es suficiente si**:
+- Número de citas < 2000
+- No se requieren queries complejas con joins
+- Performance actual es aceptable
+- No se necesita sincronización compleja
+
+**Migrar a SQLite cuando**:
+- Número de citas > 2000
+- Se requiera mejor performance en búsquedas
+- Se necesiten índices para filtrado rápido
+- Se implemente sincronización con outbox/sync_state
 
 ---
 
-**Fin del documento** | Última actualización: 2025-11-08
+**Fin del documento** | Última actualización: 2025-11-20

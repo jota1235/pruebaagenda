@@ -1,0 +1,361 @@
+1. Qué se recomienda hoy para Ionic + Angular + SQLite
+
+La propia documentación de Ionic y varios tutoriales actuales recomiendan usar:
+
+Capacitor + @capacitor-community/sqlite para SQLite nativo (Android/iOS). 
+Ionic Framework
++2
+DEV Community
++2
+
+Dejar cordova-sqlite-storage solo para proyectos legacy.
+
+Además, se insiste en:
+
+Esperar a que la plataforma esté lista (platform.ready() / Capacitor listo) antes de tocar la BD. 
+Stack Overflow
++1
+
+Hacer la inicialización de la BD en un servicio central (singleton) y exponer métodos asíncronos.
+
+2. Pasos recomendados para implementar SQLite (Ionic + Angular + Capacitor)
+2.1. Instalación del plugin
+
+Instalar plugin y dependencia:
+
+npm install @capacitor-community/sqlite
+npx cap sync
+
+
+Abrir Android Studio:
+
+npx cap open android
+
+
+Deja que Gradle sincronice. Si hay errores de dependencias AndroidX o similares, corrígelos ahí (el plugin los documenta).
+
+Hay tutoriales paso a paso que muestran exactamente este flujo para Angular/Ionic 6–8 con Capacitor y este plugin. 
+DEV Community
++2
+https://devdactic.com
++2
+
+2.2. Patrón de inicialización en Ionic/Angular
+
+Idea clave:
+La BD solo existe en el dispositivo cuando:
+
+La app ya arrancó en el entorno nativo (no en navegador), y
+
+Ya se ejecutó tu código de inicialización (crear conexión, abrir BD, crear tablas y sembrar datos si hace falta).
+
+Un patrón típico:
+
+// app.component.ts
+import { Component } from '@angular/core';
+import { Platform } from '@ionic/angular';
+import { DbService } from './services/db.service';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: 'app.component.html'
+})
+export class AppComponent {
+  constructor(
+    private platform: Platform,
+    private dbService: DbService
+  ) {
+    this.initApp();
+  }
+
+  async initApp() {
+    await this.platform.ready(); // MUY IMPORTANTE
+    await this.dbService.init(); // Inicializa SQLite solo una vez
+  }
+}
+
+
+Y un servicio de BD (simplificado) usando @capacitor-community/sqlite:
+
+// db.service.ts
+import { Injectable } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
+import { CapacitorSQLite, SQLiteDBConnection } from '@capacitor-community/sqlite';
+
+@Injectable({ providedIn: 'root' })
+export class DbService {
+  private db?: SQLiteDBConnection;
+  private isReady = false;
+
+  async init() {
+    if (!Capacitor.isNativePlatform()) {
+      // Opcional: puedes usar jeep-sqlite para web o simplemente saltarte SQLite
+      console.log('SQLite solo en nativo');
+      return;
+    }
+
+    const sqlite = CapacitorSQLite;
+
+    // 1. Crear conexión
+    const ret = await sqlite.createConnection({
+      database: 'mi_bd',
+      version: 1,
+      readonly: false
+    });
+
+    this.db = ret;
+
+    // 2. Abrir BD
+    await this.db.open();
+
+    // 3. Crear tablas y sembrar datos si es la primera vez
+    await this.createSchema();
+    await this.seedIfNeeded();
+
+    this.isReady = true;
+  }
+
+  private async createSchema() {
+    const createStmt = `
+      CREATE TABLE IF NOT EXISTS productos(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT,
+        precio REAL
+      );
+    `;
+    await this.db!.execute(createStmt);
+  }
+
+  private async seedIfNeeded() {
+    // Por ejemplo, contar registros
+    const res = await this.db!.query('SELECT COUNT(*) AS total FROM productos;');
+    const total = res.values?.[0]?.total ?? 0;
+
+    if (total === 0) {
+      // Datos de prueba
+      const insert = `
+        INSERT INTO productos (nombre, precio) VALUES
+        ('Producto A', 10.5),
+        ('Producto B', 20.0),
+        ('Producto C', 30.0);
+      `;
+      await this.db!.execute(insert);
+    }
+  }
+
+  async getProductos() {
+    if (!this.isReady || !this.db) throw new Error('DB no lista');
+    const res = await this.db.query('SELECT * FROM productos;');
+    return res.values ?? [];
+  }
+}
+
+
+Puntos importantes que coinciden en la mayoría de guías y foros:
+
+No llamar a SQLite antes de platform.ready() / Capacitor.isNativePlatform.
+
+Marcar la BD como “lista” con un flag (isReady) o un observable/promesa.
+
+Hacer que tus componentes/páginas esperen a dbService.getProductos() (async) antes de mostrar datos.
+
+https://devdactic.com
++2
+Stack Overflow
++2
+
+3. BD pre-poblada (datos de prueba dentro del APK)
+
+Hay dos enfoques comunes:
+
+3.1. Sembrar los datos desde código (como arriba)
+
+Ventajas:
+
+No necesitas manejar archivos .db en assets.
+
+Es lo que recomiendan muchos tutoriales modernos (sembrar desde JSON o sentencias SQL al iniciar la app). 
+https://devdactic.com
++1
+
+Desventaja:
+
+Si son muchos datos, puede tardar algo en la primera ejecución.
+
+3.2. Incluir un .db ya lleno y copiarlo al dispositivo
+
+El plugin @capacitor-community/sqlite tiene opciones como copiar desde assets o importar desde JSON para usar una BD preexistente. 
+GitHub
++2
+https://devdactic.com
++2
+
+Flujo típico:
+
+Pones tu BD en android/app/src/main/assets/databases/mi_bd.db o en src/assets/db/ (según la guía que sigas).
+
+En la inicialización haces algo como:
+
+sqlite.copyFromAssets() o
+
+sqlite.importFromJson(jsonSchema) si eliges JSON.
+
+Luego creas la conexión a esa BD y la abres igual.
+
+Muchos problemas de “no se ve la BD en el APK” vienen de:
+
+El archivo .db no está en la ruta correcta en Android/iOS.
+
+Nunca se llamó al método de “copiar desde assets”.
+
+Se crea una BD vacía con el mismo nombre en otra ruta.
+
+4. Por qué en el APK “no se inicializa bien” / no ves los datos
+
+Revisando foros y preguntas similares, casi siempre es por alguna de estas cosas: 
+Ionic Forum
++4
+Stack Overflow
++4
+Ionic Forum
++4
+
+Usar el navegador para “cargar datos de prueba”
+
+Lo que veías en ionic serve NO es la misma BD que la del dispositivo.
+
+En web se usa IndexedDB/WebSQL/LocalStorage, en nativo es el SQLite real. Son mundos separados.
+
+Solución: sembrar los datos de prueba desde tu código de inicialización, no manualmente desde el navegador.
+
+No esperar a que la plataforma esté lista
+
+Si llamas a SQLite en el constructor de un servicio/página antes de platform.ready(), el plugin no está disponible y falla silenciosamente o no crea la BD.
+
+Solución: mover toda la lógica de inicialización a un punto donde ya se garantice que la app está lista (por ejemplo app.component + servicio).
+
+No esperar las promesas de inicialización (async/await)
+
+En Android el arranque de la BD es más lento que en navegador. Si no esperas a que init() termine, tus páginas consultan la BD cuando aún no existen tablas ni datos.
+
+Solución: que tu app arranque (o muestre pantallas de datos) solo después de que dbService.init() se haya resuelto.
+
+Plugins mal sincronizados en el build release
+
+A veces el APK debug funciona y el publicado en Play Store no inicializa SQLite (casos reportados). 
+Ionic Forum
+
+Suele ser por:
+
+No hacer npx cap sync android antes del build.
+
+No rehacer Build > Clean Project / Invalidate Caches en Android Studio.
+
+Solución: asegurarte de compilar el APK desde un proyecto sincronizado y sin errores de Gradle.
+
+Mezclar varios sistemas de almacenamiento
+
+Algunos proyectos usan @ionic/storage con fallback a SQLite y además @capacitor-community/sqlite. Si no está bien configurado, se guardan datos en un lado y se lee en otro. 
+Ionic Forum
++1
+
+5. Checklist rápido para que tus datos de prueba sí salgan en el APK
+
+✅ Estás usando Capacitor + @capacitor-community/sqlite (o, si sigues legacy, cordova-sqlite-storage bien instalado y sincronizado).
+
+✅ Toda la lógica de BD está en un servicio que:
+
+Espera platform.ready() / Capacitor.isNativePlatform().
+
+Crea conexión → abre BD → crea tablas → si está vacía, inserta datos de prueba.
+
+✅ app.component.ts llama a await dbService.init() antes de navegar o mostrar páginas que leen de la BD.
+
+✅ Los datos de prueba se insertan siempre que la BD está vacía, no dependes del navegador para cargarlos.
+
+✅ Hiciste:
+
+npx cap sync android
+npx cap open android
+
+
+y desde Android Studio generaste el APK/release sin errores de Gradle.
+
+Cómo inicializar correctamente la base de datos 
+Para inicializar correctamente la base de datos SQLite en una app con Ionic y Angular, es fundamental seguir estos pasos estructurados:
+
+1. Instala e importa el plugin SQLite de Capacitor
+Ejecuta: npm install @capacitor-community/sqlite
+
+Agrega el plugin a Capacitor con npx cap sync
+
+En tu proyecto Angular, importa y usa los métodos del plugin para la gestión de SQLite.
+
+2. Solicita permisos y verifica plataforma
+En Android, solicita permisos para acceso a almacenamiento si es necesario.
+
+Espera que la plataforma Capacitor esté lista (por ejemplo, usando Platform.ready()).
+
+3. Crea o abre la base de datos
+Usa el plugin para abrir o crear la base con:
+import { CapacitorSQLite, SQLiteDBConnection } from '@capacitor-community/sqlite';
+
+const sqlite = CapacitorSQLite;
+let db: SQLiteDBConnection;
+
+async function initDB() {
+  db = await sqlite.createConnection({database:"mydb", mode:"no-encryption", version:1});
+  await db.open();
+}
+
+Esto asegura que la base SQLite se abra antes de usarla.
+
+4. Ejecuta las sentencias SQL para crear tablas y cargar datos iniciales
+Ejecuta comandos para crear tablas al inicio, si no existen:
+
+typescript
+await db.execute(`CREATE TABLE IF NOT EXISTS usuarios (id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT)`);
+Inserta datos de prueba si quieres.
+
+5. Controla el estado de inicialización
+Usa un BehaviorSubject o similar para avisar que la DB está lista y evitar ejecutar consultas antes de tiempo.
+
+6. Maneja errores y cierre de conexión
+Usa try-catch para controlar errores.
+
+Cierra la conexión cuando la app sea cerrada.
+
+Resumen básico de código para inicializar SQLite en Ionic Angular:
+typescript
+import { Injectable } from '@angular/core';
+import { Platform } from '@ionic/angular';
+import { CapacitorSQLite, SQLiteDBConnection } from '@capacitor-community/sqlite';
+import { BehaviorSubject } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class DatabaseService {
+  private db!: SQLiteDBConnection;
+  dbReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
+  constructor(private platform: Platform) {
+    this.platform.ready().then(() => {
+      this.initDB();
+    });
+  }
+
+  async initDB() {
+    try {
+      this.db = await CapacitorSQLite.createConnection({database: "mydb", version: 1, mode: "no-encryption"});
+      await this.db.open();
+      await this.db.execute(`CREATE TABLE IF NOT EXISTS usuarios (id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT)`);
+      this.dbReady.next(true);
+    } catch (error) {
+      console.error("Error inicializando SQLite", error);
+    }
+  }
+
+  // Más métodos para CRUD pueden ir aquí
+}
+Estos pasos y organización garantizan que SQLite se inicie correctamente y esté disponible para consultas una vez lista, previniendo errores comunes con datos no cargados o que la base no se abra bien.

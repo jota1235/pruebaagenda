@@ -1,571 +1,519 @@
 import { Injectable } from '@angular/core';
 import { CapacitorSQLite, SQLiteConnection, SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { Capacitor } from '@capacitor/core';
+import { BehaviorSubject } from 'rxjs';
+import { filter, take } from 'rxjs/operators';
 
 /**
- * DatabaseService
+ * DatabaseService - Patrón actualizado 2025
  *
- * Servicio para gestionar la base de datos SQLite local usando Capacitor.
- * Maneja la inicialización, creación de tablas, y ejecución de queries.
+ * Servicio para gestionar SQLite usando @capacitor-community/sqlite
+ * Siguiendo las mejores prácticas para Android/iOS
  *
- * Características:
- * - Usa Capacitor SQLite para soporte nativo en iOS/Android
- * - Crea 15+ tablas para el sistema de agenda
- * - Soporte multi-tenant (por handel/sucursal)
- * - Campos de sincronización offline-first
+ * Características clave:
+ * - BehaviorSubject para dbReady (patrón recomendado)
+ * - Verifica conexión existente antes de crear
+ * - Solo funciona en plataformas nativas (Android/iOS)
+ * - Inicialización en app.component.ts después de platform.ready()
+ * - Manejo de errores robusto
  */
 @Injectable({
   providedIn: 'root'
 })
 export class DatabaseService {
-  private sqlite: SQLiteConnection;
-  private db: SQLiteDBConnection | null = null;
-  private dbName: string = 'agenda_syserv.db';
-  private isInitialized: boolean = false;
-  private platform: string;
+  private sqlite!: SQLiteConnection;
+  private db!: SQLiteDBConnection;
+  private dbName = 'agendaDB';
+  private isNative = Capacitor.isNativePlatform();
+
+  // BehaviorSubject para notificar cuando la BD está lista
+  public dbReady = new BehaviorSubject<boolean>(false);
 
   constructor() {
+    // Inicializar SQLiteConnection
     this.sqlite = new SQLiteConnection(CapacitorSQLite);
-    this.platform = Capacitor.getPlatform();
   }
 
   /**
-   * Inicializa la base de datos
-   * Crea la conexión y todas las tablas necesarias
+   * Inicializa la base de datos SQLite
+   * Debe llamarse desde app.component.ts después de platform.ready()
    */
-  async initDatabase(): Promise<void> {
-    if (this.isInitialized) {
-      console.log('✅ Base de datos ya inicializada');
+  async init(): Promise<void> {
+    console.log('🔧 [DatabaseService] Iniciando SQLite...');
+    console.log(`📱 Plataforma: ${Capacitor.getPlatform()}`);
+    console.log(`🏠 Es nativa: ${this.isNative}`);
+
+    // Solo funciona en plataformas nativas
+    if (!this.isNative) {
+      console.log('⚠️ SQLite solo funciona en Android/iOS. Plataforma actual: web');
+      console.log('💡 Usando localStorage como fallback');
+      this.dbReady.next(false);
       return;
     }
 
     try {
-      console.log(`🔧 Iniciando base de datos en plataforma: ${this.platform}...`);
+      // 1. Verificar consistencia de conexiones
+      console.log('🔍 Verificando consistencia de conexiones...');
+      await CapacitorSQLite.checkConnectionsConsistency();
+      console.log('✅ Consistencia verificada');
 
-      // En web, necesitamos inicializar el web store primero
-      if (this.platform === 'web') {
-        console.log('🌐 Plataforma web detectada, inicializando web store...');
-        // Verificar que jeep-sqlite esté disponible
-        const jeepEl = document.querySelector('jeep-sqlite');
-        if (!jeepEl) {
-          throw new Error('Elemento jeep-sqlite no encontrado en el DOM');
-        }
+      // 2. Verificar si la conexión ya existe
+      console.log(`🔍 Verificando si existe conexión "${this.dbName}"...`);
+      const isConn = (await CapacitorSQLite.isConnection(this.dbName, false)).result;
 
-        // Inicializar el web store (solo falla si ya está inicializado, lo cual es seguro)
-        try {
-          await this.sqlite.initWebStore();
-          console.log('✅ Web store inicializado correctamente');
-        } catch (error: any) {
-          // Si ya está inicializado, el error es esperado y lo ignoramos
-          if (error.message && error.message.includes('already initialized')) {
-            console.log('ℹ️ Web store ya estaba inicializado');
-          } else {
-            console.error('❌ Error al inicializar web store:', error);
-            throw error;
-          }
-        }
+      if (isConn) {
+        console.log('📦 Conexión existente encontrada, recuperando...');
+        this.db = await CapacitorSQLite.retrieveConnection(this.dbName, false);
       } else {
-        console.log(`📱 Plataforma nativa (${this.platform}) detectada`);
+        console.log('🆕 Creando nueva conexión...');
+        this.db = await CapacitorSQLite.createConnection({
+          database: this.dbName,
+          version: 1,
+          encrypted: false,
+          mode: 'no-encryption',
+          readonly: false
+        });
       }
+      console.log('✅ Conexión obtenida');
 
-      // Crear/abrir conexión a la base de datos
-      console.log(`🔗 Creando conexión a: ${this.dbName}...`);
-      this.db = await this.sqlite.createConnection(
-        this.dbName,
-        false,              // No encriptada
-        'no-encryption',
-        1,                  // Versión
-        false               // No readonly
-      );
-      console.log('✅ Conexión creada');
-
-      // Abrir base de datos
+      // 3. Abrir la base de datos
       console.log('🔓 Abriendo base de datos...');
       await this.db.open();
       console.log('✅ Base de datos abierta');
 
-      // Crear todas las tablas
-      console.log('📋 Creando tablas...');
-      await this.createTables();
-      console.log('✅ Tablas creadas');
+      // 4. Crear esquema (tablas)
+      console.log('📋 Creando esquema...');
+      await this.createSchema();
+      console.log('✅ Esquema creado');
 
-      // Crear índices para performance
-      console.log('🔍 Creando índices...');
-      await this.createIndexes();
-      console.log('✅ Índices creados');
+      // 5. Sembrar datos si es necesario
+      console.log('🌱 Verificando datos de prueba...');
+      await this.seedIfNeeded();
+      console.log('✅ Datos verificados');
 
-      this.isInitialized = true;
-      console.log('🎉 Base de datos inicializada exitosamente');
+      // 6. Marcar como lista
+      this.dbReady.next(true);
+      console.log('🎉 [DatabaseService] SQLite completamente inicializado y listo');
 
-    } catch (error) {
-      console.error('❌ Error FATAL al inicializar base de datos:', error);
-      console.error('❌ Tipo de error:', typeof error);
-      console.error('❌ Error stack:', (error as any)?.stack);
+    } catch (error: any) {
+      console.error('❌ [DatabaseService] Error CRÍTICO inicializando SQLite:', error);
+      console.error('Tipo:', typeof error);
+      console.error('Mensaje:', error?.message);
+      console.error('Stack:', error?.stack);
+      this.dbReady.next(false);
       throw error;
     }
   }
 
   /**
-   * Crea todas las tablas del sistema
+   * Crea el esquema completo de la base de datos
    */
-  private async createTables(): Promise<void> {
-    console.log('Creando tablas...');
-
-    const tables = [
-      // ==================== TABLA 1: EMPRESAS BASE ====================
-      `CREATE TABLE IF NOT EXISTS tempresas_base (
+  private async createSchema(): Promise<void> {
+    const schema = `
+      -- ==================== CLIENTES ====================
+      CREATE TABLE IF NOT EXISTS clientes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombre_empresa TEXT,
-        activa TEXT DEFAULT 'SI',
-        tiempo_notificacion_1 INTEGER DEFAULT 1440,
-        tiempo_notificacion_2 INTEGER DEFAULT 60,
-        status_send_1 TEXT DEFAULT 'Confirmado',
-        status_send_2 TEXT DEFAULT 'Confirmado',
-        send_type_1 TEXT DEFAULT 'SMS',
-        send_type_2 TEXT DEFAULT 'SMS',
-        dias_ctespr INTEGER DEFAULT 365,
-        nventa_ctespr INTEGER DEFAULT 1,
+        handel INTEGER NOT NULL DEFAULT 1,
+        id_empresa_base INTEGER NOT NULL DEFAULT 1,
+        nombre TEXT NOT NULL,
+        apaterno TEXT,
+        amaterno TEXT,
+        tel1 TEXT,
+        email1 TEXT,
+        activo INTEGER DEFAULT 1,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-      )`,
+      );
 
-      // ==================== TABLA 2: EMPRESAS/SUCURSALES ====================
-      `CREATE TABLE IF NOT EXISTS tempresas (
-        handel INTEGER PRIMARY KEY,
-        id_empresa_base INTEGER NOT NULL,
-        nombreSucursal_Sel TEXT,
-        Telefono TEXT,
-        activa TEXT DEFAULT 'Si',
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (id_empresa_base) REFERENCES tempresas_base(id)
-      )`,
-
-      // ==================== TABLA 3: PERMISOS/ROLES ====================
-      `CREATE TABLE IF NOT EXISTS tpermisos (
+      -- ==================== PERSONAL ====================
+      CREATE TABLE IF NOT EXISTS personal (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        handel INTEGER NOT NULL,
-        nombre TEXT,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (handel) REFERENCES tempresas(handel)
-      )`,
-
-      // ==================== TABLA 4: USUARIOS/PERSONAL ====================
-      `CREATE TABLE IF NOT EXISTS tusuarios (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        handel INTEGER NOT NULL,
+        handel INTEGER NOT NULL DEFAULT 1,
+        id_empresa_base INTEGER NOT NULL DEFAULT 1,
         alias TEXT,
-        nombre TEXT,
-        apaterno TEXT,
-        amaterno TEXT,
-        nombrecto TEXT,
-        tel1 TEXT,
-        tel2 TEXT,
-        email1 TEXT,
-        activo TEXT DEFAULT 'Si',
-        id_permiso INTEGER,
+        nombre TEXT NOT NULL,
+        apellidos TEXT,
+        activo INTEGER DEFAULT 1,
         orden INTEGER DEFAULT 0,
-        color_agenda_fondo TEXT DEFAULT '#848484',
-        color_agenda_texto TEXT DEFAULT 'white',
-        sync_status TEXT DEFAULT 'synced',
-        uuid_local TEXT,
-        version INTEGER DEFAULT 1,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        deleted INTEGER DEFAULT 0,
-        FOREIGN KEY (handel) REFERENCES tempresas(handel),
-        FOREIGN KEY (id_permiso) REFERENCES tpermisos(id)
-      )`,
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+      );
 
-      // ==================== TABLA 5: CLIENTES ====================
-      `CREATE TABLE IF NOT EXISTS tclientes (
+      -- ==================== PRODUCTOS/SERVICIOS ====================
+      CREATE TABLE IF NOT EXISTS productos (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        handel INTEGER NOT NULL,
-        nombrecto TEXT,
-        nombre TEXT,
-        apaterno TEXT,
-        amaterno TEXT,
-        tel1 TEXT,
-        tel2 TEXT,
-        email1 TEXT,
-        codPaisTel1 TEXT DEFAULT '+52',
-        medio_promo TEXT,
-        sync_status TEXT DEFAULT 'synced',
-        uuid_local TEXT,
-        version INTEGER DEFAULT 1,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        deleted INTEGER DEFAULT 0,
-        FOREIGN KEY (handel) REFERENCES tempresas(handel)
-      )`,
-
-      // ==================== TABLA 6: PRODUCTOS/SERVICIOS ====================
-      `CREATE TABLE IF NOT EXISTS tproductos (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        handel INTEGER NOT NULL,
-        nombre TEXT,
+        handel INTEGER NOT NULL DEFAULT 1,
+        id_empresa_base INTEGER NOT NULL DEFAULT 1,
         codigo TEXT,
+        nombre TEXT NOT NULL,
         tipo TEXT DEFAULT 'Servicio',
-        u_medida TEXT DEFAULT 'Pieza',
-        n_duracion INTEGER DEFAULT 1,
-        precio REAL DEFAULT 0,
-        sync_status TEXT DEFAULT 'synced',
-        uuid_local TEXT,
-        version INTEGER DEFAULT 1,
+        n_duracion INTEGER,
+        precio REAL,
+        activo INTEGER DEFAULT 1,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        deleted INTEGER DEFAULT 0,
-        FOREIGN KEY (handel) REFERENCES tempresas(handel)
-      )`,
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+      );
 
-      // ==================== TABLA 7: CONFIGURACIÓN GENERAL ====================
-      `CREATE TABLE IF NOT EXISTS tconfig_gral (
+      -- ==================== CITAS ====================
+      CREATE TABLE IF NOT EXISTS citas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        handel INTEGER UNIQUE NOT NULL,
-        id_empresa_base INTEGER,
-        puesto_servicio TEXT DEFAULT 'Terapeuta',
-        hora_inicio INTEGER DEFAULT 9,
-        hora_fin INTEGER DEFAULT 18,
-        minutos_incremento INTEGER DEFAULT 30,
-        color_libre TEXT DEFAULT '#ffffff',
-        color_reservada TEXT DEFAULT '#FFF3CD',
-        color_confirmada TEXT DEFAULT '#D4EDDA',
-        color_cancelada TEXT DEFAULT '#F8D7DA',
-        color_cobrado TEXT DEFAULT '#CCE5FF',
-        color_fuera_tiempo TEXT DEFAULT '#E9ECEF',
-        most_disponibilidad TEXT DEFAULT 'SI',
-        rangoManual TEXT DEFAULT 'NO',
-        rangoHora TEXT DEFAULT 'SI',
-        vizNombreTerapeuta TEXT DEFAULT 'SI',
-        Filas TEXT,
-        num_columnas INTEGER DEFAULT 0,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (handel) REFERENCES tempresas(handel),
-        FOREIGN KEY (id_empresa_base) REFERENCES tempresas_base(id)
-      )`,
-
-      // ==================== TABLA 8: CONFIGURACIÓN AUXILIAR ====================
-      `CREATE TABLE IF NOT EXISTS tconfig_gral_aux1 (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        handel INTEGER UNIQUE NOT NULL,
-        horario_sabado TEXT,
-        horario_domingo TEXT,
-        formato_hora TEXT DEFAULT 'militar',
-        str_dias TEXT DEFAULT '1-2-3-4-5',
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (handel) REFERENCES tempresas(handel)
-      )`,
-
-      // ==================== TABLA 9: ESPACIOS ADICIONALES ====================
-      `CREATE TABLE IF NOT EXISTS tespacios_adicionales (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        handel INTEGER NOT NULL,
-        fecha TEXT NOT NULL,
-        col_aux INTEGER DEFAULT 0,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE(handel, fecha),
-        FOREIGN KEY (handel) REFERENCES tempresas(handel)
-      )`,
-
-      // ==================== TABLA 10: LINK DE FECHAS ====================
-      `CREATE TABLE IF NOT EXISTS tagenda_lnk_fecha (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        fecha TEXT UNIQUE NOT NULL
-      )`,
-
-      // ==================== TABLA 11: AGENDA (PRINCIPAL) ====================
-      `CREATE TABLE IF NOT EXISTS tagenda (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        handel INTEGER NOT NULL,
-        id_empresa_base INTEGER,
+        handel INTEGER NOT NULL DEFAULT 1,
+        id_empresa_base INTEGER NOT NULL DEFAULT 1,
         id_cliente INTEGER,
         id_personal INTEGER,
-        fecha TEXT,
-        hora TEXT,
+        id_servicio INTEGER,
+        fecha TEXT NOT NULL,
+        hora TEXT NOT NULL,
+        duracion INTEGER,
         status TEXT DEFAULT 'Reservado',
-        espacios_duracion INTEGER DEFAULT 1,
-        spacio INTEGER DEFAULT 0,
         notas TEXT,
-        notas2 TEXT,
-        ban_cita INTEGER DEFAULT 0,
-        ban_liquid_credito INTEGER DEFAULT 0,
-        id_caja INTEGER DEFAULT 0,
-        folio INTEGER DEFAULT 0,
-        lnk_fecha INTEGER,
-        efectivo REAL DEFAULT 0,
-        tarjeta REAL DEFAULT 0,
-        transferencia REAL DEFAULT 0,
-        deposito REAL DEFAULT 0,
-        puntos REAL DEFAULT 0,
-        credito REAL DEFAULT 0,
-        apartado REAL DEFAULT 0,
-        sync_status TEXT DEFAULT 'synced',
-        uuid_local TEXT,
-        version INTEGER DEFAULT 1,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        deleted INTEGER DEFAULT 0,
-        FOREIGN KEY (handel) REFERENCES tempresas(handel),
-        FOREIGN KEY (id_cliente) REFERENCES tclientes(id),
-        FOREIGN KEY (id_personal) REFERENCES tusuarios(id),
-        FOREIGN KEY (lnk_fecha) REFERENCES tagenda_lnk_fecha(id)
-      )`,
+        FOREIGN KEY (id_cliente) REFERENCES clientes(id),
+        FOREIGN KEY (id_personal) REFERENCES personal(id),
+        FOREIGN KEY (id_servicio) REFERENCES productos(id)
+      );
 
-      // ==================== TABLA 12: AGENDA AUXILIAR ====================
-      `CREATE TABLE IF NOT EXISTS tagenda_aux (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        id_agenda INTEGER NOT NULL,
-        id_producto_servicio INTEGER,
-        cantidad REAL DEFAULT 1,
-        costo REAL DEFAULT 0,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (id_agenda) REFERENCES tagenda(id),
-        FOREIGN KEY (id_producto_servicio) REFERENCES tproductos(id)
-      )`,
+      -- ==================== ÍNDICES PARA PERFORMANCE ====================
+      CREATE INDEX IF NOT EXISTS idx_clientes_activo ON clientes(activo, handel, id_empresa_base);
+      CREATE INDEX IF NOT EXISTS idx_personal_activo ON personal(activo, handel, id_empresa_base);
+      CREATE INDEX IF NOT EXISTS idx_productos_activo ON productos(activo, tipo, handel, id_empresa_base);
+      CREATE INDEX IF NOT EXISTS idx_citas_fecha ON citas(fecha, handel, id_empresa_base);
+      CREATE INDEX IF NOT EXISTS idx_citas_personal ON citas(id_personal, fecha);
+    `;
 
-      // ==================== TABLA 13: INVENTARIO ====================
-      `CREATE TABLE IF NOT EXISTS tinventario (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        handel INTEGER NOT NULL,
-        id_producto INTEGER,
-        id_agenda INTEGER,
-        cantidad REAL DEFAULT 0,
-        ban_add_manual INTEGER DEFAULT 0,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (handel) REFERENCES tempresas(handel),
-        FOREIGN KEY (id_producto) REFERENCES tproductos(id),
-        FOREIGN KEY (id_agenda) REFERENCES tagenda(id)
-      )`,
-
-      // ==================== TABLA 14: RECORDATORIOS ====================
-      `CREATE TABLE IF NOT EXISTS trecordatorios (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        handel INTEGER NOT NULL,
-        id_agenda INTEGER,
-        tipo TEXT,
-        fecha_envio TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (handel) REFERENCES tempresas(handel),
-        FOREIGN KEY (id_agenda) REFERENCES tagenda(id)
-      )`,
-
-      // ==================== TABLA 15: CONTROL DE ASISTENCIA ====================
-      `CREATE TABLE IF NOT EXISTS tcontrol_asistencia (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        handel INTEGER NOT NULL,
-        id_personal INTEGER,
-        fecha_evento TEXT,
-        tipo_evento TEXT,
-        hora_evento TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (handel) REFERENCES tempresas(handel),
-        FOREIGN KEY (id_personal) REFERENCES tusuarios(id)
-      )`,
-
-      // ==================== TABLA 16: OUTBOX (SINCRONIZACIÓN) ====================
-      `CREATE TABLE IF NOT EXISTS outbox (
-        op_id TEXT PRIMARY KEY,
-        type TEXT NOT NULL,
-        company_id INTEGER NOT NULL,
-        entity TEXT NOT NULL,
-        entity_id INTEGER,
-        payload TEXT NOT NULL,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        attempts INTEGER DEFAULT 0,
-        status TEXT DEFAULT 'pending',
-        last_error TEXT,
-        last_attempt TEXT
-      )`,
-
-      // ==================== TABLA 17: SYNC STATE ====================
-      `CREATE TABLE IF NOT EXISTS sync_state (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        company_id INTEGER NOT NULL,
-        resource TEXT NOT NULL,
-        last_full_sync TEXT,
-        last_delta_sync TEXT,
-        last_window_from TEXT,
-        last_window_to TEXT,
-        UNIQUE(company_id, resource)
-      )`
-    ];
-
-    // Ejecutar creación de cada tabla
-    for (const sql of tables) {
-      try {
-        await this.db!.execute(sql);
-      } catch (error) {
-        console.error('Error creando tabla:', error);
-        throw error;
-      }
-    }
-
-    console.log('Tablas creadas exitosamente');
+    await this.db.execute(schema);
   }
 
   /**
-   * Crea índices para optimizar consultas
+   * Siembra datos de prueba si la base de datos está vacía
    */
-  private async createIndexes(): Promise<void> {
-    console.log('Creando índices...');
+  private async seedIfNeeded(): Promise<void> {
+    // Verificar si ya hay clientes
+    const result = await this.db.query('SELECT COUNT(*) as total FROM clientes');
+    const total = result.values?.[0]?.total || 0;
 
-    const indexes = [
-      // Índices para tagenda (tabla más consultada)
-      'CREATE INDEX IF NOT EXISTS idx_tagenda_fecha ON tagenda(fecha)',
-      'CREATE INDEX IF NOT EXISTS idx_tagenda_handel_fecha ON tagenda(handel, fecha)',
-      'CREATE INDEX IF NOT EXISTS idx_tagenda_status ON tagenda(status)',
-      'CREATE INDEX IF NOT EXISTS idx_tagenda_sync ON tagenda(sync_status)',
-      'CREATE INDEX IF NOT EXISTS idx_tagenda_personal ON tagenda(id_personal)',
-      'CREATE INDEX IF NOT EXISTS idx_tagenda_cliente ON tagenda(id_cliente)',
+    if (total === 0) {
+      console.log('📦 Base de datos vacía, sembrando datos de prueba...');
 
-      // Índices para tclientes
-      'CREATE INDEX IF NOT EXISTS idx_tclientes_handel ON tclientes(handel)',
-      'CREATE INDEX IF NOT EXISTS idx_tclientes_sync ON tclientes(sync_status)',
+      const seedData = `
+        -- CLIENTES DE PRUEBA
+        INSERT INTO clientes (handel, id_empresa_base, nombre, apaterno, amaterno, tel1, email1, activo) VALUES
+        (1, 1, 'Juan', 'Pérez', 'García', '555-0101', 'juan.perez@example.com', 1),
+        (1, 1, 'María', 'González', 'López', '555-0102', 'maria.gonzalez@example.com', 1),
+        (1, 1, 'Carlos', 'Martínez', 'Rodríguez', '555-0103', 'carlos.martinez@example.com', 1),
+        (1, 1, 'Ana', 'Hernández', 'Díaz', '555-0104', 'ana.hernandez@example.com', 1),
+        (1, 1, 'Pedro', 'Sánchez', 'Flores', '555-0105', 'pedro.sanchez@example.com', 1);
 
-      // Índices para tusuarios
-      'CREATE INDEX IF NOT EXISTS idx_tusuarios_handel ON tusuarios(handel)',
-      'CREATE INDEX IF NOT EXISTS idx_tusuarios_activo ON tusuarios(activo)',
-      'CREATE INDEX IF NOT EXISTS idx_tusuarios_sync ON tusuarios(sync_status)',
+        -- PERSONAL DE PRUEBA
+        INSERT INTO personal (handel, id_empresa_base, alias, nombre, apellidos, activo, orden) VALUES
+        (1, 1, 'dr_rodriguez', 'Dr. Rodríguez', 'García', 1, 1),
+        (1, 1, 'dra_fernandez', 'Dra. Fernández', 'López', 1, 2),
+        (1, 1, 'lic_gonzalez', 'Lic. González', 'Martínez', 1, 3),
+        (1, 1, 'lic_torres', 'Lic. Torres', 'Sánchez', 1, 4);
 
-      // Índices para tproductos
-      'CREATE INDEX IF NOT EXISTS idx_tproductos_handel ON tproductos(handel)',
-      'CREATE INDEX IF NOT EXISTS idx_tproductos_tipo ON tproductos(tipo)',
-      'CREATE INDEX IF NOT EXISTS idx_tproductos_sync ON tproductos(sync_status)',
+        -- SERVICIOS DE PRUEBA
+        INSERT INTO productos (handel, id_empresa_base, codigo, nombre, tipo, n_duracion, precio, activo) VALUES
+        (1, 1, 'SRV001', 'Masaje Relajante', 'Servicio', 2, 500, 1),
+        (1, 1, 'SRV002', 'Masaje Terapéutico', 'Servicio', 3, 750, 1),
+        (1, 1, 'SRV003', 'Acupuntura', 'Servicio', 1, 600, 1),
+        (1, 1, 'SRV004', 'Reflexología', 'Servicio', 2, 550, 1),
+        (1, 1, 'SRV005', 'Aromaterapia', 'Servicio', 1, 350, 1),
+        (1, 1, 'SRV006', 'Tratamiento Facial', 'Servicio', 2, 650, 1);
+      `;
 
-      // Índices para outbox
-      'CREATE INDEX IF NOT EXISTS idx_outbox_status ON outbox(status)',
-      'CREATE INDEX IF NOT EXISTS idx_outbox_created ON outbox(created_at)',
-
-      // Índices para sync_state
-      'CREATE INDEX IF NOT EXISTS idx_sync_company_resource ON sync_state(company_id, resource)'
-    ];
-
-    for (const sql of indexes) {
-      try {
-        await this.db!.execute(sql);
-      } catch (error) {
-        console.warn('Advertencia creando índice:', error);
-      }
-    }
-
-    console.log('Índices creados exitosamente');
-  }
-
-  /**
-   * Ejecuta una consulta SELECT y retorna resultados
-   */
-  async executeQuery(query: string, params: any[] = []): Promise<any[]> {
-    if (!this.db) {
-      throw new Error('Base de datos no inicializada');
-    }
-
-    try {
-      const result = await this.db.query(query, params);
-      return result.values || [];
-    } catch (error) {
-      console.error('Error ejecutando query:', query, error);
-      throw error;
+      await this.db.execute(seedData);
+      console.log('✅ Datos de prueba sembrados correctamente');
+    } else {
+      console.log(`ℹ️ Base de datos ya contiene ${total} clientes`);
     }
   }
 
   /**
-   * Ejecuta un comando INSERT/UPDATE/DELETE
+   * Helper para esperar a que la BD esté lista antes de hacer queries
    */
-  async executeCommand(query: string, params: any[] = []): Promise<boolean> {
-    if (!this.db) {
-      throw new Error('Base de datos no inicializada');
-    }
-
-    try {
-      await this.db.run(query, params);
-      return true;
-    } catch (error) {
-      console.error('Error ejecutando comando:', query, error);
-      throw error;
+  async waitForDB(): Promise<void> {
+    if (!this.dbReady.value) {
+      console.log('⏳ Esperando a que la BD esté lista...');
+      await this.dbReady.pipe(filter(ready => ready), take(1)).toPromise();
+      console.log('✅ BD lista');
     }
   }
 
   /**
-   * Ejecuta múltiples comandos en una transacción
+   * Verifica si la BD está lista
    */
-  async executeTransaction(queries: { query: string; params?: any[] }[]): Promise<boolean> {
-    if (!this.db) {
-      throw new Error('Base de datos no inicializada');
-    }
-
-    try {
-      await this.db.execute('BEGIN TRANSACTION');
-
-      for (const { query, params = [] } of queries) {
-        await this.db.run(query, params);
-      }
-
-      await this.db.execute('COMMIT');
-      return true;
-    } catch (error) {
-      await this.db.execute('ROLLBACK');
-      console.error('Error en transacción:', error);
-      throw error;
-    }
+  isReady(): boolean {
+    return this.dbReady.value;
   }
 
   /**
-   * Guarda los cambios en el store (solo web)
-   * Llama esto después de operaciones importantes en lote
+   * Obtiene la conexión de la BD
+   * Lanza error si la BD no está lista
    */
-  async saveToStore(): Promise<void> {
-    if (this.platform === 'web' && this.db) {
-      await this.sqlite.saveToStore(this.dbName);
-      console.log('💾 Cambios guardados en web store');
+  getDB(): SQLiteDBConnection {
+    if (!this.dbReady.value || !this.db) {
+      throw new Error('Base de datos no está inicializada. Llama a init() primero.');
     }
+    return this.db;
   }
 
-  /**
-   * Obtiene el último ID insertado
-   */
-  async getLastInsertId(): Promise<number> {
-    const result = await this.executeQuery('SELECT last_insert_rowid() as id');
-    return result[0]?.id || 0;
+  // ==================== MÉTODOS DE CONSULTA: CLIENTES ====================
+
+  async getClientes(): Promise<any[]> {
+    await this.waitForDB();
+    const result = await this.db.query(
+      'SELECT * FROM clientes WHERE activo = 1 ORDER BY nombre'
+    );
+    return result.values || [];
   }
 
+  async getClienteById(id: number): Promise<any | null> {
+    await this.waitForDB();
+    const result = await this.db.query(
+      'SELECT * FROM clientes WHERE id = ? AND activo = 1',
+      [id]
+    );
+    return result.values?.[0] || null;
+  }
+
+  async addCliente(data: any): Promise<number> {
+    await this.waitForDB();
+    const sql = `
+      INSERT INTO clientes (handel, id_empresa_base, nombre, apaterno, amaterno, tel1, email1, activo)
+      VALUES (?, ?, ?, ?, ?, ?, ?, 1)
+    `;
+    const result = await this.db.run(sql, [
+      data.handel || 1,
+      data.id_empresa_base || 1,
+      data.nombre,
+      data.apaterno || '',
+      data.amaterno || '',
+      data.tel1 || '',
+      data.email1 || ''
+    ]);
+    return result.changes?.lastId || -1;
+  }
+
+  async updateCliente(id: number, data: any): Promise<boolean> {
+    await this.waitForDB();
+    const sql = `
+      UPDATE clientes
+      SET nombre = ?, apaterno = ?, amaterno = ?, tel1 = ?, email1 = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `;
+    const result = await this.db.run(sql, [
+      data.nombre,
+      data.apaterno || '',
+      data.amaterno || '',
+      data.tel1 || '',
+      data.email1 || '',
+      id
+    ]);
+    return (result.changes?.changes || 0) > 0;
+  }
+
+  async deleteCliente(id: number): Promise<boolean> {
+    await this.waitForDB();
+    const sql = 'UPDATE clientes SET activo = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ?';
+    const result = await this.db.run(sql, [id]);
+    return (result.changes?.changes || 0) > 0;
+  }
+
+  // ==================== MÉTODOS DE CONSULTA: PERSONAL ====================
+
+  async getPersonal(): Promise<any[]> {
+    await this.waitForDB();
+    const result = await this.db.query(
+      'SELECT * FROM personal WHERE activo = 1 ORDER BY orden, nombre'
+    );
+    return result.values || [];
+  }
+
+  async getPersonalById(id: number): Promise<any | null> {
+    await this.waitForDB();
+    const result = await this.db.query(
+      'SELECT * FROM personal WHERE id = ? AND activo = 1',
+      [id]
+    );
+    return result.values?.[0] || null;
+  }
+
+  async addPersonal(data: any): Promise<number> {
+    await this.waitForDB();
+    const sql = `
+      INSERT INTO personal (handel, id_empresa_base, alias, nombre, apellidos, activo, orden)
+      VALUES (?, ?, ?, ?, ?, 1, ?)
+    `;
+    const result = await this.db.run(sql, [
+      data.handel || 1,
+      data.id_empresa_base || 1,
+      data.alias || '',
+      data.nombre,
+      data.apellidos || '',
+      data.orden || 0
+    ]);
+    return result.changes?.lastId || -1;
+  }
+
+  async updatePersonal(id: number, data: any): Promise<boolean> {
+    await this.waitForDB();
+    const sql = `
+      UPDATE personal
+      SET alias = ?, nombre = ?, apellidos = ?, orden = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `;
+    const result = await this.db.run(sql, [
+      data.alias || '',
+      data.nombre,
+      data.apellidos || '',
+      data.orden || 0,
+      id
+    ]);
+    return (result.changes?.changes || 0) > 0;
+  }
+
+  async deletePersonal(id: number): Promise<boolean> {
+    await this.waitForDB();
+    const sql = 'UPDATE personal SET activo = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ?';
+    const result = await this.db.run(sql, [id]);
+    return (result.changes?.changes || 0) > 0;
+  }
+
+  // ==================== MÉTODOS DE CONSULTA: SERVICIOS ====================
+
+  async getServicios(): Promise<any[]> {
+    await this.waitForDB();
+    const result = await this.db.query(
+      'SELECT * FROM productos WHERE activo = 1 AND tipo = "Servicio" ORDER BY nombre'
+    );
+    return result.values || [];
+  }
+
+  async getServicioById(id: number): Promise<any | null> {
+    await this.waitForDB();
+    const result = await this.db.query(
+      'SELECT * FROM productos WHERE id = ? AND activo = 1',
+      [id]
+    );
+    return result.values?.[0] || null;
+  }
+
+  async addServicio(data: any): Promise<number> {
+    await this.waitForDB();
+    const sql = `
+      INSERT INTO productos (handel, id_empresa_base, codigo, nombre, tipo, n_duracion, precio, activo)
+      VALUES (?, ?, ?, ?, 'Servicio', ?, ?, 1)
+    `;
+    const result = await this.db.run(sql, [
+      data.handel || 1,
+      data.id_empresa_base || 1,
+      data.codigo || '',
+      data.nombre,
+      data.n_duracion || 1,
+      data.precio || 0
+    ]);
+    return result.changes?.lastId || -1;
+  }
+
+  async updateServicio(id: number, data: any): Promise<boolean> {
+    await this.waitForDB();
+    const sql = `
+      UPDATE productos
+      SET codigo = ?, nombre = ?, n_duracion = ?, precio = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `;
+    const result = await this.db.run(sql, [
+      data.codigo || '',
+      data.nombre,
+      data.n_duracion || 1,
+      data.precio || 0,
+      id
+    ]);
+    return (result.changes?.changes || 0) > 0;
+  }
+
+  async deleteServicio(id: number): Promise<boolean> {
+    await this.waitForDB();
+    const sql = 'UPDATE productos SET activo = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ?';
+    const result = await this.db.run(sql, [id]);
+    return (result.changes?.changes || 0) > 0;
+  }
+
+  // ==================== MÉTODOS DE CONSULTA: CITAS ====================
+
+  async getCitasPorFecha(fecha: string): Promise<any[]> {
+    await this.waitForDB();
+    const result = await this.db.query(
+      'SELECT * FROM citas WHERE fecha = ? ORDER BY hora',
+      [fecha]
+    );
+    return result.values || [];
+  }
+
+  async addCita(data: any): Promise<number> {
+    await this.waitForDB();
+    const sql = `
+      INSERT INTO citas (handel, id_empresa_base, id_cliente, id_personal, id_servicio, fecha, hora, duracion, status, notas)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    const result = await this.db.run(sql, [
+      data.handel || 1,
+      data.id_empresa_base || 1,
+      data.id_cliente,
+      data.id_personal,
+      data.id_servicio,
+      data.fecha,
+      data.hora,
+      data.duracion || 30,
+      data.status || 'Reservado',
+      data.notas || ''
+    ]);
+    return result.changes?.lastId || -1;
+  }
+
+  async updateCita(id: number, data: any): Promise<boolean> {
+    await this.waitForDB();
+    const sql = `
+      UPDATE citas
+      SET id_cliente = ?, id_personal = ?, id_servicio = ?, fecha = ?, hora = ?, duracion = ?, status = ?, notas = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `;
+    const result = await this.db.run(sql, [
+      data.id_cliente,
+      data.id_personal,
+      data.id_servicio,
+      data.fecha,
+      data.hora,
+      data.duracion || 30,
+      data.status || 'Reservado',
+      data.notas || '',
+      id
+    ]);
+    return (result.changes?.changes || 0) > 0;
+  }
+
+  async cancelCita(id: number): Promise<boolean> {
+    await this.waitForDB();
+    const sql = 'UPDATE citas SET status = "Cancelado", updated_at = CURRENT_TIMESTAMP WHERE id = ?';
+    const result = await this.db.run(sql, [id]);
+    return (result.changes?.changes || 0) > 0;
+  }
+
+  // ==================== UTILIDADES ====================
+
   /**
-   * Limpia toda la base de datos (útil para testing)
+   * Limpia todos los datos de las tablas
    */
-  async clearDatabase(): Promise<void> {
-    if (!this.db) {
-      throw new Error('Base de datos no inicializada');
-    }
-
-    try {
-      // Lista de tablas en orden inverso por dependencias
-      const tables = [
-        'trecordatorios',
-        'tcontrol_asistencia',
-        'tinventario',
-        'tagenda_aux',
-        'tagenda',
-        'tagenda_lnk_fecha',
-        'tespacios_adicionales',
-        'tconfig_gral_aux1',
-        'tconfig_gral',
-        'tproductos',
-        'tclientes',
-        'tusuarios',
-        'tpermisos',
-        'tempresas',
-        'tempresas_base',
-        'outbox',
-        'sync_state'
-      ];
-
-      for (const table of tables) {
-        await this.db.execute(`DELETE FROM ${table}`);
-      }
-
-      console.log('Base de datos limpiada');
-    } catch (error) {
-      console.error('Error limpiando base de datos:', error);
-      throw error;
-    }
+  async clearAllData(): Promise<void> {
+    await this.waitForDB();
+    await this.db.execute(`
+      DELETE FROM citas;
+      DELETE FROM productos;
+      DELETE FROM personal;
+      DELETE FROM clientes;
+    `);
+    console.log('🗑️ Todos los datos eliminados');
   }
 
   /**
@@ -573,48 +521,9 @@ export class DatabaseService {
    */
   async close(): Promise<void> {
     if (this.db) {
-      try {
-        await this.sqlite.closeConnection(this.dbName, false);
-        this.db = null;
-        this.isInitialized = false;
-        console.log('Conexión a BD cerrada');
-      } catch (error) {
-        console.error('Error cerrando conexión:', error);
-      }
+      await this.db.close();
+      this.dbReady.next(false);
+      console.log('🔒 Base de datos cerrada');
     }
-  }
-
-  /**
-   * Verifica si la base de datos está inicializada
-   */
-  isDbInitialized(): boolean {
-    return this.isInitialized;
-  }
-
-  /**
-   * Exporta la base de datos (útil para backups)
-   */
-  async exportDatabase(): Promise<any> {
-    if (!this.db) {
-      throw new Error('Base de datos no inicializada');
-    }
-
-    try {
-      const exportResult = await this.db.exportToJson('full');
-      return exportResult.export;
-    } catch (error) {
-      console.error('Error exportando base de datos:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Importa una base de datos desde JSON
-   * NOTA: Funcionalidad pendiente de implementación con Capacitor SQLite
-   */
-  async importDatabase(jsonData: any): Promise<void> {
-    console.warn('importDatabase() no implementado aún para Capacitor SQLite');
-    // TODO: Implementar importación de datos desde JSON
-    // Posible solución: ejecutar múltiples INSERT statements desde el JSON
   }
 }

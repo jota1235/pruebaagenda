@@ -11,8 +11,10 @@ import {
   IonButton,
   IonButtons,
   IonBackButton,
-  IonSpinner
+  IonSpinner,
+  IonBadge
 } from '@ionic/angular/standalone';
+import { DatabaseService } from '../../core/services/database.service';
 import { AgendaSimpleService } from '../../core/services/agenda-simple.service';
 
 @Component({
@@ -31,14 +33,19 @@ import { AgendaSimpleService } from '../../core/services/agenda-simple.service';
     IonButton,
     IonButtons,
     IonBackButton,
-    IonSpinner
+    IonSpinner,
+    IonBadge
   ]
 })
 export class ClientesTestPage implements OnInit {
   clientes: any[] = [];
   isLoading = true;
+  source = ''; // 'SQLite' o 'localStorage'
 
-  constructor(private agendaService: AgendaSimpleService) {}
+  constructor(
+    private databaseService: DatabaseService,
+    private agendaSimpleService: AgendaSimpleService
+  ) {}
 
   async ngOnInit() {
     await this.loadClientes();
@@ -47,10 +54,33 @@ export class ClientesTestPage implements OnInit {
   async loadClientes() {
     try {
       this.isLoading = true;
-      this.clientes = await this.agendaService.getPacientes();
-      console.log('Clientes cargados desde localStorage:', this.clientes);
+
+      // Verificar si SQLite está disponible
+      if (this.databaseService.isReady()) {
+        console.log('📱 Cargando clientes desde SQLite...');
+        this.source = 'SQLite';
+        const clientesRaw = await this.databaseService.getClientes();
+
+        // Transformar formato SQLite al formato esperado por la UI
+        this.clientes = clientesRaw.map(c => ({
+          id: c.id,
+          nombre: `${c.nombre || ''} ${c.apaterno || ''} ${c.amaterno || ''}`.trim(),
+          telefono: c.tel1 || '',
+          email: c.email1 || '',
+          activo: 'SI'
+        }));
+
+        console.log(`✅ ${this.clientes.length} clientes cargados desde SQLite`);
+      } else {
+        console.log('💾 SQLite no disponible, cargando desde localStorage...');
+        this.source = 'localStorage';
+        this.clientes = await this.agendaSimpleService.getPacientes();
+        console.log(`✅ ${this.clientes.length} clientes cargados desde localStorage`);
+      }
+
     } catch (error) {
-      console.error('Error cargando clientes:', error);
+      console.error('❌ Error cargando clientes:', error);
+      this.source = 'Error';
     } finally {
       this.isLoading = false;
     }

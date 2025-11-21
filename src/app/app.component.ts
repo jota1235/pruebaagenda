@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import { IonApp, IonRouterOutlet, Platform } from '@ionic/angular/standalone';
 import { SeedSimpleService } from './core/services/seed-simple.service';
+import { DatabaseService } from './core/services/database.service';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-root',
@@ -8,42 +10,83 @@ import { SeedSimpleService } from './core/services/seed-simple.service';
   imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent implements OnInit {
-  constructor(private seedService: SeedSimpleService) {}
+  constructor(
+    private platform: Platform,
+    private seedService: SeedSimpleService,
+    private databaseService: DatabaseService
+  ) {}
 
   async ngOnInit() {
-    // Inicializar datos
+    // Inicializar aplicación
     await this.initializeApp();
 
-    // Cargar preferencia de modo oscuro al iniciar la app
+    // Cargar preferencia de modo oscuro
     this.loadDarkModePreference();
   }
 
   /**
-   * Inicializa la aplicación y los datos en localStorage
+   * Inicializa la aplicación, la base de datos y los datos
+   *
+   * Estrategia:
+   * - En Android/iOS: Intenta usar SQLite primero, fallback a localStorage
+   * - En Web: Usa localStorage directamente
    */
   private async initializeApp() {
     try {
-      console.log('🚀 Inicializando aplicación con localStorage...');
+      console.log('🚀 [AppComponent] Iniciando aplicación...');
 
-      // Verificar si es primera ejecución
-      const hasData = this.seedService.hasData();
+      // 1. Esperar a que la plataforma esté lista (CRÍTICO para SQLite)
+      await this.platform.ready();
+      console.log('✅ Plataforma lista:', Capacitor.getPlatform());
 
-      if (!hasData) {
-        console.log('📦 Primera ejecución detectada, poblando localStorage...');
-        await this.seedService.seedDatabase();
-        console.log('✅ localStorage poblado con datos de prueba');
+      // 2. Intentar inicializar SQLite (solo en plataformas nativas)
+      const isNative = Capacitor.isNativePlatform();
+      let sqliteInitialized = false;
+
+      if (isNative) {
+        console.log('📱 Plataforma nativa detectada, intentando inicializar SQLite...');
+        try {
+          await this.databaseService.init();
+          sqliteInitialized = this.databaseService.isReady();
+
+          if (sqliteInitialized) {
+            console.log('✅ SQLite inicializado correctamente');
+          } else {
+            console.log('⚠️ SQLite no se inicializó, usando localStorage como fallback');
+          }
+        } catch (error) {
+          console.error('❌ Error inicializando SQLite, usando localStorage como fallback:', error);
+          sqliteInitialized = false;
+        }
       } else {
-        console.log('✅ localStorage ya contiene datos');
-
-        // DESARROLLO: Recreando datos con estructura correcta
-        console.log('🔄 Recreando datos en desarrollo...');
-        await this.seedService.clearAllData();
-        await this.seedService.seedDatabase();
+        console.log('🌐 Plataforma web detectada, usando localStorage');
       }
 
-      console.log('🎉 Aplicación lista!');
+      // 3. Si SQLite no está disponible, usar localStorage
+      if (!sqliteInitialized) {
+        console.log('📦 Inicializando localStorage...');
+        const hasData = this.seedService.hasData();
+
+        if (!hasData) {
+          console.log('📦 Primera ejecución, poblando localStorage...');
+          await this.seedService.seedDatabase();
+          console.log('✅ localStorage poblado con datos de prueba');
+        } else {
+          console.log('✅ localStorage ya contiene datos');
+
+          // DESARROLLO: Recrear datos para pruebas
+          console.log('🔄 [DEV] Recreando datos en localStorage...');
+          await this.seedService.clearAllData();
+          await this.seedService.seedDatabase();
+        }
+      }
+
+      console.log('🎉 [AppComponent] Aplicación completamente inicializada');
+
     } catch (error) {
-      console.error('❌ Error inicializando aplicación:', error);
+      console.error('❌ [AppComponent] Error CRÍTICO inicializando aplicación:', error);
+      console.error('Tipo:', typeof error);
+      console.error('Stack:', (error as any)?.stack);
     }
   }
 
