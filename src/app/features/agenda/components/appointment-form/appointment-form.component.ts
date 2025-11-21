@@ -39,6 +39,7 @@ import {
   searchOutline
 } from 'ionicons/icons';
 import { AgendaService } from '../../../../core/services/agenda.service';
+import { DatabaseService } from '../../../../core/services/database.service';
 
 /**
  * Interface para el formulario de cita
@@ -174,7 +175,8 @@ export class AppointmentFormComponent implements OnInit {
 
   constructor(
     private modalController: ModalController,
-    private agendaService: AgendaService
+    private agendaService: AgendaService,
+    private databaseService: DatabaseService
   ) {
     // Registrar iconos
     addIcons({
@@ -461,14 +463,67 @@ export class AppointmentFormComponent implements OnInit {
       isPromo: this.isPromo
     };
 
-    console.log('Guardando cita:', formData);
+    console.log('💾 Guardando cita:', formData);
 
-    // TODO: Guardar en SQLite y agregar a outbox
-    // await this.dbService.insertAppointment(appointment);
-    // await this.syncService.addToOutbox('CREATE_APPOINTMENT', appointment);
+    try {
+      // Guardar en SQLite (una cita por cada servicio)
+      if (this.databaseService.isReady()) {
+        console.log('📱 Guardando en SQLite...');
 
-    // Cerrar modal con confirmación
-    this.modalController.dismiss(formData, 'confirm');
+        // Formatear fecha y hora para SQLite
+        const fecha = this.formatDateForSQL(this.date);
+        const hora = this.formatTimeForSQL(this.date);
+
+        for (const service of this.addedServices) {
+          const citaData = {
+            handel: 1,
+            id_empresa_base: 1,
+            id_cliente: this.selectedClient!.id,
+            id_personal: this.selectedStaffId!,
+            id_servicio: service.serviceId,
+            fecha: fecha,
+            hora: hora,
+            duracion: service.duration,
+            status: 'Reservado',
+            notas: ''
+          };
+
+          const citaId = await this.databaseService.addCita(citaData);
+          console.log(`✅ Cita guardada en SQLite con ID: ${citaId}`, citaData);
+        }
+
+        console.log('✅ Todas las citas guardadas correctamente en SQLite');
+      } else {
+        console.log('💾 SQLite no disponible, guardando en localStorage...');
+        // TODO: Implementar guardado en localStorage como fallback
+      }
+
+      // Cerrar modal con confirmación
+      this.modalController.dismiss(formData, 'confirm');
+
+    } catch (error) {
+      console.error('❌ Error guardando cita:', error);
+      // TODO: Mostrar alerta de error
+    }
+  }
+
+  /**
+   * Formatear fecha para SQL (YYYY-MM-DD)
+   */
+  private formatDateForSQL(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  /**
+   * Formatear hora para SQL (HH:MM)
+   */
+  private formatTimeForSQL(date: Date): string {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
   }
 
   /**
