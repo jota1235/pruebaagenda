@@ -1,0 +1,142 @@
+// ============================================
+// APPOINTMENT DETAIL MODAL STYLES
+// ============================================
+
+.appointment-detail-content {
+  --background: #F8F9FA;
+}
+
+// ============================================
+// STATUS SECTION
+// ============================================
+.status-section {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem 1rem 1rem;
+  background: white;
+}
+
+.status-badge {
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.5rem 1.25rem;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+// ============================================
+// DETAIL LIST
+// ============================================
+.detail-list {
+  background: transparent;
+  padding: 0.5rem 0;
+}
+
+.detail-item {
+  --background: white;
+  --padding-start: 1rem;
+  --padding-end: 1rem;
+  --inner-padding-end: 0;
+  margin: 0.5rem 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  ion-icon {
+    font-size: 1.5rem;
+    margin-right: 0.75rem;
+  }
+}
+
+.detail-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+}
+
+.detail-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1F2937;
+  margin: 0;
+}
+
+.detail-notes {
+  font-size: 0.9375rem;
+  color: #4B5563;
+  line-height: 1.5;
+  margin-top: 0.5rem;
+  white-space: pre-wrap;
+}
+
+// ============================================
+// FOOTER ACTIONS
+// ============================================
+ion-footer {
+  ion-toolbar {
+    --background: white;
+    --border-width: 0;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.action-buttons {
+  padding: 1rem;
+
+  ion-button {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    height: 44px;
+    --border-radius: 10px;
+  }
+
+  .edit-button {
+    ion-icon {
+      font-size: 1.25rem;
+    }
+  }
+
+  .delete-button {
+    ion-icon {
+      font-size: 1.25rem;
+    }
+  }
+}
+
+// ============================================
+// MODO OSCURO
+// ============================================
+@media (prefers-color-scheme: dark) {
+  .appointment-detail-content {
+    --background: #1A1A1A;
+  }
+
+  .status-section {
+    background: #2A2A2A;
+  }
+
+  .detail-item {
+    --background: #2A2A2A;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .detail-label {
+    color: #9CA3AF;
+  }
+
+  .detail-value {
+    color: #F3F4F6;
+  }
+
+  .detail-notes {
+    color: #D1D5DB;
+  }
+
+  ion-footer ion-toolbar {
+    --background: #2A2A2A;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3);
+  }
+}

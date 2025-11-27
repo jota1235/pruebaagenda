@@ -203,7 +203,7 @@ export class DatabaseService {
         FOREIGN KEY (id_personal) REFERENCES personal(id)
       );
 
-      -- ==================== CITAS ====================
+      -- ==================== CITAS (LEGACY - SERÁ MIGRADO) ====================
       CREATE TABLE IF NOT EXISTS citas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         handel INTEGER NOT NULL DEFAULT 1,
@@ -224,15 +224,86 @@ export class DatabaseService {
         FOREIGN KEY (id_servicio) REFERENCES productos(id)
       );
 
+      -- ==================== TAGENDA_LNK_FECHA (COMPATIBLE SYSERV) ====================
+      CREATE TABLE IF NOT EXISTS tagenda_lnk_fecha (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        handel INTEGER NOT NULL,
+        id_empresa_base INTEGER NOT NULL,
+        fecha TEXT NOT NULL,
+        activo INTEGER DEFAULT 1,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(handel, id_empresa_base, fecha)
+      );
+
+      -- ==================== TAGENDA (COMPATIBLE SYSERV) ====================
+      CREATE TABLE IF NOT EXISTS tagenda (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        handel INTEGER NOT NULL,
+        id_empresa_base INTEGER NOT NULL,
+        id_cliente INTEGER NOT NULL,
+        id_personal INTEGER NOT NULL,
+        fecha TEXT NOT NULL,
+        hora TEXT NOT NULL,
+        espacios_duracion INTEGER DEFAULT 1,
+        spacio INTEGER DEFAULT 0,
+        status TEXT DEFAULT 'Reservado',
+        notas TEXT,
+        notas2 TEXT,
+        ban_cita INTEGER DEFAULT 0,
+        lnk_fecha INTEGER,
+        efectivo REAL DEFAULT 0,
+        tarjeta REAL DEFAULT 0,
+        transferencia REAL DEFAULT 0,
+        credito REAL DEFAULT 0,
+        activo INTEGER DEFAULT 1,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (id_cliente) REFERENCES clientes(id),
+        FOREIGN KEY (id_personal) REFERENCES personal(id),
+        FOREIGN KEY (lnk_fecha) REFERENCES tagenda_lnk_fecha(id)
+      );
+
+      -- ==================== TAGENDA_AUX (COMPATIBLE SYSERV) ====================
+      CREATE TABLE IF NOT EXISTS tagenda_aux (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_agenda INTEGER NOT NULL,
+        id_producto_servicio INTEGER NOT NULL,
+        cantidad REAL DEFAULT 1,
+        costo REAL DEFAULT 0,
+        activo INTEGER DEFAULT 1,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (id_agenda) REFERENCES tagenda(id),
+        FOREIGN KEY (id_producto_servicio) REFERENCES productos(id)
+      );
+
       -- ==================== ÍNDICES PARA PERFORMANCE ====================
       CREATE INDEX IF NOT EXISTS idx_clientes_activo ON clientes(activo, handel, id_empresa_base);
       CREATE INDEX IF NOT EXISTS idx_personal_activo ON personal(activo, handel, id_empresa_base);
       CREATE INDEX IF NOT EXISTS idx_productos_activo ON productos(activo, tipo, handel, id_empresa_base);
       CREATE INDEX IF NOT EXISTS idx_config_agenda_handel ON config_agenda(handel, id_empresa_base);
       CREATE INDEX IF NOT EXISTS idx_agenda_terapeutas ON agenda_terapeutas(handel, id_empresa_base, activo);
+
+      -- Índices CITAS (legacy)
       CREATE INDEX IF NOT EXISTS idx_citas_fecha ON citas(fecha, handel, id_empresa_base);
       CREATE INDEX IF NOT EXISTS idx_citas_personal ON citas(id_personal, fecha);
       CREATE INDEX IF NOT EXISTS idx_citas_activo ON citas(activo);
+
+      -- Índices TAGENDA_LNK_FECHA
+      CREATE INDEX IF NOT EXISTS idx_lnk_fecha_fecha ON tagenda_lnk_fecha(fecha);
+      CREATE INDEX IF NOT EXISTS idx_lnk_fecha_handel ON tagenda_lnk_fecha(handel, id_empresa_base);
+
+      -- Índices TAGENDA
+      CREATE INDEX IF NOT EXISTS idx_tagenda_fecha ON tagenda(fecha);
+      CREATE INDEX IF NOT EXISTS idx_tagenda_personal ON tagenda(id_personal);
+      CREATE INDEX IF NOT EXISTS idx_tagenda_cliente ON tagenda(id_cliente);
+      CREATE INDEX IF NOT EXISTS idx_tagenda_activo ON tagenda(activo);
+      CREATE INDEX IF NOT EXISTS idx_tagenda_lnk_fecha ON tagenda(lnk_fecha);
+      CREATE INDEX IF NOT EXISTS idx_tagenda_fecha_personal ON tagenda(fecha, id_personal);
+
+      -- Índices TAGENDA_AUX
+      CREATE INDEX IF NOT EXISTS idx_tagenda_aux_agenda ON tagenda_aux(id_agenda);
+      CREATE INDEX IF NOT EXISTS idx_tagenda_aux_servicio ON tagenda_aux(id_producto_servicio);
+      CREATE INDEX IF NOT EXISTS idx_tagenda_aux_activo ON tagenda_aux(activo);
     `;
 
     await this.db.execute(schema);
@@ -770,5 +841,702 @@ export class DatabaseService {
       'DELETE FROM agenda_terapeutas WHERE handel = ? AND id_empresa_base = ?',
       [handel, idEmpresa]
     );
+  }
+
+  // ==================== MÉTODOS AUXILIARES PARA TAGENDA ====================
+
+  /**
+   * Obtiene o crea un registro en tagenda_lnk_fecha
+   * @param handel - ID de sucursal
+   * @param id_empresa_base - ID de empresa
+   * @param fecha - Fecha en formato YYYY-MM-DD
+   * @returns ID del registro en tagenda_lnk_fecha
+   */
+  async getOrCreateLnkFecha(
+    handel: number,
+    id_empresa_base: number,
+    fecha: string
+  ): Promise<number> {
+    await this.waitForDB();
+
+    // Buscar existente
+    const result = await this.db.query(`
+      SELECT id FROM tagenda_lnk_fecha
+      WHERE handel = ? AND id_empresa_base = ? AND fecha = ? AND activo = 1
+    `, [handel, id_empresa_base, fecha]);
+
+    if (result.values && result.values.length > 0) {
+      return result.values[0].id;
+    }
+
+    // Crear nuevo
+    const insertResult = await this.db.run(`
+      INSERT INTO tagenda_lnk_fecha (handel, id_empresa_base, fecha, activo)
+      VALUES (?, ?, ?, 1)
+    `, [handel, id_empresa_base, fecha]);
+
+    return insertResult.changes?.lastId || 0;
+  }
+
+  /**
+   * Calcula el spacio (columna) para una nueva cita
+   *
+   * El spacio representa la columna en la matriz de agenda donde se debe
+   * colocar la cita. Se calcula basándose en el orden del personal activo.
+   *
+   * En el modo vizNombreTerapeuta (cada terapeuta tiene su columna):
+   *   - spacio = posición del terapeuta en la lista de personal activo ordenado
+   *   - Ejemplo: Si hay 3 terapeutas activos [739, 2273, 4924]
+   *     - Terapeuta 739 → spacio = 0 (primera columna)
+   *     - Terapeuta 2273 → spacio = 1 (segunda columna)
+   *     - Terapeuta 4924 → spacio = 2 (tercera columna)
+   *
+   * Este valor es usado por MapaAgenda() para:
+   *   1. Ubicar la cita en la matriz arrMapa[columna][fila]
+   *   2. Verificar conflictos con isDisponible()
+   *   3. Renderizar visualmente la agenda
+   *
+   * @param id_personal - ID del personal que atenderá
+   * @param fecha - Fecha de la cita (YYYY-MM-DD)
+   * @param hora - Hora de la cita (HH:MM)
+   * @param espacios_duracion - Duración en slots
+   * @returns Índice de columna (0, 1, 2, ...)
+   */
+  async calcularSpacio(
+    id_personal: number,
+    fecha: string,
+    hora: string,
+    espacios_duracion: number
+  ): Promise<number> {
+    await this.waitForDB();
+
+    // Calcular índice basado en orden del personal activo
+    // Este es el algoritmo correcto que MapaAgenda() espera:
+    // El spacio es la posición del terapeuta en la lista ordenada de personal activo
+    const result = await this.db.query(`
+      SELECT COUNT(*) as idx
+      FROM personal p1
+      WHERE p1.activo = 1
+        AND p1.orden < (SELECT p2.orden FROM personal p2 WHERE p2.id = ?)
+    `, [id_personal]);
+
+    const spacio = result.values?.[0]?.idx || 0;
+
+    console.log(`📍 calcularSpacio() → id_personal: ${id_personal}, spacio: ${spacio}`);
+
+    return spacio;
+  }
+
+  /**
+   * Convierte minutos a espacios_duracion (slots)
+   * @param duracion_minutos - Duración en minutos
+   * @param minutos_incremento - Minutos por slot (default 30)
+   * @returns Número de slots
+   */
+  minutosToEspacios(duracion_minutos: number, minutos_incremento: number = 30): number {
+    return Math.ceil(duracion_minutos / minutos_incremento);
+  }
+
+  /**
+   * Convierte espacios_duracion (slots) a minutos
+   * @param espacios_duracion - Número de slots
+   * @param minutos_incremento - Minutos por slot (default 30)
+   * @returns Duración en minutos
+   */
+  espaciosToMinutos(espacios_duracion: number, minutos_incremento: number = 30): number {
+    return espacios_duracion * minutos_incremento;
+  }
+
+  // ==================== MÉTODOS CRUD PARA TAGENDA (COMPATIBLE SYSERV) ====================
+
+  /**
+   * Verifica si hay conflictos de horario para una nueva cita
+   * @param id_personal - ID del personal
+   * @param fecha - Fecha de la cita (YYYY-MM-DD)
+   * @param hora - Hora de inicio (HH:MM)
+   * @param duracion_minutos - Duración en minutos
+   * @param id_cita_excluir - ID de cita a excluir (para edición)
+   * @returns true si hay conflicto, false si está libre
+   */
+  async verificarConflictoHorario(
+    id_personal: number,
+    fecha: string,
+    hora: string,
+    duracion_minutos: number,
+    id_cita_excluir?: number
+  ): Promise<{ hayConflicto: boolean; citasConflicto: any[] }> {
+    await this.waitForDB();
+
+    // Calcular hora de fin de la nueva cita
+    const [horaInicio, minutoInicio] = hora.split(':').map(Number);
+    const minutosDesdeMedianoche = horaInicio * 60 + minutoInicio;
+    const minutosFinales = minutosDesdeMedianoche + duracion_minutos;
+
+    const horaFin = Math.floor(minutosFinales / 60);
+    const minutoFin = minutosFinales % 60;
+    const horaFinStr = `${horaFin.toString().padStart(2, '0')}:${minutoFin.toString().padStart(2, '0')}`;
+
+    console.log(`🔍 Verificando conflictos para: Personal ${id_personal}, Fecha ${fecha}, ${hora} - ${horaFinStr}`);
+
+    // Buscar citas del mismo personal en la misma fecha que se solapen
+    const query = `
+      SELECT
+        t.id,
+        t.hora,
+        t.espacios_duracion,
+        t.status,
+        c.nombre || ' ' || COALESCE(c.apaterno, '') as cliente
+      FROM tagenda t
+      LEFT JOIN clientes c ON t.id_cliente = c.id
+      WHERE t.activo = 1
+        AND t.id_personal = ?
+        AND t.fecha = ?
+        AND t.status IN ('Reservado', 'Confirmado', 'Cobrado')
+        ${id_cita_excluir ? 'AND t.id != ?' : ''}
+    `;
+
+    const params = id_cita_excluir
+      ? [id_personal, fecha, id_cita_excluir]
+      : [id_personal, fecha];
+
+    const result = await this.db.query(query, params);
+    const citasExistentes = result.values || [];
+
+    const citasConflicto: any[] = [];
+
+    // Verificar solapamiento con cada cita existente
+    for (const cita of citasExistentes) {
+      const [horaExistente, minutoExistente] = cita.hora.split(':').map(Number);
+      const minutosInicioExistente = horaExistente * 60 + minutoExistente;
+      const duracionExistente = cita.espacios_duracion * 30; // slots a minutos
+      const minutosFinExistente = minutosInicioExistente + duracionExistente;
+
+      // Verificar solapamiento:
+      // Hay conflicto si:
+      // - La nueva cita empieza durante una cita existente, O
+      // - La nueva cita termina durante una cita existente, O
+      // - La nueva cita engloba completamente una cita existente
+      const hayConflicto = (
+        (minutosDesdeMedianoche >= minutosInicioExistente && minutosDesdeMedianoche < minutosFinExistente) || // Empieza durante
+        (minutosFinales > minutosInicioExistente && minutosFinales <= minutosFinExistente) || // Termina durante
+        (minutosDesdeMedianoche <= minutosInicioExistente && minutosFinales >= minutosFinExistente) // Engloba
+      );
+
+      if (hayConflicto) {
+        const horaFinExistente = Math.floor(minutosFinExistente / 60);
+        const minutoFinExistente = minutosFinExistente % 60;
+
+        citasConflicto.push({
+          ...cita,
+          hora_fin: `${horaFinExistente.toString().padStart(2, '0')}:${minutoFinExistente.toString().padStart(2, '0')}`,
+          duracion_minutos: duracionExistente
+        });
+
+        console.log(`⚠️ CONFLICTO: Cita existente ${cita.id} (${cita.hora} - ${citasConflicto[citasConflicto.length - 1].hora_fin})`);
+      }
+    }
+
+    if (citasConflicto.length > 0) {
+      console.log(`❌ ${citasConflicto.length} conflicto(s) de horario detectado(s)`);
+    } else {
+      console.log(`✅ No hay conflictos de horario`);
+    }
+
+    return {
+      hayConflicto: citasConflicto.length > 0,
+      citasConflicto
+    };
+  }
+
+  /**
+   * Agrega una cita en el nuevo formato compatible con syserv
+   * @param citaData - Datos de la cita
+   * @returns ID de la cita creada en tagenda
+   */
+  async addCitaTagenda(citaData: {
+    handel: number;
+    id_empresa_base: number;
+    id_cliente: number;
+    id_personal: number;
+    fecha: string;  // YYYY-MM-DD
+    hora: string;   // HH:MM
+    duracion_minutos: number;  // Total en minutos
+    servicios: Array<{
+      id_servicio: number;
+      cantidad: number;
+      costo: number;
+    }>;
+    status?: string;
+    notas?: string;
+    notas2?: string;
+  }): Promise<number> {
+    await this.waitForDB();
+
+    console.log('💾 Guardando cita en tagenda (compatible syserv)...', citaData);
+
+    try {
+      // 1. VALIDAR CONFLICTOS DE HORARIO
+      const conflictoCheck = await this.verificarConflictoHorario(
+        citaData.id_personal,
+        citaData.fecha,
+        citaData.hora,
+        citaData.duracion_minutos
+      );
+
+      if (conflictoCheck.hayConflicto) {
+        const citaConflicto = conflictoCheck.citasConflicto[0];
+        const errorMsg = `Ya existe una cita para este personal en ese horario:\n${citaConflicto.cliente} - ${citaConflicto.hora} a ${citaConflicto.hora_fin}`;
+        console.error(`❌ ${errorMsg}`);
+        throw new Error(errorMsg);
+      }
+
+      // 2. Obtener configuración de incremento
+      const config = await this.getConfigAgenda(citaData.handel, citaData.id_empresa_base);
+      const minutos_incremento = config?.minutos_incremento || 30;
+
+      // 3. Calcular espacios_duracion
+      const espacios_duracion = this.minutosToEspacios(
+        citaData.duracion_minutos,
+        minutos_incremento
+      );
+
+      console.log(`📊 Duración: ${citaData.duracion_minutos} min = ${espacios_duracion} slots (${minutos_incremento} min/slot)`);
+
+      // 4. Obtener o crear lnk_fecha
+      const lnk_fecha_id = await this.getOrCreateLnkFecha(
+        citaData.handel,
+        citaData.id_empresa_base,
+        citaData.fecha
+      );
+
+      console.log(`🔗 lnk_fecha_id: ${lnk_fecha_id}`);
+
+      // 4. Calcular spacio (columna en matriz)
+      const spacio = await this.calcularSpacio(
+        citaData.id_personal,
+        citaData.fecha,
+        citaData.hora,
+        espacios_duracion
+      );
+
+      console.log(`📍 spacio (columna): ${spacio}`);
+
+      // 5. Insertar en tagenda
+      const insertResult = await this.db.run(`
+        INSERT INTO tagenda (
+          handel, id_empresa_base, id_cliente, id_personal,
+          fecha, hora, espacios_duracion, spacio,
+          status, notas, notas2, ban_cita, lnk_fecha, activo
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, 1)
+      `, [
+        citaData.handel,
+        citaData.id_empresa_base,
+        citaData.id_cliente,
+        citaData.id_personal,
+        citaData.fecha,
+        citaData.hora,
+        espacios_duracion,
+        spacio,
+        citaData.status || 'Reservado',
+        citaData.notas || '',
+        citaData.notas2 || '',
+        lnk_fecha_id
+      ]);
+
+      const tagenda_id = insertResult.changes?.lastId;
+
+      if (!tagenda_id) {
+        throw new Error('Error al insertar cita en tagenda');
+      }
+
+      console.log(`✅ Cita insertada en tagenda con ID: ${tagenda_id}`);
+
+      // 6. Insertar servicios en tagenda_aux
+      for (const servicio of citaData.servicios) {
+        await this.db.run(`
+          INSERT INTO tagenda_aux (
+            id_agenda, id_producto_servicio, cantidad, costo, activo
+          ) VALUES (?, ?, ?, ?, 1)
+        `, [
+          tagenda_id,
+          servicio.id_servicio,
+          servicio.cantidad,
+          servicio.costo
+        ]);
+
+        console.log(`  ✅ Servicio agregado: id_servicio=${servicio.id_servicio}, cantidad=${servicio.cantidad}`);
+      }
+
+      console.log(`✅ Cita completa guardada: tagenda_id=${tagenda_id}, servicios=${citaData.servicios.length}`);
+
+      return tagenda_id;
+
+    } catch (error) {
+      console.error('❌ Error en addCitaTagenda:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Obtiene citas del nuevo formato tagenda con JOIN completo
+   * @param fecha - Fecha en formato YYYY-MM-DD (opcional)
+   * @returns Array de citas con información completa
+   */
+  async getCitasTagenda(fecha?: string): Promise<any[]> {
+    await this.waitForDB();
+
+    let sql = `
+      SELECT
+        t.id,
+        t.handel,
+        t.id_empresa_base,
+        t.id_cliente,
+        c.nombre as cliente_nombre,
+        c.apaterno as cliente_apaterno,
+        c.amaterno as cliente_amaterno,
+        c.tel1 as cliente_tel1,
+        t.id_personal,
+        p.nombre as personal_nombre,
+        p.alias as personal_alias,
+        t.fecha,
+        t.hora,
+        t.espacios_duracion,
+        t.spacio,
+        t.status,
+        t.notas,
+        t.notas2,
+        t.ban_cita,
+        t.lnk_fecha,
+        t.efectivo,
+        t.tarjeta,
+        t.transferencia,
+        t.credito,
+        -- Calcular duración en minutos para compatibilidad con UI
+        (t.espacios_duracion * 30) as duracion_minutos,
+        -- Servicios concatenados (para vista rápida)
+        GROUP_CONCAT(pr.nombre, ', ') as servicios_nombres,
+        -- Total de servicios
+        COUNT(ta.id) as total_servicios,
+        -- Costo total
+        SUM(ta.costo * ta.cantidad) as costo_total
+      FROM tagenda t
+      LEFT JOIN clientes c ON t.id_cliente = c.id
+      LEFT JOIN personal p ON t.id_personal = p.id
+      LEFT JOIN tagenda_aux ta ON t.id = ta.id_agenda AND ta.activo = 1
+      LEFT JOIN productos pr ON ta.id_producto_servicio = pr.id
+      WHERE t.activo = 1
+    `;
+    const params: any[] = [];
+
+    if (fecha) {
+      sql += ' AND t.fecha = ?';
+      params.push(fecha);
+    }
+
+    sql += ' GROUP BY t.id ORDER BY t.fecha, t.hora, t.spacio';
+
+    const result = await this.db.query(sql, params);
+    return result.values || [];
+  }
+
+  /**
+   * Obtiene los servicios de una cita específica
+   * @param id_agenda - ID de la cita en tagenda
+   * @returns Array de servicios con detalles
+   */
+  async getServiciosDeCita(id_agenda: number): Promise<any[]> {
+    await this.waitForDB();
+
+    const result = await this.db.query(`
+      SELECT
+        ta.id,
+        ta.id_agenda,
+        ta.id_producto_servicio,
+        pr.nombre as servicio_nombre,
+        pr.codigo as servicio_codigo,
+        pr.n_duracion as servicio_duracion,
+        pr.precio as servicio_precio,
+        ta.cantidad,
+        ta.costo,
+        (ta.cantidad * ta.costo) as subtotal
+      FROM tagenda_aux ta
+      LEFT JOIN productos pr ON ta.id_producto_servicio = pr.id
+      WHERE ta.id_agenda = ? AND ta.activo = 1
+    `, [id_agenda]);
+
+    return result.values || [];
+  }
+
+  /**
+   * Actualiza una cita existente con validación de conflictos
+   * @param id - ID de la cita a actualizar
+   * @param citaData - Nuevos datos de la cita
+   * @returns true si se actualizó correctamente
+   */
+  async updateCitaTagenda(id: number, citaData: {
+    handel: number;
+    id_empresa_base: number;
+    id_cliente: number;
+    id_personal: number;
+    fecha: string;
+    hora: string;
+    duracion_minutos: number;
+    servicios: Array<{
+      id_servicio: number;
+      cantidad: number;
+      costo: number;
+    }>;
+    status?: string;
+    notas?: string;
+    notas2?: string;
+  }): Promise<boolean> {
+    await this.waitForDB();
+
+    console.log(`✏️ Actualizando cita ID: ${id}`, citaData);
+
+    try {
+      // 1. VALIDAR CONFLICTOS DE HORARIO (excluyendo esta cita)
+      const conflictoCheck = await this.verificarConflictoHorario(
+        citaData.id_personal,
+        citaData.fecha,
+        citaData.hora,
+        citaData.duracion_minutos,
+        id // Excluir esta cita de la validación
+      );
+
+      if (conflictoCheck.hayConflicto) {
+        const citaConflicto = conflictoCheck.citasConflicto[0];
+        const errorMsg = `Ya existe una cita para este personal en ese horario:\n${citaConflicto.cliente} - ${citaConflicto.hora} a ${citaConflicto.hora_fin}`;
+        console.error(`❌ ${errorMsg}`);
+        throw new Error(errorMsg);
+      }
+
+      // 2. Obtener configuración
+      const config = await this.getConfigAgenda(citaData.handel, citaData.id_empresa_base);
+      const minutos_incremento = config?.minutos_incremento || 30;
+
+      // 3. Calcular espacios_duracion
+      const espacios_duracion = this.minutosToEspacios(
+        citaData.duracion_minutos,
+        minutos_incremento
+      );
+
+      // 4. Recalcular spacio
+      const spacio = await this.calcularSpacio(
+        citaData.id_personal,
+        citaData.fecha,
+        citaData.hora,
+        espacios_duracion
+      );
+
+      // 5. Actualizar tagenda
+      const sql = `
+        UPDATE tagenda
+        SET id_cliente = ?, id_personal = ?, fecha = ?, hora = ?,
+            espacios_duracion = ?, spacio = ?, status = ?,
+            notas = ?, notas2 = ?,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+      `;
+
+      const result = await this.db.run(sql, [
+        citaData.id_cliente,
+        citaData.id_personal,
+        citaData.fecha,
+        citaData.hora,
+        espacios_duracion,
+        spacio,
+        citaData.status || 'Reservado',
+        citaData.notas || '',
+        citaData.notas2 || '',
+        id
+      ]);
+
+      // 6. Eliminar servicios antiguos de tagenda_aux
+      console.log('🔄 Eliminando servicios antiguos de tagenda_aux...');
+      await this.db.run(
+        'DELETE FROM tagenda_aux WHERE id_agenda = ?',
+        [id]
+      );
+
+      // 7. Insertar nuevos servicios
+      console.log(`💾 Guardando ${citaData.servicios.length} servicios en tagenda_aux...`);
+      for (const servicio of citaData.servicios) {
+        await this.db.run(`
+          INSERT INTO tagenda_aux (
+            id_agenda, id_producto_servicio, cantidad, costo, activo
+          ) VALUES (?, ?, ?, ?, 1)
+        `, [
+          id,
+          servicio.id_servicio,
+          servicio.cantidad,
+          servicio.costo
+        ]);
+      }
+
+      console.log(`✅ Cita actualizada exitosamente`);
+      return (result.changes?.changes || 0) > 0;
+    } catch (error: any) {
+      console.error('❌ Error actualizando cita:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Elimina una cita en tagenda (soft delete)
+   * @param id - ID de la cita
+   * @returns true si se eliminó correctamente
+   */
+  async deleteCitaTagenda(id: number): Promise<boolean> {
+    await this.waitForDB();
+
+    // Soft delete en tagenda
+    const sql = 'UPDATE tagenda SET activo = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ?';
+    const result = await this.db.run(sql, [id]);
+
+    // También marcar como inactivos los servicios asociados
+    await this.db.run(
+      'UPDATE tagenda_aux SET activo = 0 WHERE id_agenda = ?',
+      [id]
+    );
+
+    return (result.changes?.changes || 0) > 0;
+  }
+
+  /**
+   * Busca servicios por nombre (autocompletado)
+   * @param query - Texto a buscar
+   * @returns Array de servicios que coinciden (con duración en MINUTOS)
+   */
+  async searchServicios(query: string): Promise<any[]> {
+    await this.waitForDB();
+
+    const sql = `
+      SELECT
+        id,
+        nombre,
+        (n_duracion * 30) as duracion,
+        precio
+      FROM productos
+      WHERE activo = 1
+        AND tipo = 'Servicio'
+        AND LOWER(nombre) LIKE LOWER(?)
+      ORDER BY nombre
+      LIMIT 10
+    `;
+
+    const result = await this.db.query(sql, [`%${query}%`]);
+    return result.values || [];
+  }
+
+  /**
+   * 🔧 MIGRACIÓN: Corregir n_duracion incorrectos en productos
+   *
+   * Problema: Algunos servicios tienen n_duracion guardado en MINUTOS en lugar de ESPACIOS
+   * n_duracion debe estar en ESPACIOS (slots de 30 min)
+   *
+   * Solución: Detectar valores > 10 (probablemente minutos) y convertirlos a espacios
+   *
+   * @param minutos_incremento - Minutos por slot (default 30)
+   * @returns Número de registros corregidos
+   */
+  async corregirDuracionServicios(minutos_incremento: number = 30): Promise<number> {
+    await this.waitForDB();
+
+    console.log('🔧 Iniciando corrección de n_duracion en productos...');
+
+    // 1. Obtener todos los servicios con n_duracion sospechoso (> 10)
+    const serviciosIncorrectos = await this.db.query(`
+      SELECT id, nombre, n_duracion
+      FROM productos
+      WHERE activo = 1
+        AND tipo = 'Servicio'
+        AND n_duracion > 10
+    `);
+
+    if (!serviciosIncorrectos.values || serviciosIncorrectos.values.length === 0) {
+      console.log('✅ No se encontraron n_duracion incorrectos en productos');
+      return 0;
+    }
+
+    console.log(`⚠️  Encontrados ${serviciosIncorrectos.values.length} servicios con n_duracion > 10:`);
+
+    let corregidos = 0;
+
+    // 2. Corregir cada servicio
+    for (const servicio of serviciosIncorrectos.values) {
+      const valorIncorrecto = servicio.n_duracion;
+      const valorCorrecto = Math.ceil(valorIncorrecto / minutos_incremento);
+
+      console.log(`   📍 Servicio ID ${servicio.id} "${servicio.nombre}":`);
+      console.log(`      ❌ Antes: ${valorIncorrecto} n_duracion (${valorIncorrecto * 30} min si fueran espacios)`);
+      console.log(`      ✅ Ahora:  ${valorCorrecto} n_duracion (${valorCorrecto * 30} min)`);
+
+      await this.db.run(`
+        UPDATE productos
+        SET n_duracion = ?
+        WHERE id = ?
+      `, [valorCorrecto, servicio.id]);
+
+      corregidos++;
+    }
+
+    console.log(`✅ ${corregidos} servicios corregidos exitosamente`);
+    return corregidos;
+  }
+
+  /**
+   * 🔧 MIGRACIÓN: Corregir espacios_duracion incorrectos en tagenda
+   *
+   * Problema: Algunas citas tienen espacios_duracion guardado en MINUTOS en lugar de ESPACIOS
+   * Esto causa que MapaAgenda() marque demasiados slots como continuaciones
+   *
+   * Solución: Detectar valores > 10 (probablemente minutos) y convertirlos a espacios
+   *
+   * @param minutos_incremento - Minutos por slot (default 30)
+   * @returns Número de registros corregidos
+   */
+  async corregirEspaciosDuracion(minutos_incremento: number = 30): Promise<number> {
+    await this.waitForDB();
+
+    console.log('🔧 Iniciando corrección de espacios_duracion en tagenda...');
+
+    // 1. Obtener todas las citas con espacios_duracion sospechosos (> 10)
+    const citasIncorrectas = await this.db.query(`
+      SELECT id, espacios_duracion, fecha, hora
+      FROM tagenda
+      WHERE espacios_duracion > 10
+        AND activo = 1
+    `);
+
+    if (!citasIncorrectas.values || citasIncorrectas.values.length === 0) {
+      console.log('✅ No se encontraron espacios_duracion incorrectos en tagenda');
+      return 0;
+    }
+
+    console.log(`⚠️  Encontradas ${citasIncorrectas.values.length} citas con espacios_duracion > 10:`);
+
+    let corregidos = 0;
+
+    // 2. Corregir cada cita
+    for (const cita of citasIncorrectas.values) {
+      const valorIncorrecto = cita.espacios_duracion;
+      const valorCorrecto = Math.ceil(valorIncorrecto / minutos_incremento);
+
+      console.log(`   📍 Cita ID ${cita.id} (${cita.fecha} ${cita.hora}):`);
+      console.log(`      ❌ Antes: ${valorIncorrecto} espacios (${valorIncorrecto * 30} min)`);
+      console.log(`      ✅ Ahora:  ${valorCorrecto} espacios (${valorCorrecto * 30} min)`);
+
+      await this.db.run(`
+        UPDATE tagenda
+        SET espacios_duracion = ?
+        WHERE id = ?
+      `, [valorCorrecto, cita.id]);
+
+      corregidos++;
+    }
+
+    console.log(`✅ ${corregidos} citas corregidas exitosamente`);
+    return corregidos;
   }
 }

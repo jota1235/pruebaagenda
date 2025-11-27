@@ -67,6 +67,7 @@ export interface HorarioAgenda {
  */
 export interface Reserva {
   id_agenda: number;
+  id?: number; // Alias para id_agenda (retornado por getCitasTagenda)
   id_cliente: number;
   id_personal: number;
   hora: string;
@@ -77,6 +78,7 @@ export interface Reserva {
   columna_ag: number;
   id_personal_ag: number | string;
   cliente: string;
+  personal?: string; // Nombre del personal (retornado por getCitasTagenda)
   tel1: string | null;
   tel2: string | null;
   email1: string | null;
@@ -90,6 +92,9 @@ export interface Reserva {
   alias_personal: string;
   nombre_personal: string;
   fecha?: string; // Campo opcional para almacenar la fecha en formato YYYY-MM-DD
+  costo_total?: number; // Costo total de la cita (retornado por getCitasTagenda)
+  servicios_nombres?: string; // Nombres de servicios concatenados para mostrar en UI
+  duracion_minutos?: number; // Duración en minutos para mostrar en UI
 }
 
 /**

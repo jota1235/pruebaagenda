@@ -1074,13 +1074,18 @@ export class AgendaService {
 
     // Verificar si SQLite está disponible
     if (this.dbService.isReady()) {
-      console.log('📱 readReservas() usando SQLite para fecha:', fecha);
+      console.log('📱 readReservas() usando SQLite (tagenda) para fecha:', fecha);
 
       try {
-        // Leer citas desde SQLite (ahora incluye JOINs con clientes, personal y servicios)
-        const citas = await this.dbService.getCitas(fecha);
+        // Leer citas desde SQLite usando TAGENDA (compatible syserv)
+        const citas = await this.dbService.getCitasTagenda(fecha);
 
-        // Mapear datos de SQLite al formato esperado
+        console.log(`📊 ${citas.length} citas cargadas desde tagenda para ${fecha}`);
+        if (citas.length > 0) {
+          console.log('📋 Ejemplo de cita desde tagenda:', citas[0]);
+        }
+
+        // Mapear datos de tagenda al formato esperado
         this.vecReservas = citas.map((cita: any) => {
           // Construir nombre completo del cliente
           const nombreCliente = [
@@ -1090,13 +1095,10 @@ export class AgendaService {
           ].filter(Boolean).join(' ').trim();
 
           // Construir nombre completo del personal
-          const nombrePersonal = [
-            cita.personal_nombre || '',
-            cita.personal_apellidos || ''
-          ].filter(Boolean).join(' ').trim();
+          const nombrePersonal = cita.personal_nombre || cita.personal_alias || '';
 
-          // Construir nombre del servicio (string, no array)
-          const servicioAgenda = cita.servicio_nombre || null;
+          // Servicios concatenados (ya viene del JOIN)
+          const servicioAgenda = cita.servicios_nombres || null;
 
           return {
             id_agenda: cita.id,
@@ -1105,32 +1107,38 @@ export class AgendaService {
             hora: cita.hora,
             hora_ag: cita.hora,
             status: cita.status,
-            duracion: cita.duracion || 30,
-            columna: cita.id_personal,
-            columna_ag: cita.id_personal,
+            duracion: cita.espacios_duracion || 1,  // ✅ FIX: Usar espacios_duracion (no duracion_minutos)
+            columna: cita.spacio,  // Usar spacio como columna
+            columna_ag: cita.spacio,
             id_personal_ag: cita.id_personal,
             cliente: nombreCliente,
             tel1: cita.cliente_tel1 || null,
             tel2: null,
-            email1: cita.cliente_email1 || null,
+            email1: null,
             notas: cita.notas || '',
-            notas2: '',
+            notas2: cita.notas2 || '',
             notas_ag: cita.notas || '',
-            ban_cita: 0,
+            ban_cita: cita.ban_cita || 0,
             ban_liquid_credito: 0,
             servicios_agenda: servicioAgenda,
             seteado: false,
             alias_personal: cita.personal_alias || '',
             nombre_personal: nombrePersonal,
-            fecha: cita.fecha
+            fecha: cita.fecha,
+            espacios_duracion: cita.espacios_duracion,  // Guardar para referencia
+            duracion_minutos: cita.duracion_minutos,     // También guardar minutos para display
+            total_servicios: cita.total_servicios || 0,
+            costo_total: cita.costo_total || 0
           };
         });
 
         // Extraer ids de clientes
         this.ids_clientes = this.vecReservas.map(r => r.id_cliente).filter(id => id);
 
-        console.log(`✅ ${this.vecReservas.length} citas encontradas desde SQLite para ${fecha}`);
-        console.log('📋 Ejemplo de cita cargada:', this.vecReservas[0]);
+        console.log(`✅ ${this.vecReservas.length} citas mapeadas desde tagenda para ${fecha}`);
+        if (this.vecReservas.length > 0) {
+          console.log('📋 Ejemplo de cita mapeada:', this.vecReservas[0]);
+        }
       } catch (error) {
         console.error('❌ Error leyendo citas desde SQLite, usando localStorage:', error);
         return await this.readReservasFromLocalStorage(fecha);
