@@ -198,10 +198,14 @@
     <!-- Swiper de Terapeutas -->
     <swiper-container
       #swiper
-      [slidesPerView]="1"
-      [spaceBetween]="0"
+      slides-per-view="1"
+      space-between="0"
+      speed="300"
+      css-mode="false"
+      init="true"
       (slidechange)="onSlideChange()"
       (swiperready)="onSwiperReady($event)"
+      (swiperinit)="onSwiperReady($event)"
       class="therapist-swiper">
 
       <!-- Slide por cada Terapeuta -->

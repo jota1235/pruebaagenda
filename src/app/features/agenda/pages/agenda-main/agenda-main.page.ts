@@ -251,7 +251,7 @@ export class AgendaMainPage implements OnInit {
    */
   private initializeSwiper() {
     // Intentar inicialización múltiples veces si es necesario
-    const maxAttempts = 10;
+    const maxAttempts = 15;
     let attempts = 0;
 
     const tryInit = () => {
@@ -263,21 +263,78 @@ export class AgendaMainPage implements OnInit {
         // Para Web Components de Swiper, el objeto swiper está en la propiedad .swiper
         if (swiperEl.swiper) {
           this.swiper = swiperEl.swiper;
-          console.log('✅ Swiper inicializado correctamente');
+          console.log('✅ Swiper inicializado correctamente en intento', attempts);
+
+          // Configurar swiper manualmente para asegurar que funciona
+          if (this.swiper && this.swiper.params) {
+            this.swiper.params.slidesPerView = 1;
+            this.swiper.params.spaceBetween = 0;
+            this.swiper.update();
+          }
+
           return;
         }
       }
 
       // Si no se inicializó y aún hay intentos, reintentar
       if (attempts < maxAttempts) {
-        setTimeout(tryInit, 100 * attempts); // Aumentar el delay progresivamente
+        setTimeout(tryInit, 150 * attempts); // Aumentar el delay progresivamente (más tiempo)
       } else {
         console.warn('⚠️ No se pudo inicializar Swiper después de', maxAttempts, 'intentos');
+        // Como último recurso, usar MutationObserver
+        this.initializeSwiperWithObserver();
       }
     };
 
     // Comenzar primer intento
-    setTimeout(tryInit, 100);
+    setTimeout(tryInit, 200); // Delay inicial más largo para producción
+  }
+
+  /**
+   * Fallback: Inicializar Swiper usando MutationObserver
+   * Se usa cuando el método normal falla
+   */
+  private initializeSwiperWithObserver() {
+    if (!this.swiperRef || !this.swiperRef.nativeElement) {
+      console.warn('⚠️ No se puede usar MutationObserver: swiperRef no disponible');
+      return;
+    }
+
+    console.log('🔍 Intentando inicializar con MutationObserver...');
+
+    const swiperEl = this.swiperRef.nativeElement;
+
+    // Observar cambios en el elemento swiper
+    const observer = new MutationObserver((mutations) => {
+      if (swiperEl.swiper && !this.swiper) {
+        this.swiper = swiperEl.swiper;
+        console.log('✅ Swiper inicializado via MutationObserver');
+
+        // Configurar swiper
+        if (this.swiper && this.swiper.params) {
+          this.swiper.params.slidesPerView = 1;
+          this.swiper.params.spaceBetween = 0;
+          this.swiper.update();
+        }
+
+        observer.disconnect();
+        this.cdr.detectChanges();
+      }
+    });
+
+    observer.observe(swiperEl, {
+      attributes: true,
+      childList: true,
+      subtree: true
+    });
+
+    // Timeout para desconectar el observer después de 10 segundos
+    setTimeout(() => {
+      observer.disconnect();
+      if (!this.swiper) {
+        console.error('❌ Swiper no se pudo inicializar incluso con MutationObserver');
+      }
+    }, 10000);
   }
 
   /**
@@ -285,10 +342,45 @@ export class AgendaMainPage implements OnInit {
    * Este es el método más confiable para capturar la instancia en producción
    */
   onSwiperReady(event: any) {
-    if (event && event.detail && event.detail[0]) {
-      this.swiper = event.detail[0];
-      console.log('✅ Swiper ready event captured');
+    console.log('🎉 Evento swiperready disparado:', event);
+
+    // Intentar obtener la instancia de múltiples formas
+    let swiperInstance = null;
+
+    if (event && event.detail) {
+      // Método 1: event.detail[0]
+      if (Array.isArray(event.detail) && event.detail[0]) {
+        swiperInstance = event.detail[0];
+      }
+      // Método 2: event.detail directamente
+      else if (event.detail.swiper) {
+        swiperInstance = event.detail.swiper;
+      }
+      // Método 3: event.detail es la instancia
+      else if (typeof event.detail.slideTo === 'function') {
+        swiperInstance = event.detail;
+      }
+    }
+
+    // Método 4: Obtener del elemento directamente
+    if (!swiperInstance && this.swiperRef && this.swiperRef.nativeElement) {
+      swiperInstance = this.swiperRef.nativeElement.swiper;
+    }
+
+    if (swiperInstance) {
+      this.swiper = swiperInstance;
+      console.log('✅ Swiper ready event captured and instance assigned');
+
+      // Configurar swiper
+      if (this.swiper && this.swiper.params) {
+        this.swiper.params.slidesPerView = 1;
+        this.swiper.params.spaceBetween = 0;
+        this.swiper.update();
+      }
+
       this.cdr.detectChanges();
+    } else {
+      console.warn('⚠️ Evento swiperready disparado pero no se pudo obtener la instancia');
     }
   }
 
