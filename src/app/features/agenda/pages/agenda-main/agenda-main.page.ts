@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import Swiper from 'swiper';
 import {
   IonContent,
   IonButton,
@@ -26,7 +27,9 @@ import {
 } from '@ionic/angular/standalone';
 import { CalendarModalComponent, CalendarModalResult } from '../../components/calendar-modal/calendar-modal.component';
 import { AppointmentFormComponent, AppointmentFormData } from '../../components/appointment-form/appointment-form.component';
+import { AppointmentDetailComponent } from '../../components/appointment-detail/appointment-detail.component';
 import { AgendaService } from '../../../../core/services/agenda.service';
+import { DatabaseService } from '../../../../core/services/database.service';
 import { ConfigAgenda, Reserva } from '../../../../core/interfaces/agenda.interfaces';
 import { addIcons } from 'ionicons';
 import {
@@ -81,6 +84,7 @@ interface DayOption {
   templateUrl: './agenda-main.page.html',
   styleUrls: ['./agenda-main.page.scss'],
   standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     CommonModule,
     IonContent,
@@ -172,11 +176,34 @@ export class AgendaMainPage implements OnInit {
   // Citas del día
   appointments: Reserva[] = [];
 
+  // ==================== CARRUSEL DE TERAPEUTAS ====================
+  @ViewChild('swiper') swiperRef?: ElementRef;
+  swiper?: Swiper;
+
+  // Terapeutas activos (cada uno es un slide)
+  terapeutas: Array<{
+    id: number;
+    alias: string;
+    nombre: string;
+    orden: number;
+  }> = [];
+
+  // Horarios del día (eje Y)
+  horarios: string[] = [];
+
+  // Matriz de agenda generada por MapaAgenda()
+  arrMapa: string[][] = [];
+
+  // Índice del terapeuta actual visible
+  currentTherapistIndex = 0;
+
   constructor(
     private router: Router,
     private actionSheetController: ActionSheetController,
     private modalController: ModalController,
-    private agendaService: AgendaService
+    private agendaService: AgendaService,
+    private databaseService: DatabaseService,
+    private cdr: ChangeDetectorRef
   ) {
     // Registrar iconos
     addIcons({
@@ -213,11 +240,50 @@ export class AgendaMainPage implements OnInit {
     this.initializeAgenda();
   }
 
+  ngAfterViewInit() {
+    // Obtener referencia al swiper después de que la vista se haya inicializado
+    // Web Components necesitan más tiempo para inicializarse
+    setTimeout(() => {
+      if (this.swiperRef) {
+        const swiperEl = this.swiperRef.nativeElement;
+
+        // Para Web Components de Swiper, el objeto swiper está directamente en el elemento
+        this.swiper = swiperEl.swiper || swiperEl;
+
+        console.log('✅ Swiper elemento:', !!swiperEl);
+        console.log('✅ Swiper.swiper:', !!swiperEl.swiper);
+        console.log('✅ Swiper inicializado:', this.swiper ? 'OK' : 'FALLO');
+
+        if (this.swiper) {
+          console.log('✅ Swiper tiene slideTo:', typeof this.swiper.slideTo);
+        }
+      }
+    }, 500); // Aumentar timeout para Web Components
+  }
+
   /**
    * Inicializar agenda con animación de carga
    */
   async initializeAgenda() {
     try {
+      console.log('🚀 Iniciando initializeAgenda()...');
+
+      // 0. MIGRACIONES: Corregir duraciones incorrectas en la BD
+      // (solo se ejecutarán una vez, detectan valores > 10 y los convierten de minutos a espacios)
+      console.log('🔍 Verificando DatabaseService.isReady():', this.databaseService.isReady());
+
+      if (this.databaseService.isReady()) {
+        console.log('✅ DatabaseService listo, ejecutando migraciones...');
+
+        const serviciosCorregidos = await this.databaseService.corregirDuracionServicios(); // Corregir n_duracion en productos
+        console.log(`📊 Servicios corregidos: ${serviciosCorregidos}`);
+
+        const citasCorregidas = await this.databaseService.corregirEspaciosDuracion();  // Corregir espacios_duracion en tagenda
+        console.log(`📊 Citas corregidas: ${citasCorregidas}`);
+      } else {
+        console.warn('⚠️  DatabaseService NO está listo, migraciones NO ejecutadas');
+      }
+
       // 1. Configurar el handel (sucursal) y empresa
       this.agendaService.handel = 1;
       this.agendaService.id_empresa_base = 1;
@@ -262,17 +328,84 @@ export class AgendaMainPage implements OnInit {
    * Cargar citas para una fecha específica
    */
   async loadAppointmentsForDate(date: Date) {
+    console.log('📅 loadAppointmentsForDate() iniciado para:', date);
     try {
       const fecha = this.formatDateSQL(date);
 
       // Establecer la fecha en el servicio ANTES de cargar las citas
       this.agendaService.setFechaAg(fecha);
 
+      // DEBUG: Verificar datos RAW de la BD ANTES de MapaAgenda
+      console.log('🔬 Verificando datos RAW de tagenda ANTES de MapaAgenda...');
+      const citasRaw = await this.databaseService.getCitasTagenda(fecha);
+      console.log(`📊 Citas RAW de BD (${citasRaw.length}):`);
+      citasRaw.forEach((c: any, i: number) => {
+        console.log(`   ${i+1}. ${c.cliente_nombre} - ${c.hora}`);
+        console.log(`      espacios_duracion: ${c.espacios_duracion}`);
+        console.log(`      duracion_minutos: ${c.duracion_minutos}`);
+      });
+
       // Usar MapaAgenda para obtener todas las citas mapeadas de esa fecha
       this.appointments = await this.agendaService.MapaAgenda(false);
+
+      // ==================== CARGAR DATOS DEL CARRUSEL ====================
+
+      // 1. Obtener matriz generada por MapaAgenda()
+      this.arrMapa = this.agendaService.getArrMapa();
+
+      // 2. Obtener terapeutas activos
+      const config = this.agendaService.getInfoConfigAgenda();
+      this.terapeutas = (config.arrTerapeutas || []).map((t: any) => ({
+        id: t.id,
+        alias: t.alias,
+        nombre: t.nombre,
+        orden: t.orden || 0
+      }));
+
+      // 3. Obtener horarios del día
+      const horariosData = this.agendaService.getInfoHorarios();
+      if (Array.isArray(horariosData)) {
+        // Si son objetos HorarioAgenda, extraer el formato militar
+        this.horarios = horariosData.map((h: any) =>
+          typeof h === 'string' ? h : h.militar
+        );
+      } else {
+        this.horarios = [];
+      }
+
+      console.log('📊 Datos del carrusel cargados:');
+      console.log(`   - Terapeutas: ${this.terapeutas.length}`);
+      console.log(`   - Horarios: ${this.horarios.length}`);
+      console.log(`   - Citas: ${this.appointments.length}`);
+
+      // Debug: Mostrar citas con sus duraciones
+      console.log('🔍🔍🔍 DETALLE DE CITAS 🔍🔍🔍');
+      this.appointments.forEach((cita, index) => {
+        console.log(`⏰ Cita ${index + 1}: ${cita.cliente}`);
+        console.log(`   📅 Hora: ${cita.hora} | Duración: ${cita.duracion} espacios = ${cita.duracion * 30} minutos`);
+        console.log(`   🎯 Status: ${cita.status} | Columna: ${cita.columna_ag} | ID: ${cita.id_agenda}`);
+        console.log(`   🛠️ Servicios: "${cita.servicios_agenda || cita.servicios_nombres || 'N/A'}"`);
+      });
+
+      // Debug: Mostrar matriz completa del primer terapeuta
+      if (this.arrMapa.length > 0 && this.terapeutas.length > 0) {
+        console.log('🗂️🗂️🗂️ MATRIZ DE SLOTS 🗂️🗂️🗂️');
+        const primerTerapeuta = this.terapeutas[0];
+        const columna0 = this.arrMapa[0] || [];
+
+        console.log(`📍 Mostrando slots de: ${primerTerapeuta.alias}`);
+        columna0.slice(0, 15).forEach((valor, fila) => {
+          const horario = this.horarios[fila] || `Fila ${fila}`;
+          console.log(`   ${horario}: [${valor === '' ? 'LIBRE' : valor}]`);
+        });
+      }
+
     } catch (error) {
       console.error('Error cargando citas:', error);
       this.appointments = [];
+      this.terapeutas = [];
+      this.horarios = [];
+      this.arrMapa = [];
     }
   }
 
@@ -305,6 +438,27 @@ export class AgendaMainPage implements OnInit {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  /**
+   * Formatear hora en formato de 12 horas (solo número)
+   * Ejemplo: "09:00" -> "9:00", "13:00" -> "1:00"
+   */
+  formatHour(horario: string): string {
+    const [hours, minutes] = horario.split(':');
+    let hour = parseInt(hours);
+    hour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
+    return `${hour}:${minutes}`;
+  }
+
+  /**
+   * Obtener período AM/PM
+   * Ejemplo: "09:00" -> "a.m.", "13:00" -> "p.m."
+   */
+  formatPeriod(horario: string): string {
+    const [hours] = horario.split(':');
+    const hour = parseInt(hours);
+    return hour < 12 ? 'a.m.' : 'p.m.';
   }
 
   /**
@@ -345,7 +499,8 @@ export class AgendaMainPage implements OnInit {
           clientName: appointment.cliente,
           service: appointment.servicios_agenda || 'Sin servicio',
           duration: appointment.duracion, // Ya está en minutos, no multiplicar
-          status: appointment.status.toLowerCase()
+          status: appointment.status.toLowerCase(),
+          fullData: appointment // Guardar el objeto completo para el detalle
         } : undefined
       });
 
@@ -576,6 +731,68 @@ export class AgendaMainPage implements OnInit {
   }
 
   /**
+   * Ver detalle de una cita
+   */
+  async viewAppointmentDetail(appointment: Reserva) {
+    const modal = await this.modalController.create({
+      component: AppointmentDetailComponent,
+      cssClass: 'appointment-detail-modal',
+      componentProps: {
+        appointment: appointment
+      },
+      breakpoints: [0, 0.5, 0.75, 0.95],
+      initialBreakpoint: 0.75,
+      backdropDismiss: true
+    });
+
+    await modal.present();
+
+    // Esperar a que se cierre el modal
+    const { data, role } = await modal.onWillDismiss();
+
+    if (role === 'edit' && data?.appointment) {
+      // Abrir formulario en modo edición
+      await this.editAppointment(data.appointment);
+    } else if (role === 'delete' && data?.appointmentId) {
+      // Recargar citas después de eliminar
+      console.log('✅ Cita eliminada, recargando agenda...');
+      await this.loadAppointmentsForDate(this.selectedDate);
+      this.generateTimeSlots();
+    }
+  }
+
+  /**
+   * Editar cita existente
+   */
+  async editAppointment(appointment: Reserva) {
+    const modal = await this.modalController.create({
+      component: AppointmentFormComponent,
+      cssClass: 'appointment-form-modal',
+      componentProps: {
+        date: new Date(appointment.fecha + 'T00:00:00'),
+        mode: 'edit',
+        existingAppointment: appointment
+      },
+      backdropDismiss: false
+    });
+
+    await modal.present();
+
+    // Esperar a que se cierre el modal
+    const { data, role } = await modal.onWillDismiss<AppointmentFormData>();
+
+    if (role === 'confirm' && data) {
+      console.log('✅ Cita actualizada:', data);
+
+      // Recargar citas del día desde la base de datos
+      await this.loadAppointmentsForDate(this.selectedDate);
+
+      // Regenerar timeline con las citas actualizadas
+      this.generateTimeSlots();
+    }
+  }
+
+  /**
    * Cambiar tab del bottom navigation
    */
   changeTab(tab: string) {
@@ -589,5 +806,172 @@ export class AgendaMainPage implements OnInit {
    */
   private delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // ==================== MÉTODOS DEL CARRUSEL ====================
+
+  /**
+   * Evento cuando cambia el slide del carrusel
+   */
+  onSlideChange() {
+    if (this.swiper) {
+      const newIndex = this.swiper.activeIndex;
+      console.log(`🔄 onSlideChange() - Índice anterior: ${this.currentTherapistIndex}, Nuevo: ${newIndex}`);
+
+      // Actualizar índice actual
+      this.currentTherapistIndex = newIndex;
+
+      // Forzar detección de cambios para actualizar la clase .active en los indicadores
+      this.cdr.detectChanges();
+
+      const terapeuta = this.terapeutas[this.currentTherapistIndex];
+      if (terapeuta) {
+        console.log(`📍 Mostrando agenda de: ${terapeuta.nombre}`);
+      }
+    }
+  }
+
+  /**
+   * Navegar a un terapeuta específico desde indicadores
+   */
+  goToTherapist(index: number) {
+    console.log(`🎯 goToTherapist(${index}) llamado`);
+    console.log(`   - currentTherapistIndex ANTES: ${this.currentTherapistIndex}`);
+    console.log(`   - Swiper existe: ${!!this.swiper}`);
+    console.log(`   - Índice válido: ${index >= 0 && index < this.terapeutas.length}`);
+    console.log(`   - Total terapeutas: ${this.terapeutas.length}`);
+
+    if (this.swiper && index >= 0 && index < this.terapeutas.length) {
+      const terapeuta = this.terapeutas[index];
+      console.log(`   ✅ Navegando a: ${terapeuta.nombre}`);
+
+      // Actualizar el índice inmediatamente (el slidechange también lo hará, pero esto es para sincronizar más rápido)
+      this.currentTherapistIndex = index;
+      this.cdr.detectChanges();
+      console.log(`   - currentTherapistIndex DESPUÉS: ${this.currentTherapistIndex}`);
+
+      this.swiper.slideTo(index);
+    } else {
+      console.warn(`   ❌ No se puede navegar - Swiper no disponible o índice inválido`);
+    }
+  }
+
+  /**
+   * Obtener información de una celda de la matriz
+   */
+  getCeldaInfo(columna: number, fila: number): {
+    tipo: 'libre' | 'cita' | 'continuacion' | 'inhabil' | 'deshabilitado';
+    cita?: Reserva;
+    valor: string;
+  } {
+    const valor = this.arrMapa[columna]?.[fila] || '';
+
+    if (valor === '') return { tipo: 'libre', valor };
+
+    // Para continuaciones (X), buscar la cita original arriba
+    if (valor === 'X') {
+      // Buscar hacia arriba en la misma columna para encontrar la cita original
+      for (let filaAnterior = fila - 1; filaAnterior >= 0; filaAnterior--) {
+        const valorAnterior = this.arrMapa[columna]?.[filaAnterior] || '';
+        const citaId = parseInt(valorAnterior);
+        if (!isNaN(citaId)) {
+          const cita = this.appointments.find(c => c.id_agenda === citaId);
+          return { tipo: 'continuacion', cita, valor };
+        }
+      }
+      return { tipo: 'continuacion', valor };
+    }
+
+    if (valor === 'i') return { tipo: 'inhabil', valor };
+    if (valor === 'd') return { tipo: 'deshabilitado', valor };
+
+    const citaId = parseInt(valor);
+    if (!isNaN(citaId)) {
+      const cita = this.appointments.find(c => c.id_agenda === citaId);
+      return { tipo: 'cita', cita, valor };
+    }
+
+    return { tipo: 'libre', valor };
+  }
+
+  /**
+   * Obtener clase CSS según el tipo de celda
+   */
+  getCeldaClass(columna: number, fila: number): string {
+    const info = this.getCeldaInfo(columna, fila);
+    return `cell-${info.tipo}`;
+  }
+
+  /**
+   * Click en una celda de la agenda
+   */
+  async onCellClick(columna: number, fila: number) {
+    const celdaInfo = this.getCeldaInfo(columna, fila);
+
+    // Ver detalle de cita (tanto en celda principal como en continuación)
+    if ((celdaInfo.tipo === 'cita' || celdaInfo.tipo === 'continuacion') && celdaInfo.cita) {
+      await this.viewAppointmentDetail(celdaInfo.cita);
+    } else if (celdaInfo.tipo === 'libre') {
+      // Crear nueva cita con datos pre-seleccionados
+      const terapeuta = this.terapeutas[columna];
+      const horario = this.horarios[fila];
+
+      if (terapeuta && horario) {
+        await this.crearCitaConDatos(terapeuta, horario);
+      }
+    }
+  }
+
+  /**
+   * Crear cita con terapeuta y hora pre-seleccionados
+   */
+  async crearCitaConDatos(terapeuta: any, horario: string) {
+    // Combinar fecha seleccionada con horario
+    const [horas, minutos] = horario.split(':').map(Number);
+    const fechaHora = new Date(this.selectedDate);
+    fechaHora.setHours(horas, minutos, 0, 0);
+
+    const modal = await this.modalController.create({
+      component: AppointmentFormComponent,
+      cssClass: 'appointment-form-modal',
+      componentProps: {
+        date: fechaHora,
+        mode: 'create',
+        preselectedStaff: terapeuta.id,
+        selectedDate: this.selectedDate
+      },
+      backdropDismiss: false
+    });
+
+    await modal.present();
+
+    const { data, role } = await modal.onWillDismiss<AppointmentFormData>();
+
+    if (role === 'confirm' && data) {
+      console.log('✅ Cita creada desde carrusel:', data);
+      await this.loadAppointmentsForDate(this.selectedDate);
+      this.generateTimeSlots();
+    }
+  }
+
+  /**
+   * Obtener color según el status de la cita
+   */
+  getStatusColor(status?: string): string {
+    switch (status) {
+      case 'Confirmado': return 'success';
+      case 'Cobrado': return 'primary';
+      case 'Reservado': return 'warning';
+      case 'Cancelado': return 'danger';
+      case 'FueraTiempo': return 'medium';
+      default: return 'medium';
+    }
+  }
+
+  /**
+   * Contar citas de un terapeuta específico
+   */
+  getAppointmentCountForTherapist(terapeutaId: number): number {
+    return this.appointments.filter(a => a.id_personal === terapeutaId).length;
   }
 }

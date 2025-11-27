@@ -180,35 +180,112 @@
 
   </div>
 
-  <!-- Timeline de Citas -->
-  <div class="timeline-container" *ngIf="activeTab === 'appointments'">
-    <div class="timeline-content">
+  <!-- ==================== CARRUSEL DE AGENDAS POR TERAPEUTA ==================== -->
+  <div class="carousel-container" *ngIf="activeTab === 'appointments'">
 
-      <!-- Líneas de tiempo cada 30 minutos -->
-      <div class="time-slot" *ngFor="let slot of timeSlots; let i = index">
-        <div class="time-label">
-          <span class="hour">{{ slot.displayTime }}</span>
-          <span class="period">{{ slot.period }}</span>
-        </div>
-
-        <div class="time-grid">
-          <!-- Slot de 30 minutos -->
-          <div
-            class="grid-slot"
-            [class.has-appointment]="!slot.isEmpty"
-          >
-            <!-- Cita (si existe) -->
-            <div class="appointment-card" *ngIf="!slot.isEmpty && slot.appointment">
-              <div class="appointment-time">{{ slot.displayTime }} {{ slot.period }}</div>
-              <div class="appointment-client">{{ slot.appointment.clientName }}</div>
-              <div class="appointment-service">{{ slot.appointment.service }}</div>
-              <div class="appointment-duration">{{ slot.appointment.duration }} min</div>
-            </div>
-          </div>
-        </div>
+    <!-- Indicadores de Terapeutas -->
+    <div class="therapist-indicators" *ngIf="terapeutas.length > 0">
+      <div
+        *ngFor="let terapeuta of terapeutas; let i = index"
+        class="indicator"
+        [class.active]="currentTherapistIndex === i"
+        (click)="goToTherapist(i)">
+        <span class="indicator-text">{{ terapeuta.alias }}</span>
+        <div class="indicator-badge" *ngIf="i === currentTherapistIndex"></div>
       </div>
-
     </div>
+
+    <!-- Swiper de Terapeutas -->
+    <swiper-container
+      #swiper
+      [slidesPerView]="1"
+      [spaceBetween]="0"
+      (slidechange)="onSlideChange()"
+      class="therapist-swiper">
+
+      <!-- Slide por cada Terapeuta -->
+      <swiper-slide *ngFor="let terapeuta of terapeutas; let col = index">
+        <div class="therapist-schedule">
+
+          <!-- Header del Terapeuta -->
+          <div class="therapist-header">
+            <h3 class="therapist-name">{{ terapeuta.nombre }}</h3>
+            <ion-badge color="primary">
+              {{ getAppointmentCountForTherapist(terapeuta.id) }} citas
+            </ion-badge>
+          </div>
+
+          <!-- Timeline de Horarios -->
+          <ion-list class="time-slots-list">
+            <ion-item
+              *ngFor="let horario of horarios; let fila = index"
+              [ngClass]="getCeldaClass(col, fila)"
+              (click)="onCellClick(col, fila)"
+              class="time-slot-item"
+              button>
+
+              <!-- Etiqueta de Hora -->
+              <ion-label slot="start" class="time-label">
+                {{ formatHour(horario) }}
+                <small>{{ formatPeriod(horario) }}</small>
+              </ion-label>
+
+              <!-- Celda LIBRE -->
+              <div *ngIf="getCeldaInfo(col, fila).tipo === 'libre'" class="cell-content libre">
+                <span class="libre-text"></span>
+              </div>
+
+              <!-- Celda CITA -->
+              <div *ngIf="getCeldaInfo(col, fila).tipo === 'cita'" class="cell-content cita"
+                   [attr.data-status]="getCeldaInfo(col, fila).cita?.status">
+                <div class="cita-time">{{ getCeldaInfo(col, fila).cita?.hora }}</div>
+                <div class="cita-header">
+                  <strong class="cliente-name">{{ getCeldaInfo(col, fila).cita?.cliente }}</strong>
+                </div>
+                <p class="servicio-text">{{ getCeldaInfo(col, fila).cita?.servicios_agenda }}</p>
+                <div class="cita-footer">
+                  <span class="duracion-text">
+                    <ion-icon name="time-outline"></ion-icon>
+                    {{ getCeldaInfo(col, fila).cita?.duracion_minutos }} min
+                  </span>
+                </div>
+              </div>
+
+              <!-- Celda CONTINUACIÓN -->
+              <div *ngIf="getCeldaInfo(col, fila).tipo === 'continuacion'"
+                   class="cell-content continuacion"
+                   [attr.data-status]="getCeldaInfo(col, fila).cita?.status">
+                <div class="continuacion-indicator"></div>
+                <!-- DEBUG: Mostrar info de continuación -->
+                <span class="debug-continuation" *ngIf="getCeldaInfo(col, fila).cita">
+                  {{ getCeldaInfo(col, fila).cita?.cliente }} (cont.)
+                </span>
+              </div>
+
+              <!-- Celda INHÁBIL -->
+              <div *ngIf="getCeldaInfo(col, fila).tipo === 'inhabil'" class="cell-content inhabil">
+                <span class="inhabil-text">No disponible</span>
+              </div>
+
+              <!-- Celda DESHABILITADA -->
+              <div *ngIf="getCeldaInfo(col, fila).tipo === 'deshabilitado'" class="cell-content deshabilitado">
+                <span class="deshabilitado-text">Cerrado</span>
+              </div>
+
+            </ion-item>
+          </ion-list>
+
+        </div>
+      </swiper-slide>
+
+    </swiper-container>
+
+    <!-- Mensaje si no hay terapeutas -->
+    <div class="no-therapists" *ngIf="terapeutas.length === 0">
+      <ion-icon name="people-outline" class="no-data-icon"></ion-icon>
+      <p>No hay terapeutas configurados</p>
+    </div>
+
   </div>
 
   <!-- FAB para nueva cita -->

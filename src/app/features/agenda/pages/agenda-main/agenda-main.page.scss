@@ -1208,3 +1208,602 @@ ion-item.today {
     }
   }
 }
+
+// ==================== CARRUSEL DE AGENDAS ====================
+
+.carousel-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+// Indicadores de Terapeutas - Estilo igual a los días
+.therapist-indicators {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: var(--ion-background-color);
+  border-bottom: 1px solid var(--ion-color-light-shade);
+  overflow-x: auto;
+  flex-shrink: 0;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 20px;
+    border-radius: 14px;
+    background: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    min-width: 80px;
+
+    &:hover {
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+      transform: translateY(-2px) scale(1.02);
+    }
+
+    .indicator-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+      text-transform: capitalize;
+    }
+
+    .indicator-badge {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--ion-color-medium);
+    }
+
+    // Terapeuta activo - mismo estilo que día seleccionado
+    &.active {
+      background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-primary-tint) 100%);
+      color: white;
+      transform: translateY(-4px) scale(1.08);
+      box-shadow: 0 8px 20px rgba(14, 165, 233, 0.35);
+
+      .indicator-text {
+        color: #ffffff;
+        font-weight: 700;
+      }
+
+      .indicator-badge {
+        background: #ffffff;
+      }
+    }
+  }
+}
+
+// Swiper Container
+.therapist-swiper {
+  width: 100%;
+  height: 100%;
+  flex: 1;
+}
+
+// Slide del Terapeuta
+.therapist-schedule {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+// Header del Terapeuta - Estilo azul consistente
+.therapist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-primary-tint) 100%);
+  color: #ffffff;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+
+  .therapist-name {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  ion-badge {
+    --background: rgba(255, 255, 255, 0.2);
+    --color: #ffffff;
+    font-weight: 500;
+  }
+}
+
+// Lista de Time Slots
+.time-slots-list {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--ion-background-color);
+}
+
+.time-slot-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  --min-height: 70px;
+  border-bottom: none;
+
+  .time-label {
+    min-width: 70px;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 500;
+    color: #999999;
+    padding: 0 12px 0 16px;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+
+    small {
+      font-size: 11px;
+      color: #666666;
+      font-weight: 400;
+    }
+  }
+
+  // Celdas de Agenda
+  .cell-content {
+    flex: 1;
+    padding: 16px;
+    border-radius: 16px;
+    margin: 6px 16px 6px 0;
+    min-height: 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: all 0.25s ease;
+
+    // Celda LIBRE
+    &.libre {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      align-items: center;
+      gap: 4px;
+      min-height: 50px;
+
+      .libre-text {
+        font-size: 13px;
+        color: #888888;
+        font-weight: 400;
+      }
+
+      .add-icon {
+        font-size: 20px;
+        color: var(--ion-color-primary);
+      }
+
+      &:active {
+        background: rgba(var(--ion-color-primary-rgb), 0.05);
+        border-radius: 12px;
+      }
+    }
+
+    // Celda CITA - Estilo card grande
+    &.cita {
+      background: #e74c3c;
+      border: none;
+      padding: 16px;
+      min-height: 110px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+      // Hora en la esquina superior
+      .cita-time {
+        font-size: 13px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.95);
+        margin-bottom: 8px;
+      }
+
+      .cita-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+        gap: 8px;
+
+        .cliente-name {
+          font-size: 16px;
+          font-weight: 700;
+          color: #ffffff;
+          flex: 1;
+          line-height: 1.3;
+        }
+
+        .status-badge {
+          font-size: 10px;
+          padding: 3px 8px;
+          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.2);
+          color: #ffffff;
+        }
+      }
+
+      .servicio-text {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.9);
+        margin: 0 0 10px 0;
+        font-weight: 400;
+        line-height: 1.4;
+      }
+
+      .cita-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .duracion-text {
+          font-size: 13px;
+          color: rgba(255, 255, 255, 0.85);
+          display: flex;
+          align-items: center;
+          gap: 4px;
+
+          ion-icon {
+            font-size: 16px;
+          }
+        }
+
+        .costo-text {
+          font-size: 15px;
+          font-weight: 600;
+          color: #ffffff;
+        }
+      }
+
+      // Colores por Status - Colores correctos según negocio
+      &[data-status="Reservado"] {
+        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); // Amarillo/Naranja - Pendiente
+      }
+
+      &[data-status="Confirmado"] {
+        background: linear-gradient(135deg, #27ae60 0%, #229954 100%); // Verde - Confirmado/Atendido
+      }
+
+      &[data-status="Cobrado"] {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); // Azul - Pagado
+      }
+
+      &[data-status="Cancelado"] {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); // Rojo - Cancelado
+        opacity: 0.7;
+      }
+
+      &:active {
+        transform: scale(0.97);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+    }
+
+    // Celda CONTINUACIÓN (parte de una cita multi-slot)
+    &.continuacion {
+      background: rgba(var(--ion-color-primary-rgb), 0.05);
+      border: none;
+      border-left: 4px solid var(--ion-color-primary);
+      align-items: center;
+      justify-content: flex-start;
+      padding: 4px 12px;
+      cursor: pointer;
+
+      .continuacion-indicator {
+        width: 3px;
+        height: 100%;
+        background: linear-gradient(
+          to bottom,
+          var(--ion-color-primary) 0%,
+          var(--ion-color-primary-shade) 100%
+        );
+        border-radius: 2px;
+        opacity: 0.6;
+      }
+
+      // Colores por Status (heredados de la cita)
+      &[data-status="Reservado"] {
+        background: rgba(243, 156, 18, 0.08);
+        border-color: #f39c12;
+
+        .continuacion-indicator {
+          background: linear-gradient(to bottom, #f39c12 0%, #e67e22 100%);
+        }
+      }
+
+      &[data-status="Confirmado"] {
+        background: rgba(39, 174, 96, 0.08);
+        border-color: #27ae60;
+
+        .continuacion-indicator {
+          background: linear-gradient(to bottom, #27ae60 0%, #229954 100%);
+        }
+      }
+
+      &[data-status="Cobrado"] {
+        background: rgba(52, 152, 219, 0.08);
+        border-color: #3498db;
+
+        .continuacion-indicator {
+          background: linear-gradient(to bottom, #3498db 0%, #2980b9 100%);
+        }
+      }
+
+      &[data-status="Cancelado"] {
+        background: rgba(231, 76, 60, 0.05);
+        border-color: #e74c3c;
+        opacity: 0.5;
+
+        .continuacion-indicator {
+          background: linear-gradient(to bottom, #e74c3c 0%, #c0392b 100%);
+        }
+      }
+
+      // Efecto hover/active
+      &:active {
+        opacity: 0.7;
+
+        .continuacion-indicator {
+          opacity: 1;
+        }
+      }
+
+      // DEBUG: Texto de continuación
+      .debug-continuation {
+        font-size: 10px;
+        color: var(--ion-color-medium);
+        font-style: italic;
+        margin-left: 8px;
+      }
+    }
+
+    // Celda INHÁBIL
+    &.inhabil {
+      background: #e9ecef;
+      border: 1px solid #dee2e6;
+      align-items: center;
+
+      .inhabil-text {
+        font-size: 12px;
+        color: #6c757d;
+        font-style: italic;
+      }
+    }
+
+    // Celda DESHABILITADA
+    &.deshabilitado {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      align-items: center;
+
+      .deshabilitado-text {
+        font-size: 12px;
+        color: #adb5bd;
+      }
+    }
+  }
+}
+
+// Mensaje sin terapeutas
+.no-therapists {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: var(--ion-color-medium);
+
+  .no-data-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  p {
+    font-size: 16px;
+    margin: 0;
+  }
+}
+
+// Dark Mode para Carrusel
+body.dark {
+  .therapist-indicators {
+    background: var(--ion-background-color);
+    border-color: var(--ion-color-step-150);
+
+    .indicator {
+      background: var(--ion-color-step-100);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+
+      &:hover {
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+      }
+
+      .indicator-text {
+        color: var(--ion-color-step-800);
+      }
+
+      .indicator-badge {
+        background: var(--ion-color-step-500);
+      }
+
+      // Terapeuta activo en dark mode
+      &.active {
+        background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-primary-tint) 100%);
+        box-shadow: 0 8px 20px rgba(14, 165, 233, 0.4);
+
+        .indicator-text {
+          color: #ffffff;
+        }
+
+        .indicator-badge {
+          background: #ffffff;
+        }
+      }
+    }
+  }
+
+  .therapist-header {
+    background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-primary-tint) 100%);
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+  }
+
+  .time-slot-item {
+    border-bottom-color: var(--ion-color-step-150);
+
+    .time-label {
+      color: var(--ion-color-step-650);
+    }
+
+    .cell-content {
+      // Celda LIBRE en dark mode
+      &.libre {
+        background: var(--ion-color-step-50);
+        border-color: var(--ion-color-step-200);
+
+        .libre-text {
+          color: var(--ion-color-step-600);
+        }
+
+        .add-icon {
+          color: var(--ion-color-primary);
+        }
+
+        &:active {
+          background: var(--ion-color-step-100);
+        }
+      }
+
+      // Celda CITA en dark mode - colores más vibrantes
+      &.cita {
+        .cliente-name {
+          color: var(--ion-text-color);
+        }
+
+        .servicio-text {
+          color: var(--ion-color-step-650);
+        }
+
+        .duracion-text {
+          color: var(--ion-color-step-600);
+        }
+
+        // Colores por Status en dark mode - más brillantes
+        &[data-status="Confirmado"] {
+          background: rgba(40, 167, 69, 0.25);
+          border-color: #4caf50;
+
+          .costo-text {
+            color: #4caf50;
+          }
+        }
+
+        &[data-status="Cobrado"] {
+          background: rgba(33, 150, 243, 0.25);
+          border-color: #42a5f5;
+
+          .costo-text {
+            color: #42a5f5;
+          }
+        }
+
+        &[data-status="Reservado"] {
+          background: rgba(255, 193, 7, 0.25);
+          border-color: #ffca28;
+
+          .costo-text {
+            color: #ffca28;
+          }
+        }
+
+        &[data-status="Cancelado"] {
+          background: rgba(244, 67, 54, 0.2);
+          border-color: #e57373;
+          opacity: 0.6;
+
+          .costo-text {
+            color: #e57373;
+          }
+        }
+      }
+
+      // Celda CONTINUACIÓN en dark mode
+      &.continuacion {
+        background: transparent;
+
+        .continuacion-indicator {
+          opacity: 0.7;
+        }
+
+        // Colores por Status
+        &[data-status="Confirmado"] {
+          background: rgba(40, 167, 69, 0.12);
+          border-color: #4caf50;
+
+          .continuacion-indicator {
+            background: linear-gradient(to bottom, #4caf50 0%, #388e3c 100%);
+          }
+        }
+
+        &[data-status="Cobrado"] {
+          background: rgba(33, 150, 243, 0.12);
+          border-color: #42a5f5;
+
+          .continuacion-indicator {
+            background: linear-gradient(to bottom, #42a5f5 0%, #1976d2 100%);
+          }
+        }
+
+        &[data-status="Reservado"] {
+          background: rgba(255, 193, 7, 0.12);
+          border-color: #ffca28;
+
+          .continuacion-indicator {
+            background: linear-gradient(to bottom, #ffca28 0%, #f9a825 100%);
+          }
+        }
+
+        &[data-status="Cancelado"] {
+          background: rgba(244, 67, 54, 0.08);
+          border-color: #e57373;
+          opacity: 0.5;
+
+          .continuacion-indicator {
+            background: linear-gradient(to bottom, #e57373 0%, #ef5350 100%);
+          }
+        }
+      }
+
+      // Celda INHÁBIL y DESHABILITADA en dark mode
+      &.inhabil,
+      &.deshabilitado {
+        background: var(--ion-color-step-50);
+        border-color: var(--ion-color-step-150);
+
+        .inhabil-text,
+        .deshabilitado-text {
+          color: var(--ion-color-step-500);
+        }
+      }
+    }
+  }
+
+  // Header del terapeuta en dark mode
+  .therapist-header {
+    background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-primary-shade) 100%);
+  }
+}
