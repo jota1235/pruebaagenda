@@ -177,7 +177,7 @@ export class AgendaMainPage implements OnInit {
   appointments: Reserva[] = [];
 
   // ==================== CARRUSEL DE TERAPEUTAS ====================
-  @ViewChild('swiper') swiperRef?: ElementRef;
+  @ViewChild('swiperContainer') swiperRef?: ElementRef;
   swiper?: Swiper;
 
   // Terapeutas activos (cada uno es un slide)
@@ -246,142 +246,45 @@ export class AgendaMainPage implements OnInit {
   }
 
   /**
-   * Inicializar Swiper con estrategia robusta para producción
-   * Maneja casos donde el elemento puede no estar renderizado inicialmente
+   * Inicializar Swiper usando API de JavaScript (NO Web Component)
+   * Mucho más confiable en producción
    */
   private initializeSwiper() {
-    // Intentar inicialización múltiples veces si es necesario
-    const maxAttempts = 15;
-    let attempts = 0;
-
-    const tryInit = () => {
-      attempts++;
-
+    // Esperar a que el DOM esté listo
+    setTimeout(() => {
       if (this.swiperRef && this.swiperRef.nativeElement) {
         const swiperEl = this.swiperRef.nativeElement;
 
-        // Para Web Components de Swiper, el objeto swiper está en la propiedad .swiper
-        if (swiperEl.swiper) {
-          this.swiper = swiperEl.swiper;
-          console.log('✅ Swiper inicializado correctamente en intento', attempts);
+        try {
+          // Crear instancia de Swiper con configuración explícita
+          this.swiper = new Swiper(swiperEl, {
+            slidesPerView: 1,
+            spaceBetween: 0,
+            speed: 300,
+            touchRatio: 1,
+            touchAngle: 45,
+            grabCursor: true,
+            simulateTouch: true,
+            allowTouchMove: true,
+            resistance: true,
+            resistanceRatio: 0.85,
+            on: {
+              slideChange: () => {
+                // Llamar al método onSlideChange cuando cambia el slide
+                this.onSlideChange();
+              }
+            }
+          });
 
-          // Configurar swiper manualmente para asegurar que funciona
-          if (this.swiper && this.swiper.params) {
-            this.swiper.params.slidesPerView = 1;
-            this.swiper.params.spaceBetween = 0;
-            this.swiper.update();
-          }
-
-          return;
+          console.log('✅ Swiper inicializado correctamente con API JavaScript');
+          this.cdr.detectChanges();
+        } catch (error) {
+          console.error('❌ Error inicializando Swiper:', error);
         }
-      }
-
-      // Si no se inicializó y aún hay intentos, reintentar
-      if (attempts < maxAttempts) {
-        setTimeout(tryInit, 150 * attempts); // Aumentar el delay progresivamente (más tiempo)
       } else {
-        console.warn('⚠️ No se pudo inicializar Swiper después de', maxAttempts, 'intentos');
-        // Como último recurso, usar MutationObserver
-        this.initializeSwiperWithObserver();
+        console.warn('⚠️ swiperRef no disponible');
       }
-    };
-
-    // Comenzar primer intento
-    setTimeout(tryInit, 200); // Delay inicial más largo para producción
-  }
-
-  /**
-   * Fallback: Inicializar Swiper usando MutationObserver
-   * Se usa cuando el método normal falla
-   */
-  private initializeSwiperWithObserver() {
-    if (!this.swiperRef || !this.swiperRef.nativeElement) {
-      console.warn('⚠️ No se puede usar MutationObserver: swiperRef no disponible');
-      return;
-    }
-
-    console.log('🔍 Intentando inicializar con MutationObserver...');
-
-    const swiperEl = this.swiperRef.nativeElement;
-
-    // Observar cambios en el elemento swiper
-    const observer = new MutationObserver((mutations) => {
-      if (swiperEl.swiper && !this.swiper) {
-        this.swiper = swiperEl.swiper;
-        console.log('✅ Swiper inicializado via MutationObserver');
-
-        // Configurar swiper
-        if (this.swiper && this.swiper.params) {
-          this.swiper.params.slidesPerView = 1;
-          this.swiper.params.spaceBetween = 0;
-          this.swiper.update();
-        }
-
-        observer.disconnect();
-        this.cdr.detectChanges();
-      }
-    });
-
-    observer.observe(swiperEl, {
-      attributes: true,
-      childList: true,
-      subtree: true
-    });
-
-    // Timeout para desconectar el observer después de 10 segundos
-    setTimeout(() => {
-      observer.disconnect();
-      if (!this.swiper) {
-        console.error('❌ Swiper no se pudo inicializar incluso con MutationObserver');
-      }
-    }, 10000);
-  }
-
-  /**
-   * Evento cuando Swiper está listo (Web Component)
-   * Este es el método más confiable para capturar la instancia en producción
-   */
-  onSwiperReady(event: any) {
-    console.log('🎉 Evento swiperready disparado:', event);
-
-    // Intentar obtener la instancia de múltiples formas
-    let swiperInstance = null;
-
-    if (event && event.detail) {
-      // Método 1: event.detail[0]
-      if (Array.isArray(event.detail) && event.detail[0]) {
-        swiperInstance = event.detail[0];
-      }
-      // Método 2: event.detail directamente
-      else if (event.detail.swiper) {
-        swiperInstance = event.detail.swiper;
-      }
-      // Método 3: event.detail es la instancia
-      else if (typeof event.detail.slideTo === 'function') {
-        swiperInstance = event.detail;
-      }
-    }
-
-    // Método 4: Obtener del elemento directamente
-    if (!swiperInstance && this.swiperRef && this.swiperRef.nativeElement) {
-      swiperInstance = this.swiperRef.nativeElement.swiper;
-    }
-
-    if (swiperInstance) {
-      this.swiper = swiperInstance;
-      console.log('✅ Swiper ready event captured and instance assigned');
-
-      // Configurar swiper
-      if (this.swiper && this.swiper.params) {
-        this.swiper.params.slidesPerView = 1;
-        this.swiper.params.spaceBetween = 0;
-        this.swiper.update();
-      }
-
-      this.cdr.detectChanges();
-    } else {
-      console.warn('⚠️ Evento swiperready disparado pero no se pudo obtener la instancia');
-    }
+    }, 100);
   }
 
   /**
@@ -922,8 +825,8 @@ export class AgendaMainPage implements OnInit {
     this.activeTab = tab;
     console.log('Tab seleccionado:', tab);
 
-    // Si cambiamos a appointments, reinicializar swiper
-    if (tab === 'appointments') {
+    // Si cambiamos a appointments, reinicializar swiper si es necesario
+    if (tab === 'appointments' && !this.swiper) {
       setTimeout(() => {
         this.initializeSwiper();
       }, 50);

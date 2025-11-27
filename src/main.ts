@@ -19,6 +19,8 @@ if (platform === "web") {
   jeepSqlite(window);
 }
 
+// Nota: Swiper se usa como librería JS directa, no como Web Component
+
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },

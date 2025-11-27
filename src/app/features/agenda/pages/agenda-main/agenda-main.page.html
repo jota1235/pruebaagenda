@@ -195,21 +195,11 @@
       </div>
     </div>
 
-    <!-- Swiper de Terapeutas -->
-    <swiper-container
-      #swiper
-      slides-per-view="1"
-      space-between="0"
-      speed="300"
-      css-mode="false"
-      init="true"
-      (slidechange)="onSlideChange()"
-      (swiperready)="onSwiperReady($event)"
-      (swiperinit)="onSwiperReady($event)"
-      class="therapist-swiper">
-
-      <!-- Slide por cada Terapeuta -->
-      <swiper-slide *ngFor="let terapeuta of terapeutas; let col = index">
+    <!-- Swiper de Terapeutas - HTML nativo con Swiper JS -->
+    <div #swiperContainer class="swiper therapist-swiper">
+      <div class="swiper-wrapper">
+        <!-- Slide por cada Terapeuta -->
+        <div class="swiper-slide" *ngFor="let terapeuta of terapeutas; let col = index">
         <div class="therapist-schedule">
 
           <!-- Header del Terapeuta -->
@@ -281,9 +271,9 @@
           </ion-list>
 
         </div>
-      </swiper-slide>
-
-    </swiper-container>
+        </div>
+      </div>
+    </div>
 
     <!-- Mensaje si no hay terapeutas -->
     <div class="no-therapists" *ngIf="terapeutas.length === 0">
