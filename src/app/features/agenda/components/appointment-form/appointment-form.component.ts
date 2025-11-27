@@ -25,7 +25,8 @@ import {
   IonFooter,
   IonDatetime,
   IonModal,
-  ModalController
+  ModalController,
+  AlertController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -40,6 +41,7 @@ import {
 } from 'ionicons/icons';
 import { AgendaService } from '../../../../core/services/agenda.service';
 import { DatabaseService } from '../../../../core/services/database.service';
+import { Reserva } from '../../../../core/interfaces/agenda.interfaces';
 
 /**
  * Interface para el formulario de cita
@@ -132,6 +134,7 @@ export class AppointmentFormComponent implements OnInit {
   // Inputs del componente
   @Input() date: Date = new Date();
   @Input() mode: 'create' | 'edit' = 'create';
+  @Input() existingAppointment?: Reserva;
 
   // Tabs
   activeTab: 'general' | 'conceptos' = 'general';
@@ -152,8 +155,12 @@ export class AppointmentFormComponent implements OnInit {
 
   // Tab Conceptos
   selectedServiceId: number | null = null;
+  serviceSearchQuery = '';
+  serviceResults: Service[] = [];
+  selectedService: Service | null = null;
   serviceQuantity: number = 1;
   serviceDuration: number = 30;
+  servicePrice: number = 0;
   addedServices: AppointmentService[] = [];
 
   // Promo
@@ -176,7 +183,8 @@ export class AppointmentFormComponent implements OnInit {
   constructor(
     private modalController: ModalController,
     private agendaService: AgendaService,
-    private databaseService: DatabaseService
+    private databaseService: DatabaseService,
+    private alertController: AlertController
   ) {
     // Registrar iconos
     addIcons({
@@ -212,6 +220,11 @@ export class AppointmentFormComponent implements OnInit {
 
     // Load data from database
     await this.loadData();
+
+    // Si estamos en modo edición, poblar el formulario con los datos existentes
+    if (this.mode === 'edit' && this.existingAppointment) {
+      await this.populateFormForEdit();
+    }
   }
 
   /**
@@ -267,6 +280,79 @@ export class AppointmentFormComponent implements OnInit {
     } catch (error) {
       console.error('❌ Error cargando datos:', error);
     }
+  }
+
+  /**
+   * Poblar formulario con datos de cita existente (modo edición)
+   */
+  async populateFormForEdit() {
+    if (!this.existingAppointment) return;
+
+    console.log('✏️ Poblando formulario para editar:', this.existingAppointment);
+
+    // 1. Establecer cliente
+    const client = this.allClients.find(c => c.name === this.existingAppointment!.cliente);
+    if (client) {
+      this.selectedClient = client;
+      this.clientSearchQuery = client.name;
+    } else {
+      // Si no se encuentra en la lista, crear un objeto temporal
+      this.selectedClient = {
+        id: this.existingAppointment.id_cliente,
+        name: this.existingAppointment.cliente
+      };
+      this.clientSearchQuery = this.existingAppointment.cliente;
+    }
+
+    // 2. Establecer personal
+    this.selectedStaffId = this.existingAppointment.id_personal;
+
+    // 3. Establecer fecha y hora
+    if (this.existingAppointment.fecha) {
+      const [year, month, day] = this.existingAppointment.fecha.split('-').map(Number);
+      const [hours, minutes] = this.existingAppointment.hora.split(':').map(Number);
+      this.date = new Date(year, month - 1, day, hours, minutes);
+      this.selectedDateTime = this.formatDateTime(this.date);
+    }
+
+    // 4. Cargar servicios de la cita
+    // Los servicios vienen en servicios_agenda como texto concatenado
+    // Necesitamos obtener los servicios individuales desde tagenda_aux
+    try {
+      if (this.databaseService.isReady()) {
+        // Obtener servicios de tagenda_aux para esta cita usando id_agenda
+        const serviciosAux = await this.databaseService.getServiciosDeCita(this.existingAppointment.id_agenda);
+
+        if (serviciosAux && serviciosAux.length > 0) {
+          this.addedServices = serviciosAux.map((s: any) => ({
+            serviceId: s.id_producto_servicio,
+            serviceName: s.servicio_nombre || 'Servicio sin nombre',
+            quantity: s.cantidad,
+            duration: s.servicio_duracion || 30,
+            price: s.costo || 0
+          }));
+
+          console.log(`✅ ${this.addedServices.length} servicios cargados para edición`);
+        }
+      }
+    } catch (error) {
+      console.error('❌ Error cargando servicios de la cita:', error);
+      // Fallback: crear un servicio genérico si no se pueden cargar
+      this.addedServices = [{
+        serviceId: 0,
+        serviceName: this.existingAppointment.servicios_agenda || 'Servicio',
+        quantity: 1,
+        duration: this.existingAppointment.duracion || 30,
+        price: 0
+      }];
+    }
+
+    console.log('✅ Formulario poblado para edición:', {
+      cliente: this.selectedClient.name,
+      personal: this.selectedStaffId,
+      servicios: this.addedServices.length,
+      fecha: this.selectedDateTime
+    });
   }
 
   /**
@@ -376,32 +462,122 @@ export class AppointmentFormComponent implements OnInit {
   }
 
   /**
-   * Agregar servicio a la lista
+   * Buscar servicios
    */
-  addService() {
-    if (!this.selectedServiceId) {
+  async searchServices(event: any) {
+    const query = event.target.value.toLowerCase().trim();
+    this.serviceSearchQuery = query;
+
+    if (query.length >= 2) {
+      // Buscar en la lista local primero
+      this.serviceResults = this.services.filter(service =>
+        service.name.toLowerCase().includes(query)
+      );
+
+      // Si no hay resultados y SQLite está disponible, buscar en BD
+      if (this.serviceResults.length === 0 && this.databaseService.isReady()) {
+        try {
+          const dbResults = await this.databaseService.searchServicios(query);
+          this.serviceResults = dbResults.map((s: any) => ({
+            id: s.id,
+            name: s.nombre,
+            duration: s.duracion || 30,
+            price: s.precio || 0
+          }));
+        } catch (error) {
+          console.error('❌ Error buscando servicios:', error);
+        }
+      }
+    } else {
+      this.serviceResults = [];
+    }
+  }
+
+  /**
+   * Seleccionar servicio de la lista de resultados
+   */
+  selectService(service: Service) {
+    this.selectedService = service;
+    this.serviceSearchQuery = service.name;
+    this.serviceDuration = service.duration;
+    this.servicePrice = service.price;
+    this.serviceResults = [];
+  }
+
+  /**
+   * Limpiar selección de servicio
+   */
+  clearService() {
+    this.selectedService = null;
+    this.serviceSearchQuery = '';
+    this.serviceResults = [];
+    this.serviceDuration = 30;
+    this.servicePrice = 0;
+  }
+
+  /**
+   * Agregar servicio a la lista
+   * Soporta tanto servicios predefinidos como personalizados (texto libre)
+   */
+  async addService() {
+    const serviceName = this.serviceSearchQuery.trim();
+
+    if (!serviceName) {
       return;
     }
 
-    const service = this.services.find(s => s.id === this.selectedServiceId);
-    if (!service) {
-      return;
+    let serviceId: number;
+    let servicePrice = this.servicePrice;
+
+    // Si hay un servicio seleccionado de la lista, usar ese
+    if (this.selectedService) {
+      serviceId = this.selectedService.id;
+      servicePrice = this.selectedService.price;
+    } else {
+      // Es un servicio personalizado (texto libre)
+      // Crear el servicio en la BD
+      if (this.databaseService.isReady()) {
+        console.log(`🆕 Creando servicio personalizado: "${serviceName}"`);
+
+        try {
+          serviceId = await this.databaseService.addServicio({
+            nombre: serviceName,
+            n_duracion: this.serviceDuration,
+            precio: servicePrice
+          });
+
+          // Agregar a la lista local para futuras búsquedas
+          this.services.push({
+            id: serviceId,
+            name: serviceName,
+            duration: this.serviceDuration,
+            price: servicePrice
+          });
+        } catch (error) {
+          console.error('❌ Error creando servicio personalizado:', error);
+          return;
+        }
+      } else {
+        // Si SQLite no está disponible, usar ID temporal
+        serviceId = Date.now();
+      }
     }
 
     const appointmentService: AppointmentService = {
-      serviceId: service.id,
-      serviceName: service.name,
+      serviceId: serviceId,
+      serviceName: serviceName,
       quantity: this.serviceQuantity,
       duration: this.serviceDuration,
-      price: service.price
+      price: servicePrice
     };
 
     this.addedServices.push(appointmentService);
 
     // Resetear formulario de servicio
-    this.selectedServiceId = null;
+    this.clearService();
     this.serviceQuantity = 1;
     this.serviceDuration = 30;
+    this.servicePrice = 0;
   }
 
   /**
@@ -436,12 +612,25 @@ export class AppointmentFormComponent implements OnInit {
    * Validar formulario
    */
   isFormValid(): boolean {
-    return (
+    const isValid = (
       this.selectedClient !== null &&
       this.selectedStaffId !== null &&
       this.addedServices.length > 0
     );
+
+    // Debug temporal - solo loggear una vez cada 2 segundos
+    if (!isValid && !this._lastValidationLog || Date.now() - this._lastValidationLog > 2000) {
+      this._lastValidationLog = Date.now();
+      console.log('🔴 Formulario inválido:');
+      console.log('  - Cliente seleccionado:', this.selectedClient !== null, this.selectedClient);
+      console.log('  - Personal seleccionado:', this.selectedStaffId !== null, this.selectedStaffId);
+      console.log('  - Servicios agregados:', this.addedServices.length > 0, this.addedServices.length, 'servicios');
+    }
+
+    return isValid;
   }
+
+  private _lastValidationLog = 0;
 
   /**
    * Guardar cita
@@ -466,33 +655,79 @@ export class AppointmentFormComponent implements OnInit {
     console.log('💾 Guardando cita:', formData);
 
     try {
-      // Guardar en SQLite (una cita por cada servicio)
+      // Guardar en SQLite usando el nuevo formato compatible con syserv
       if (this.databaseService.isReady()) {
-        console.log('📱 Guardando en SQLite...');
-
         // Formatear fecha y hora para SQLite
         const fecha = this.formatDateForSQL(this.date);
         const hora = this.formatTimeForSQL(this.date);
 
-        for (const service of this.addedServices) {
-          const citaData = {
+        // Calcular duración total en minutos
+        const duracion_total_minutos = this.addedServices.reduce(
+          (sum, s) => sum + (s.duration * s.quantity),
+          0
+        );
+
+        // Preparar array de servicios con precio
+        const servicios = this.addedServices.map(s => ({
+          id_servicio: s.serviceId,
+          cantidad: s.quantity,
+          costo: s.price || 0
+        }));
+
+        console.log(`📊 Total de servicios: ${servicios.length}`);
+        console.log(`⏱️  Duración total: ${duracion_total_minutos} minutos`);
+
+        if (this.mode === 'edit' && this.existingAppointment) {
+          // MODO EDICIÓN: Actualizar cita existente
+          console.log(`✏️  Actualizando cita ID: ${this.existingAppointment.id_agenda}`);
+
+          const updated = await this.databaseService.updateCitaTagenda(
+            this.existingAppointment.id_agenda,
+            {
+              handel: 1,
+              id_empresa_base: 1,
+              id_cliente: this.selectedClient!.id!,
+              id_personal: this.selectedStaffId!,
+              fecha: fecha,
+              hora: hora,
+              duracion_minutos: duracion_total_minutos,
+              servicios: servicios,
+              status: this.existingAppointment.status || 'Reservado',
+              notas: this.existingAppointment.notas || ''
+            }
+          );
+
+          if (updated) {
+            console.log(`✅ Cita actualizada exitosamente`);
+            console.log(`   - 1 registro actualizado en tagenda`);
+            console.log(`   - ${servicios.length} registros actualizados en tagenda_aux`);
+          } else {
+            throw new Error('No se pudo actualizar la cita');
+          }
+
+        } else {
+          // MODO CREACIÓN: Guardar nueva cita
+          console.log('📱 Guardando nueva cita en tagenda (compatible syserv)...');
+
+          const citaId = await this.databaseService.addCitaTagenda({
             handel: 1,
             id_empresa_base: 1,
-            id_cliente: this.selectedClient!.id,
+            id_cliente: this.selectedClient!.id!,
             id_personal: this.selectedStaffId!,
-            id_servicio: service.serviceId,
             fecha: fecha,
             hora: hora,
-            duracion: service.duration,
+            duracion_minutos: duracion_total_minutos,
+            servicios: servicios,
             status: 'Reservado',
             notas: ''
-          };
+          });
 
-          const citaId = await this.databaseService.addCita(citaData);
-          console.log(`✅ Cita guardada en SQLite con ID: ${citaId}`, citaData);
+          console.log(`✅ Cita guardada en tagenda con ID: ${citaId}`);
+          console.log(`   - 1 registro en tagenda`);
+          console.log(`   - ${servicios.length} registros en tagenda_aux`);
+          console.log(`   - Duración: ${duracion_total_minutos} min → slots calculados automáticamente`);
         }
 
-        console.log('✅ Todas las citas guardadas correctamente en SQLite');
       } else {
         console.log('💾 SQLite no disponible, guardando en localStorage...');
         // TODO: Implementar guardado en localStorage como fallback
@@ -501,9 +736,17 @@ export class AppointmentFormComponent implements OnInit {
       // Cerrar modal con confirmación
       this.modalController.dismiss(formData, 'confirm');
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Error guardando cita:', error);
-      // TODO: Mostrar alerta de error
+
+      // Mostrar alerta de error al usuario
+      const alert = await this.alertController.create({
+        header: 'Error al guardar cita',
+        message: error.message || 'Ocurrió un error al guardar la cita. Por favor, intente nuevamente.',
+        buttons: ['OK']
+      });
+
+      await alert.present();
     }
   }
 
