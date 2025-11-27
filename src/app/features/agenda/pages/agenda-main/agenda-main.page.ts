@@ -241,24 +241,55 @@ export class AgendaMainPage implements OnInit {
   }
 
   ngAfterViewInit() {
-    // Obtener referencia al swiper después de que la vista se haya inicializado
-    // Web Components necesitan más tiempo para inicializarse
-    setTimeout(() => {
-      if (this.swiperRef) {
+    // Inicializar swiper con estrategia robusta para producción
+    this.initializeSwiper();
+  }
+
+  /**
+   * Inicializar Swiper con estrategia robusta para producción
+   * Maneja casos donde el elemento puede no estar renderizado inicialmente
+   */
+  private initializeSwiper() {
+    // Intentar inicialización múltiples veces si es necesario
+    const maxAttempts = 10;
+    let attempts = 0;
+
+    const tryInit = () => {
+      attempts++;
+
+      if (this.swiperRef && this.swiperRef.nativeElement) {
         const swiperEl = this.swiperRef.nativeElement;
 
-        // Para Web Components de Swiper, el objeto swiper está directamente en el elemento
-        this.swiper = swiperEl.swiper || swiperEl;
-
-        console.log('✅ Swiper elemento:', !!swiperEl);
-        console.log('✅ Swiper.swiper:', !!swiperEl.swiper);
-        console.log('✅ Swiper inicializado:', this.swiper ? 'OK' : 'FALLO');
-
-        if (this.swiper) {
-          console.log('✅ Swiper tiene slideTo:', typeof this.swiper.slideTo);
+        // Para Web Components de Swiper, el objeto swiper está en la propiedad .swiper
+        if (swiperEl.swiper) {
+          this.swiper = swiperEl.swiper;
+          console.log('✅ Swiper inicializado correctamente');
+          return;
         }
       }
-    }, 500); // Aumentar timeout para Web Components
+
+      // Si no se inicializó y aún hay intentos, reintentar
+      if (attempts < maxAttempts) {
+        setTimeout(tryInit, 100 * attempts); // Aumentar el delay progresivamente
+      } else {
+        console.warn('⚠️ No se pudo inicializar Swiper después de', maxAttempts, 'intentos');
+      }
+    };
+
+    // Comenzar primer intento
+    setTimeout(tryInit, 100);
+  }
+
+  /**
+   * Evento cuando Swiper está listo (Web Component)
+   * Este es el método más confiable para capturar la instancia en producción
+   */
+  onSwiperReady(event: any) {
+    if (event && event.detail && event.detail[0]) {
+      this.swiper = event.detail[0];
+      console.log('✅ Swiper ready event captured');
+      this.cdr.detectChanges();
+    }
   }
 
   /**
@@ -798,7 +829,13 @@ export class AgendaMainPage implements OnInit {
   changeTab(tab: string) {
     this.activeTab = tab;
     console.log('Tab seleccionado:', tab);
-    // TODO: Navegar según el tab
+
+    // Si cambiamos a appointments, reinicializar swiper
+    if (tab === 'appointments') {
+      setTimeout(() => {
+        this.initializeSwiper();
+      }, 50);
+    }
   }
 
   /**

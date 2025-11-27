@@ -7,7 +7,7 @@
       </ion-button>
     </ion-buttons>
 
-    <ion-title>Agendar Reservacion</ion-title>
+    <ion-title>{{ mode === 'edit' ? 'Editar Reservacion' : 'Agendar Reservacion' }}</ion-title>
 
     <ion-buttons slot="end">
       <ion-button (click)="togglePromo()">
@@ -67,8 +67,13 @@
         <ion-searchbar
           [(ngModel)]="clientSearchQuery"
           (ionInput)="searchClients($event)"
+          (ionChange)="searchClients($event)"
           placeholder="-- Seleccione --"
           [debounce]="300"
+          [disabled]="false"
+          type="text"
+          inputmode="text"
+          autocomplete="off"
           class="client-searchbar">
         </ion-searchbar>
       </ion-item>
@@ -136,19 +141,59 @@
   <!-- Tab Conceptos -->
   <div class="tab-content" *ngIf="activeTab === 'conceptos'">
 
-    <!-- Servicio (Nombre) -->
+    <!-- Servicio (Nombre) - Búsqueda con autocompletado -->
     <div class="form-section">
       <ion-item class="form-item">
         <ion-label position="stacked">Nombre:</ion-label>
-        <ion-select
-          [(ngModel)]="selectedServiceId"
-          placeholder="Seleccione servicio"
-          interface="action-sheet"
-          class="service-select">
-          <ion-select-option *ngFor="let service of services" [value]="service.id">
-            {{ service.name }}
-          </ion-select-option>
-        </ion-select>
+        <ion-searchbar
+          [(ngModel)]="serviceSearchQuery"
+          (ionInput)="searchServices($event)"
+          (ionChange)="searchServices($event)"
+          placeholder="Buscar o escribir servicio..."
+          [debounce]="300"
+          [disabled]="false"
+          type="text"
+          inputmode="text"
+          autocomplete="off"
+          class="service-searchbar">
+        </ion-searchbar>
+      </ion-item>
+
+      <!-- Resultados de búsqueda -->
+      <div class="search-results" *ngIf="serviceResults.length > 0">
+        <ion-list>
+          <ion-item
+            *ngFor="let service of serviceResults"
+            button
+            (click)="selectService(service)"
+            class="search-result-item">
+            <ion-label>
+              <h3>{{ service.name }}</h3>
+              <p>{{ service.duration }} min - ${{ service.price }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+
+      <!-- Indicador de servicio personalizado -->
+      <div class="custom-service-hint" *ngIf="serviceSearchQuery && !selectedService && serviceResults.length === 0 && serviceSearchQuery.length >= 2">
+        <ion-label color="primary">
+          <small>✨ Se creará un servicio personalizado: "{{ serviceSearchQuery }}"</small>
+        </ion-label>
+      </div>
+    </div>
+
+    <!-- Precio (nuevo campo para servicios personalizados) -->
+    <div class="form-section" *ngIf="serviceSearchQuery && !selectedService">
+      <ion-item class="form-item">
+        <ion-label position="stacked">Precio:</ion-label>
+        <ion-input
+          type="number"
+          [(ngModel)]="servicePrice"
+          [min]="0"
+          placeholder="0"
+          class="price-input">
+        </ion-input>
       </ion-item>
     </div>
 
@@ -189,7 +234,7 @@
         expand="block"
         fill="solid"
         color="medium"
-        [disabled]="!selectedServiceId"
+        [disabled]="!serviceSearchQuery || serviceSearchQuery.length < 2"
         (click)="addService()"
         class="add-service-button">
         Agregar
