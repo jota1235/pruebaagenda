@@ -277,6 +277,9 @@ export class AgendaMainPage implements OnInit {
             on: {
               slideChange: () => {
                 this.onSlideChange();
+              },
+              slideChangeTransitionEnd: () => {
+                this.onSlideChange();
               }
             }
           });
@@ -828,6 +831,7 @@ export class AgendaMainPage implements OnInit {
     if (this.swiper) {
       this.ngZone.run(() => {
         this.currentTherapistIndex = this.swiper.activeIndex;
+        console.log('Swiper slide change:', this.currentTherapistIndex);
         this.cdr.detectChanges();
       });
     }
