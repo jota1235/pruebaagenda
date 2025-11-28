@@ -45,8 +45,14 @@
                 "output": "./assets"
               }
             ],
-            "styles": ["src/global.scss", "src/theme/variables.scss"],
-            "scripts": [],
+            "styles": [
+              "src/global.scss",
+              "src/theme/variables.scss",
+              "node_modules/swiper/swiper-bundle.min.css"
+            ],
+            "scripts": [
+              "node_modules/swiper/swiper-bundle.min.js"
+            ],
             "browser": "src/main.ts"
           },
           "configurations": {

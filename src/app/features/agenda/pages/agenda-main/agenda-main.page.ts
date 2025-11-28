@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import Swiper from 'swiper';
+// Swiper se carga como script global desde angular.json
+declare var Swiper: any;
 import {
   IonContent,
   IonButton,
@@ -178,7 +179,7 @@ export class AgendaMainPage implements OnInit {
 
   // ==================== CARRUSEL DE TERAPEUTAS ====================
   @ViewChild('swiperContainer') swiperRef?: ElementRef;
-  swiper?: Swiper;
+  swiper?: any;
 
   // Terapeutas activos (cada uno es un slide)
   terapeutas: Array<{
@@ -252,10 +253,19 @@ export class AgendaMainPage implements OnInit {
   private initializeSwiper() {
     // Esperar a que el DOM esté listo
     setTimeout(() => {
+      console.log('🔍 Verificando disponibilidad de Swiper:', typeof Swiper);
+      console.log('🔍 Swiper global:', typeof (window as any).Swiper);
+
       if (this.swiperRef && this.swiperRef.nativeElement) {
         const swiperEl = this.swiperRef.nativeElement;
 
         try {
+          // Verificar que Swiper esté disponible
+          if (typeof Swiper === 'undefined') {
+            console.error('❌ Swiper no está definido globalmente');
+            return;
+          }
+
           // Crear instancia de Swiper con configuración explícita
           this.swiper = new Swiper(swiperEl, {
             slidesPerView: 1,
