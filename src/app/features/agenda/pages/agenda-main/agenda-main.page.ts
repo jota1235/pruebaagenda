@@ -198,6 +198,9 @@ export class AgendaMainPage implements OnInit {
   // Índice del terapeuta actual visible
   currentTherapistIndex = 0;
 
+  // DEBUG: Error de inicialización de Swiper
+  swiperError: string = '';
+
   constructor(
     private router: Router,
     private actionSheetController: ActionSheetController,
@@ -262,6 +265,7 @@ export class AgendaMainPage implements OnInit {
         try {
           // Verificar que Swiper esté disponible
           if (typeof Swiper === 'undefined') {
+            this.swiperError = 'Swiper undefined';
             console.error('❌ Swiper no está definido globalmente');
             return;
           }
@@ -287,14 +291,30 @@ export class AgendaMainPage implements OnInit {
           });
 
           console.log('✅ Swiper inicializado correctamente con API JavaScript');
+          this.swiperError = '';
           this.cdr.detectChanges();
         } catch (error) {
+          this.swiperError = String(error);
           console.error('❌ Error inicializando Swiper:', error);
         }
       } else {
+        this.swiperError = 'swiperRef no disponible';
         console.warn('⚠️ swiperRef no disponible');
       }
     }, 100);
+  }
+
+  /**
+   * DEBUG: Obtener estado de Swiper global
+   */
+  getSwiperStatus(): string {
+    if (typeof (window as any).Swiper !== 'undefined') {
+      return 'OK ✓';
+    }
+    if (typeof Swiper !== 'undefined') {
+      return 'VAR ✓';
+    }
+    return 'UNDEFINED ✗';
   }
 
   /**
