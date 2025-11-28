@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 // Swiper se carga como script global desde angular.json
@@ -204,7 +204,8 @@ export class AgendaMainPage implements OnInit {
     private modalController: ModalController,
     private agendaService: AgendaService,
     private databaseService: DatabaseService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone
   ) {
     // Registrar iconos
     addIcons({
@@ -825,8 +826,10 @@ export class AgendaMainPage implements OnInit {
    */
   onSlideChange() {
     if (this.swiper) {
-      this.currentTherapistIndex = this.swiper.activeIndex;
-      this.cdr.detectChanges();
+      this.ngZone.run(() => {
+        this.currentTherapistIndex = this.swiper.activeIndex;
+        this.cdr.detectChanges();
+      });
     }
   }
 
