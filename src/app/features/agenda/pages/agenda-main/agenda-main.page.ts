@@ -245,8 +245,9 @@ export class AgendaMainPage implements OnInit {
   }
 
   ngAfterViewInit() {
-    // Inicializar swiper con estrategia robusta para producción
-    this.initializeSwiper();
+    // NO inicializar aquí porque el *ngIf="activeTab === 'appointments'"
+    // puede no haber renderizado el contenido aún
+    // La inicialización se hace después de cargar los datos
   }
 
   /**
@@ -254,10 +255,12 @@ export class AgendaMainPage implements OnInit {
    * Mucho más confiable en producción
    */
   private initializeSwiper() {
-    // Esperar a que el DOM esté listo
+    // Esperar más tiempo para asegurar que el DOM esté completamente renderizado
     setTimeout(() => {
       console.log('🔍 Verificando disponibilidad de Swiper:', typeof Swiper);
       console.log('🔍 Swiper global:', typeof (window as any).Swiper);
+      console.log('🔍 swiperRef:', this.swiperRef);
+      console.log('🔍 activeTab:', this.activeTab);
 
       if (this.swiperRef && this.swiperRef.nativeElement) {
         const swiperEl = this.swiperRef.nativeElement;
@@ -298,10 +301,14 @@ export class AgendaMainPage implements OnInit {
           console.error('❌ Error inicializando Swiper:', error);
         }
       } else {
-        this.swiperError = 'swiperRef no disponible';
-        console.warn('⚠️ swiperRef no disponible');
+        this.swiperError = `swiperRef ${this.swiperRef ? 'existe pero sin nativeElement' : 'es undefined'}`;
+        console.warn('⚠️ swiperRef no disponible:', {
+          swiperRef: this.swiperRef,
+          activeTab: this.activeTab,
+          terapeutasLength: this.terapeutas.length
+        });
       }
-    }, 100);
+    }, 500); // Aumentado a 500ms para dar tiempo a que el *ngIf renderice
   }
 
   /**
@@ -433,6 +440,14 @@ export class AgendaMainPage implements OnInit {
       console.log(`   - Terapeutas: ${this.terapeutas.length}`);
       console.log(`   - Horarios: ${this.horarios.length}`);
       console.log(`   - Citas: ${this.appointments.length}`);
+
+      // ==================== INICIALIZAR SWIPER ====================
+      // Llamar después de cargar datos y forzar detección de cambios
+      this.cdr.detectChanges();
+
+      // Inicializar swiper ahora que los datos están listos y el DOM debería estar renderizado
+      console.log('🎯 Llamando initializeSwiper() después de cargar datos...');
+      this.initializeSwiper();
 
       // Debug: Mostrar citas con sus duraciones
       console.log('🔍🔍🔍 DETALLE DE CITAS 🔍🔍🔍');
