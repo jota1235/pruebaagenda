@@ -272,6 +272,40 @@ ion-title {
 }
 
 // ============================================
+// BUSCADOR DE SERVICIOS
+// ============================================
+.service-searchbar {
+  --background: transparent;
+  --border-radius: 8px;
+  padding: 0;
+  margin-top: 0.5rem;
+
+  input {
+    font-size: 0.9375rem !important;
+  }
+}
+
+.custom-service-hint {
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+  background: rgba(59, 130, 246, 0.08);
+  border-radius: 10px;
+  border-left: 3px solid #3B82F6;
+
+  ion-label small {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+}
+
+.price-input {
+  --padding-start: 0.75rem;
+  --padding-end: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+// ============================================
 // SELECTS
 // ============================================
 .staff-select,
@@ -613,6 +647,20 @@ ion-footer {
     ion-label p {
       color: #9CA3AF;
     }
+  }
+
+  // Servicio personalizado
+  .custom-service-hint {
+    background: rgba(59, 130, 246, 0.15);
+    border-left-color: #60A5FA;
+
+    ion-label {
+      color: #93C5FD;
+    }
+  }
+
+  .price-input {
+    --color: #F3F4F6;
   }
 
   // Servicios agregados

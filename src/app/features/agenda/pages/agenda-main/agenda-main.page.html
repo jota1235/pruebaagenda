@@ -12,6 +12,11 @@
 <!-- Main Content -->
 <ion-content [fullscreen]="true" class="agenda-content" *ngIf="!isLoading" [class.show]="showContent">
 
+  <!-- DEBUG: Indicador visual de estado del Swiper -->
+  <div *ngIf="activeTab === 'appointments'" style="position: fixed; top: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); color: white; padding: 5px; z-index: 10000; font-size: 11px; text-align: center;">
+    Swiper: {{ swiper ? 'OK ✓' : 'NO INIT ✗' }} | Ref: {{ swiperRef ? 'OK' : 'NO' }} | Terapeutas: {{ terapeutas.length }}
+  </div>
+
   <!-- Banner Superior (solo en appointments) -->
   <div class="top-banner" *ngIf="activeTab === 'appointments'">
     <p class="banner-text">¿Listo para organizar tu día?</p>

@@ -1,79 +1,650 @@
-✅ ESTADO ACTUAL - 2025-11-20
+✅ ESTADO ACTUAL - 2025-11-22 (Actualización 6)
 
 ===========================================
-TODOS LOS ERRORES RESUELTOS
+¡VALIDACIÓN DE CONFLICTOS IMPLEMENTADA! ⚠️
 ===========================================
 
-✅ Errores de TypeScript SOLUCIONADOS:
-   - TS2339: Property 'executeQuery' → Implementado stub en agenda.service.ts
-   - TS2339: Property 'executeCommand' → Implementado stub en agenda.service.ts
-   - TS2554: Expected 1 arguments checkConnectionsConsistency → Corregido
-   - TS2339: Property 'isConnection' → API v7.x implementada correctamente
-   - TS2551: Property 'retrieveConnection' → API v7.x implementada correctamente
-   - TS2322: Type 'void' is not assignable → createConnection retorna SQLiteDBConnection
+NUEVA FUNCIONALIDAD: Detección automática de conflictos de horario
 
-✅ Build exitoso:
-   - npm run build → ✅ OK (solo warnings menores)
-   - npx cap sync android → ✅ OK
+El sistema ahora valida ANTES de guardar si hay conflictos:
 
-✅ Archivos actualizados:
-   ✅ database.service.ts - SQLite v7.x API compatible
-   ✅ agenda.service.ts - Stubs para executeQuery/executeCommand
-   ✅ app.component.ts - Ya estaba correcto
-   ✅ Test pages - Ya estaban correctas
+✅ Validación de solapamiento de horarios
+   → Verifica si el personal ya tiene una cita en ese horario
+   → Detecta solapamientos parciales y totales
+   → Compara horarios de inicio y fin
 
-===========================================
-SIGUIENTE PASO: TESTING EN ANDROID
-===========================================
+✅ Algoritmo de detección implementado en database.service.ts
+   → verificarConflictoHorario() - Método nuevo
+   → Calcula minutos desde medianoche para comparación precisa
+   → Verifica 3 tipos de conflicto:
+     * Nueva cita empieza durante cita existente
+     * Nueva cita termina durante cita existente
+     * Nueva cita engloba completamente cita existente
 
-Ver guía completa en: SQLITE_TEST_GUIDE.md
+✅ Integración con CRUD de citas
+   → addCitaTagenda() valida antes de insertar
+   → updateCitaTagenda() valida antes de actualizar
+   → Excluye la cita actual al validar ediciones
+   → Lanza error con mensaje descriptivo si hay conflicto
 
-Comando para abrir Android Studio:
-   npx cap open android
+✅ UI: Alertas de error al usuario
+   → AlertController integrado en appointment-form
+   → Mensaje claro: "Ya existe una cita para este personal en ese horario"
+   → Muestra cliente y horario de la cita conflictiva
+   → Usuario puede corregir sin perder datos del formulario
 
-Verificar en Logcat:
-   - Buscar: "DatabaseService" o "SQLite"
-   - Esperar: "✅ SQLite inicializado correctamente"
+LOGS DE VALIDACIÓN:
+```
+🔍 Verificando conflictos para: Personal 3, Fecha 2025-11-22, 09:30 - 10:00
+⚠️ CONFLICTO: Cita existente 5 (09:30 - 10:00)
+❌ 1 conflicto(s) de horario detectado(s)
+```
 
-Verificar en Test Pages:
-   - /test/clientes → Badge debe mostrar "SQLite" (verde)
-   - /test/personal → Badge debe mostrar "SQLite" (verde)
-   - /test/servicios → Badge debe mostrar "SQLite" (verde)
-
-Si badge muestra "localStorage" (amarillo) → SQLite falló, ver logs
-
-===========================================
-CAMBIOS IMPLEMENTADOS
-===========================================
-
-1. DatabaseService.init():
-   - checkConnectionsConsistency() sin parámetros
-   - isConnection(dbName, readonly) con parámetros correctos
-   - createConnection() retorna SQLiteDBConnection directamente
-   - retrieveConnection() para recuperar conexiones existentes
-
-2. Tabla citas:
-   - Agregado campo 'activo' INTEGER DEFAULT 1
-   - Agregado índice idx_citas_activo
-   - deleteCita() usa soft delete (UPDATE activo = 0)
-
-3. Métodos CRUD completos:
-   - getClientes(), getPersonal(), getServicios() ✅
-   - getCitas(), addCita(), updateCita(), deleteCita() ✅
-   - Todos con waitForDB() para sincronización
-
-4. Seed automático:
-   - 5 clientes de prueba
-   - 4 personal de prueba
-   - 6 servicios de prueba
-   - Se ejecuta solo si la BD está vacía
+ARCHIVOS MODIFICADOS:
+✅ database.service.ts (líneas 952-1049) - verificarConflictoHorario()
+✅ database.service.ts (líneas 1078-1091) - addCitaTagenda() con validación
+✅ database.service.ts (líneas 1270-1389) - updateCitaTagenda() con validación
+✅ appointment-form.component.ts - AlertController importado e inyectado
+✅ appointment-form.component.ts (líneas 737-748) - Manejo de errores con alerta
 
 ===========================================
-NOTAS IMPORTANTES
+✅ ESTADO ACTUAL - 2025-11-21 (Actualización 5)
+
+===========================================
+¡ALGORITMO MapaAgenda() COMPLETO VERIFICADO! 🎯
 ===========================================
 
-- localStorage sigue siendo el sistema principal para la agenda
-- SQLite solo se probará en test pages primero
-- Una vez confirmado que funciona, se migrará la agenda
-- El código permite dual-mode: SQLite en Android, localStorage en web
-- Los errores de compilación están 100% resueltos
+VERIFICACIÓN COMPLETADA: MapaAgenda() implementa las 6 fases de syserv
+
+El algoritmo MapaAgenda() está completamente implementado en agenda.service.ts y sigue
+exactamente la especificación de syserv:
+
+✅ FASE 1: Mapear citas normales (Cobrado, Confirmado, Reservado)
+   → Busca espacio disponible en columna del terapeuta
+   → Marca celda inicial con ID de cita
+   → Marca continuación con 'X'
+
+✅ FASE 2: Mapear citas en columnas auxiliares
+   → Para citas que no cupieron en columnas normales
+   → Busca espacio en columnas extra
+
+✅ FASE 3: Mapear bloqueos (FueraTiempo)
+   → Marca espacios bloqueados con ID de cita
+   → Estos espacios se marcan como no disponibles
+
+✅ FASE 4: Ajustar citas canceladas
+   → Solo ajusta la columna (columna_ag)
+   → No mapea en matriz (citas canceladas no ocupan espacio)
+
+✅ FASE 5: Bloquear días inhábiles
+   → Si dia_habil = false, todo el mapa se marca con 'i'
+   → Previene creación de citas en días cerrados
+
+✅ FASE 6: Aplicar restricciones de columnas
+   → Marca columnas deshabilitadas con 'd'
+   → Usado para restricciones de horario/servicio
+
+MÉTODOS AUXILIARES IMPLEMENTADOS:
+✅ isDisponible(fila, columna, espacios) - Verifica disponibilidad de slots
+✅ IdentificaColumna(id_personal) - Mapea ID de terapeuta → índice de columna
+✅ IdentificaFila(hora) - Mapea hora → índice de fila
+✅ readHorariosAgenda() - Genera array de horarios disponibles
+✅ IsCitaAsignable() - Verifica si una cita puede asignarse
+✅ MarkCita() - Marca una cita en la matriz
+✅ searchSetAux() - Busca espacio en columnas auxiliares
+✅ setMarkBlok() - Marca bloqueos (FueraTiempo)
+✅ ajustColumna() - Ajusta columna de citas canceladas
+
+INTEGRACIÓN CON calcularSpacio():
+✅ database.service.ts → calcularSpacio() actualizado con documentación completa
+✅ Explica cómo se calcula el spacio (columna) basado en orden del personal
+✅ El spacio se usa en MapaAgenda() para ubicar citas en la matriz
+
+RESULTADO DE LA MATRIZ:
+arrMapa[columna][fila] puede contener:
+  '' = Espacio libre (disponible para nueva cita)
+  '123' = ID de cita (celda inicial)
+  'X' = Continuación de cita (cita ocupa varios slots)
+  'i' = Día inhábil (cerrado)
+  'd' = Columna deshabilitada
+
+===========================================
+BUILD Y SYNC EXITOSO ✅
+===========================================
+
+📦 Build completado:
+  ✅ Bundle generado en www/ (1.54 MB inicial)
+  ✅ agenda-main-page: 141.35 kB
+  ✅ jeep-sqlite-entry: 303.98 kB
+  ⚠️  8 warnings menores (imports no usados, no afectan funcionalidad)
+
+📱 Sync a Android completado:
+  ✅ Assets copiados a android/app/src/main/assets/public
+  ✅ 5 plugins Capacitor sincronizados:
+     - @capacitor-community/sqlite@7.0.2 ✅
+     - @capacitor/app@7.1.0
+     - @capacitor/haptics@7.0.2
+     - @capacitor/keyboard@7.0.3
+     - @capacitor/status-bar@7.0.3
+  ✅ Listo para probar en Android Studio
+
+===========================================
+LISTO PARA PROBAR EN ANDROID (Actualización 5)
+===========================================
+
+📱 FUNCIONALIDADES COMPLETADAS Y LISTAS PARA PROBAR:
+
+✅ 1. CREAR CITAS
+   - Formulario completo con servicios personalizados
+   - Búsqueda de clientes y servicios
+   - Cálculo automático de duración y costo
+   - Almacenamiento en tagenda + tagenda_aux
+
+✅ 2. VISUALIZAR CITAS EN AGENDA
+   - MapaAgenda() con algoritmo completo de 6 fases
+   - Lectura desde tagenda con JOINs completos
+   - Detección de conflictos y solapamientos
+   - Columnas auxiliares para alta demanda
+
+✅ 3. VER DETALLE DE CITAS
+   - Modal con toda la información
+   - Cliente, personal, servicios, costo
+   - Fecha y hora formateadas
+   - Status con colores
+
+✅ 4. EDITAR CITAS
+   - Formulario pre-llenado con datos actuales
+   - Actualización completa en tagenda + tagenda_aux
+   - Recálculo de servicios y costos
+   - Compatible con syserv
+
+✅ 5. ELIMINAR CITAS
+   - Soft delete (activo=0)
+   - Confirmación antes de eliminar
+   - Compatible con syserv
+   - Sin pérdida de datos históricos
+
+🔍 SIGUIENTE PASO SUGERIDO:
+
+Ahora que MapaAgenda() está completamente implementado, el siguiente paso
+natural sería implementar la UI visual de la agenda (carrusel con matriz):
+
+📅 Fase 6: UI Carrusel de Agenda
+  → Mostrar matriz de horarios y terapeutas
+  → Celdas coloreadas según status
+  → Click en celda para crear/ver cita
+  → Swipe entre días
+  → Indicadores de disponibilidad
+
+Esta UI usará directamente:
+  - arrMapa[columna][fila] para renderizar celdas
+  - isDisponible() para validar espacios
+  - MapaAgenda() para obtener los datos
+
+¿Procedemos con la implementación del carrusel de agenda?
+
+===========================================
+¡EDICIÓN Y ELIMINACIÓN DE CITAS IMPLEMENTADA! 🎯
+===========================================
+
+NUEVA FUNCIONALIDAD: Editar y eliminar citas desde la agenda
+
+Ahora puedes:
+✅ Ver detalles de una cita al hacer clic en ella
+✅ Editar todos los datos de una cita existente
+✅ Eliminar citas con confirmación
+✅ Soft delete (marca activo=0, no borra físicamente)
+✅ 100% compatible con estructura syserv
+
+===========================================
+¡SERVICIOS PERSONALIZADOS IMPLEMENTADOS! ✨
+===========================================
+
+NUEVA FUNCIONALIDAD: Agregar servicios con texto libre
+
+El formulario de citas ahora permite:
+✅ Buscar servicios existentes con autocompletado
+✅ Escribir nombres de servicios personalizados (texto libre)
+✅ Crear servicios dinámicamente durante la creación de citas
+✅ 100% compatible con syserv
+
+===========================================
+¡MIGRACIÓN A TAGENDA COMPLETADA! 🎉
+===========================================
+
+✅ Fase 1: Tablas creadas
+✅ Fase 1.5: appointment-form actualizado
+✅ Fase 2: agenda.service actualizado para LEER de tagenda
+
+TODO EL FLUJO AHORA USA TAGENDA (compatible syserv):
+- ✅ Crear citas → tagenda + tagenda_aux
+- ✅ Leer citas → getCitasTagenda() con JOINs completos
+- ✅ Visualizar en agenda → MapaAgenda() lee desde tagenda
+
+===========================================
+CAMBIOS FASE 2: LECTURA DE CITAS
+===========================================
+
+✅ agenda.service.ts - Método readReservas() actualizado:
+
+ANTES (línea 1081):
+  const citas = await this.dbService.getCitas(fecha);  // ❌ Tabla 'citas' antigua
+
+AHORA (línea 1081):
+  const citas = await this.dbService.getCitasTagenda(fecha);  // ✅ Tabla 'tagenda' nueva
+
+Cambios en el mapeo:
+  - duracion: Usa duracion_minutos (calculado desde espacios_duracion)
+  - columna: Usa spacio (campo de columna en matriz)
+  - servicios_agenda: Usa servicios_nombres (concatenado del JOIN)
+  - Agregados: espacios_duracion, total_servicios, costo_total
+  - notas2: Ahora se mapea correctamente
+
+Logs mejorados:
+  - "📱 readReservas() usando SQLite (tagenda) para fecha: X"
+  - "📊 N citas cargadas desde tagenda"
+  - "📋 Ejemplo de cita desde tagenda"
+  - "✅ N citas mapeadas desde tagenda"
+
+===========================================
+LISTO PARA PROBAR EN ANDROID (SEGUNDA VEZ)
+===========================================
+
+📱 PASOS PARA VERIFICAR:
+
+1. Reiniciar app en Android (o recargar con Ctrl+R)
+
+2. La cita creada anteriormente DEBE aparecer ahora en la agenda
+   - Fecha: 2025-11-22
+   - Hora: 09:00
+   - Cliente: (el que seleccionaste)
+   - Personal: (el que seleccionaste)
+   - Servicio: (el que agregaste, costo: 600)
+
+3. Verificar en Logcat cuando cargas la agenda:
+   Buscar: "readReservas" o "tagenda"
+
+   Logs esperados al cargar agenda:
+   ✅ "📱 readReservas() usando SQLite (tagenda) para fecha: 2025-11-22"
+   ✅ "📊 1 citas cargadas desde tagenda para 2025-11-22"
+   ✅ "📋 Ejemplo de cita desde tagenda: {...}"
+   ✅ "✅ 1 citas mapeadas desde tagenda para 2025-11-22"
+
+4. La cita debe mostrarse en la agenda visual
+
+5. Probar crear otra cita:
+   - Con múltiples servicios esta vez
+   - Verificar que se guarda correctamente
+   - Verificar que aparece en la agenda
+
+===========================================
+COMPATIBILIDAD 100% CON SYSERV
+===========================================
+
+✅ Guardar citas:
+   - 1 registro en tagenda
+   - N registros en tagenda_aux (uno por servicio)
+   - espacios_duracion en SLOTS
+   - spacio como índice de columna
+
+✅ Leer citas:
+   - JOIN completo con clientes, personal, productos
+   - GROUP BY para agrupar servicios
+   - Servicios concatenados en servicios_nombres
+   - Duración convertida a minutos para UI
+
+✅ Estructura idéntica a syserv:
+   - Nombres de campos exactos
+   - Tipos de datos correctos
+   - Relaciones con Foreign Keys
+   - Listo para sincronización directa
+
+===========================================
+TABLA LEGACY (citas) OBSOLETA
+===========================================
+
+⚠️ La tabla 'citas' YA NO SE USA:
+   - appointment-form guarda en tagenda ✅
+   - agenda.service lee de tagenda ✅
+   - getCitas() antigua NO se usa más
+   - addCita() antigua NO se usa más
+
+📝 NOTA: La tabla 'citas' se puede eliminar más adelante
+   después de confirmar que todo funciona correctamente
+
+===========================================
+SIGUIENTE PASO: PROBAR Y VALIDAR
+===========================================
+
+Una vez confirmado que las citas se muestran:
+
+⏳ Próximas mejoras opcionales:
+   1. Implementar MapaAgenda() completo con algoritmo syserv
+   2. Implementar UI de carrusel (ion-slides por terapeuta)
+   3. Migrar datos antiguos de citas → tagenda (si los hay)
+   4. Eliminar tabla 'citas' antigua
+   5. Implementar edición de citas
+   6. Implementar eliminación de citas
+
+===========================================
+ARCHIVOS MODIFICADOS EN FASE 2
+===========================================
+
+✅ agenda.service.ts (líneas 1075-1140)
+   - Método readReservas() usa getCitasTagenda()
+   - Mapeo actualizado para campos de tagenda
+   - Usa spacio en lugar de id_personal para columna
+   - Usa duracion_minutos calculado desde espacios_duracion
+   - Logs detallados para debugging
+
+✅ appointment-form.component.ts (líneas 468-523)
+   - Método saveAppointment() usa addCitaTagenda()
+
+✅ database.service.ts (líneas 206-1116)
+   - Tablas tagenda, tagenda_aux, tagenda_lnk_fecha
+   - Métodos CRUD completos
+
+===========================================
+LOGS DE COMPILACIÓN FASE 2
+===========================================
+
+Build: ✅ EXITOSO (12.262 seconds)
+Sync:  ✅ EXITOSO (0.44s)
+Warnings: Solo imports no usados (no afectan funcionalidad)
+
+===========================================
+RESUMEN COMPLETO DE LA MIGRACIÓN
+===========================================
+
+✅ FASE 1: Tablas creadas
+   - database.service.ts
+   - tagenda, tagenda_aux, tagenda_lnk_fecha
+   - 15 índices de performance
+   - 9 métodos CRUD (addCitaTagenda, getCitasTagenda, etc.)
+
+✅ FASE 1.5: Guardar citas
+   - appointment-form.component.ts
+   - Usa addCitaTagenda() con múltiples servicios
+   - Calcula espacios_duracion automáticamente
+
+✅ FASE 2: Leer citas
+   - agenda.service.ts
+   - Usa getCitasTagenda() con JOINs
+   - Mapea correctamente todos los campos
+
+===========================================
+CAMBIOS FASE 3: SERVICIOS PERSONALIZADOS
+===========================================
+
+✅ database.service.ts - Agregado método searchServicios() (línea 1194)
+   - Búsqueda de servicios por nombre con LIKE
+   - Retorna máximo 10 resultados
+   - Solo servicios activos
+
+✅ appointment-form.component.ts - Lógica de servicios actualizada:
+   - Agregadas variables: serviceSearchQuery, serviceResults, selectedService, servicePrice
+   - Método searchServices() para buscar con autocompletado
+   - Método selectService() para seleccionar de resultados
+   - Método clearService() para limpiar selección
+   - Método addService() MEJORADO (línea 440):
+     * Acepta servicios predefinidos O texto libre
+     * Si es texto libre → crea servicio en BD con addServicio()
+     * Si es predefinido → usa el existente
+     * Agrega servicio a la lista de la cita
+
+✅ appointment-form.component.html - UI mejorada:
+   - Reemplazado ion-select con ion-searchbar (línea 143)
+   - Lista de resultados con autocompletado (línea 153)
+   - Indicador visual "Se creará servicio personalizado" (línea 169)
+   - Campo de precio para servicios personalizados (línea 177)
+
+✅ appointment-form.component.scss - Estilos agregados:
+   - .service-searchbar (línea 277)
+   - .custom-service-hint (línea 288)
+   - .price-input (línea 301)
+   - Modo oscuro compatible (línea 652)
+
+===========================================
+FUNCIONALIDAD COMPLETA
+===========================================
+
+El usuario ahora puede:
+1. Escribir en el campo "Nombre:" del tab Conceptos
+2. Ver sugerencias de servicios existentes mientras escribe
+3. Seleccionar un servicio predefinido O escribir uno nuevo
+4. Si escribe uno nuevo, se creará automáticamente en la BD
+5. Establecer precio para servicios personalizados
+6. Agregar múltiples servicios (predefinidos + personalizados) a una cita
+
+Logs esperados al crear servicio personalizado:
+✅ "🆕 Creando servicio personalizado: [nombre]"
+✅ "✅ Servicio creado dinámicamente: [nombre] (ID: X)"
+
+===========================================
+PROBLEMA RESUELTO: BOTÓN "AGREGAR" DESHABILITADO
+===========================================
+
+✅ CAUSA IDENTIFICADA:
+   El botón "Agregar" tenía la condición [disabled]="!selectedServiceId"
+   pero selectedServiceId nunca se actualizaba en el código.
+
+✅ SOLUCIÓN:
+   Cambiar la condición a: [disabled]="!serviceSearchQuery || serviceSearchQuery.length < 2"
+   Ahora el botón se habilita cuando hay al menos 2 caracteres escritos.
+
+✅ ARCHIVO MODIFICADO:
+   - appointment-form.component.html (línea 192)
+
+===========================================
+VALIDACIÓN COMPLETADA ✅
+===========================================
+
+Probar en Android y verificar:
+- [✓] Cita creada aparece en la agenda
+- [✓] Nombre del cliente se muestra
+- [✓] Nombre del personal se muestra
+- [✓] Nombre del servicio se muestra
+- [✓] Hora correcta
+- [✓] Duración correcta (según el servicio)
+- [✓] Crear nueva cita con múltiples servicios
+- [✓] Verificar que múltiples servicios aparecen
+- [✓] Botón "Agregar" se habilita correctamente
+- [✓] Botón "Agendar Cita" se habilita después de agregar servicios
+- [✓] Buscar servicio existente con autocompletado
+- [✓] Crear servicio personalizado con texto libre
+- [✓] Verificar que servicio personalizado se guarda en BD
+- [✓] Verificar que servicio personalizado aparece en la agenda
+- [✓] Crear cita con servicios personalizados
+
+===========================================
+¡TODAS LAS PRUEBAS COMPLETADAS! ✅
+===========================================
+
+La funcionalidad de servicios personalizados está 100% operativa:
+✅ Los servicios se pueden buscar con autocompletado
+✅ Los servicios personalizados se crean dinámicamente
+✅ Se guardan correctamente en la base de datos
+✅ Las citas con servicios personalizados aparecen en la agenda
+✅ Compatible 100% con estructura syserv
+
+===========================================
+CAMBIOS FASE 4: EDICIÓN Y ELIMINACIÓN
+===========================================
+
+✅ COMPONENTES NUEVOS CREADOS:
+
+1. appointment-detail.component.ts (líneas 1-208)
+   - Modal para mostrar detalles completos de una cita
+   - Botones de acción: Editar y Eliminar
+   - Confirmación antes de eliminar
+   - Manejo de errores
+
+2. appointment-detail.component.html
+   - Vista detallada con toda la información
+   - Badge de status con colores según estado
+   - Lista de datos: cliente, personal, fecha, hora, servicios, costo
+   - Footer con botones de acción
+
+3. appointment-detail.component.scss
+   - Estilos modernos con cards y sombras
+   - Modo oscuro compatible
+   - Diseño responsive
+
+✅ COMPONENTES MODIFICADOS:
+
+1. agenda-main.page.ts (líneas 582-639)
+   Agregados métodos:
+   - viewAppointmentDetail(appointment): Abre modal de detalle
+   - editAppointment(appointment): Abre formulario en modo edición
+   - Manejo de cierre de modales con acciones
+
+2. agenda-main.page.html (línea 204)
+   - Click handler en appointment cards: (click)="viewAppointmentDetail(...)"
+   - Pasa objeto completo de la cita al modal
+
+3. appointment-form.component.ts
+   - Agregado Input: existingAppointment?: Reserva
+   - Método populateFormForEdit() (líneas 286-358)
+     * Carga datos de cita existente
+     * Establece cliente, personal, fecha/hora
+     * Carga servicios desde tagenda_aux
+   - Método saveAppointment() modificado (líneas 678-703)
+     * Detecta modo edición vs creación
+     * Usa updateCitaTagenda() en modo edición
+     * Usa addCitaTagenda() en modo creación
+
+4. appointment-form.component.html (línea 10)
+   - Título dinámico: "Editar Reservacion" o "Agendar Reservacion"
+
+5. agenda.interfaces.ts (líneas 70, 81, 95)
+   - Agregado id?: number (alias para id_agenda)
+   - Agregado personal?: string (nombre del personal)
+   - Agregado costo_total?: number (costo total de servicios)
+
+===========================================
+FUNCIONALIDAD COMPLETA
+===========================================
+
+FLUJO DE EDICIÓN:
+1. Usuario hace clic en una cita en la agenda
+2. Se abre modal appointment-detail con todos los datos
+3. Usuario presiona "Editar"
+4. Se cierra modal de detalle y abre appointment-form en modo edición
+5. Formulario se llena automáticamente con datos existentes
+6. Usuario modifica lo que necesite
+7. Al guardar, se usa updateCitaTagenda() para actualizar
+8. Agenda se recarga con datos actualizados
+
+FLUJO DE ELIMINACIÓN:
+1. Usuario hace clic en una cita en la agenda
+2. Se abre modal appointment-detail con todos los datos
+3. Usuario presiona "Eliminar"
+4. Se muestra alerta de confirmación
+5. Si confirma, se ejecuta deleteCitaTagenda() (soft delete)
+6. Se marca activo=0 en tagenda y tagenda_aux
+7. Agenda se recarga y la cita desaparece
+
+MÉTODOS DE BASE DE DATOS USADOS:
+- getServiciosDeCita(id_agenda): Obtiene servicios de una cita
+- updateCitaTagenda(id, data): Actualiza cita y servicios
+- deleteCitaTagenda(id): Soft delete de cita y servicios
+
+===========================================
+LISTO PARA PROBAR EN ANDROID (TERCERA VEZ)
+===========================================
+
+📱 PASOS PARA VERIFICAR EDICIÓN:
+
+1. Abrir la app en Android
+2. Hacer clic en una cita existente en la agenda
+3. Verificar que se abre el modal de detalle
+4. Verificar que muestra todos los datos correctos
+5. Presionar botón "Editar"
+6. Verificar que el formulario se abre con datos precargados
+7. Modificar algún dato (ej. cambiar servicio o hora)
+8. Guardar la cita
+9. Verificar que los cambios se reflejan en la agenda
+
+📱 PASOS PARA VERIFICAR ELIMINACIÓN:
+
+1. Hacer clic en una cita en la agenda
+2. Presionar botón "Eliminar"
+3. Verificar que aparece alerta de confirmación
+4. Confirmar eliminación
+5. Verificar que la cita desaparece de la agenda
+6. Verificar en Logcat que se marca activo=0
+
+===========================================
+LOGS ESPERADOS EN LOGCAT
+===========================================
+
+Al abrir detalle de cita:
+✅ "📋 Appointment detail opened: {...}"
+
+Al editar cita:
+✅ "✏️ Poblando formulario para editar: {...}"
+✅ "✅ N servicios cargados para edición"
+✅ "✅ Formulario poblado para edición: {...}"
+✅ "✏️ Actualizando cita ID: X"
+✅ "✅ Cita actualizada exitosamente"
+
+Al eliminar cita:
+✅ "🗑️ Eliminando cita ID: X"
+✅ "✅ Cita eliminada correctamente"
+✅ "✅ Cita eliminada, recargando agenda..."
+
+===========================================
+ARCHIVOS CREADOS EN FASE 4
+===========================================
+
+✅ appointment-detail.component.ts (208 líneas)
+✅ appointment-detail.component.html (105 líneas)
+✅ appointment-detail.component.scss (109 líneas)
+
+===========================================
+ARCHIVOS MODIFICADOS EN FASE 4
+===========================================
+
+✅ agenda-main.page.ts
+   - Línea 29: Import AppointmentDetailComponent
+   - Líneas 582-639: Métodos viewAppointmentDetail y editAppointment
+   - Línea 350: Agregar fullData al objeto appointment en timeSlots
+
+✅ agenda-main.page.html
+   - Línea 204: Click handler (click)="viewAppointmentDetail(...)"
+
+✅ appointment-form.component.ts
+   - Línea 43: Import Reserva
+   - Línea 136: Input existingAppointment
+   - Líneas 224-225: Llamar populateFormForEdit en ngOnInit
+   - Líneas 286-358: Método populateFormForEdit
+   - Líneas 678-703: Lógica de edición vs creación en saveAppointment
+
+✅ appointment-form.component.html
+   - Línea 10: Título dinámico según modo
+
+✅ agenda.interfaces.ts
+   - Líneas 70, 81, 95: Campos opcionales agregados
+
+===========================================
+LOGS DE COMPILACIÓN FASE 4
+===========================================
+
+Build: ✅ EXITOSO (7.731 seconds)
+Sync:  ✅ EXITOSO (0.359s)
+Warnings: Solo imports no usados (no afectan funcionalidad)
+
+Tamaño del bundle:
+- main: 314.63 kB
+- Total inicial: 1.54 MB
+- Lazy chunks: incluye nuevo AppointmentDetailComponent
+
+===========================================
+DOCUMENTACIÓN
+===========================================
+
+Ver planes completos en:
+- PLAN_MIGRACION_DB.md - Plan detallado de migración
+- ANALISIS_ALGORITMO_SYSERV.md - Algoritmo original
+- COMPARACION_SYSERV_VS_ACTUAL.md - Incompatibilidades resueltas
+- ANALISIS_DISENO_AGENDA_CARRUSEL.md - Diseño UI propuesto
