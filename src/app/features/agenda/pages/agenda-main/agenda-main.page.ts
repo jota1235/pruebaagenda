@@ -273,16 +273,12 @@ export class AgendaMainPage implements OnInit {
             simulateTouch: true,
             allowTouchMove: true,
             resistance: true,
-            resistanceRatio: 0.85,
-            on: {
-              slideChange: () => {
-                this.onSlideChange();
-              },
-              slideChangeTransitionEnd: () => {
-                this.onSlideChange();
-              }
-            }
+            resistanceRatio: 0.85
           });
+
+          // Agregar listeners después de crear el swiper usando bind para mantener contexto en producción
+          this.swiper.on('slideChange', this.onSlideChange.bind(this));
+          this.swiper.on('slideChangeTransitionEnd', this.onSlideChange.bind(this));
 
           this.cdr.detectChanges();
         } catch (error) {
@@ -831,7 +827,6 @@ export class AgendaMainPage implements OnInit {
     if (this.swiper) {
       this.ngZone.run(() => {
         this.currentTherapistIndex = this.swiper.activeIndex;
-        console.log('Swiper slide change:', this.currentTherapistIndex);
         this.cdr.detectChanges();
       });
     }
