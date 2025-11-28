@@ -135,6 +135,7 @@ export class AppointmentFormComponent implements OnInit {
   @Input() date: Date = new Date();
   @Input() mode: 'create' | 'edit' = 'create';
   @Input() existingAppointment?: Reserva;
+  @Input() preselectedStaff?: number;
 
   // Tabs
   activeTab: 'general' | 'conceptos' = 'general';
@@ -224,6 +225,11 @@ export class AppointmentFormComponent implements OnInit {
     // Si estamos en modo edición, poblar el formulario con los datos existentes
     if (this.mode === 'edit' && this.existingAppointment) {
       await this.populateFormForEdit();
+    }
+
+    // Si se pasó un staff pre-seleccionado, aplicarlo
+    if (this.mode === 'create' && this.preselectedStaff) {
+      this.selectedStaffId = this.preselectedStaff;
     }
   }
 

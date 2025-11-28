@@ -198,9 +198,6 @@ export class AgendaMainPage implements OnInit {
   // Índice del terapeuta actual visible
   currentTherapistIndex = 0;
 
-  // DEBUG: Error de inicialización de Swiper
-  swiperError: string = '';
-
   constructor(
     private router: Router,
     private actionSheetController: ActionSheetController,
@@ -255,25 +252,16 @@ export class AgendaMainPage implements OnInit {
    * Mucho más confiable en producción
    */
   private initializeSwiper() {
-    // Esperar más tiempo para asegurar que el DOM esté completamente renderizado
     setTimeout(() => {
-      console.log('🔍 Verificando disponibilidad de Swiper:', typeof Swiper);
-      console.log('🔍 Swiper global:', typeof (window as any).Swiper);
-      console.log('🔍 swiperRef:', this.swiperRef);
-      console.log('🔍 activeTab:', this.activeTab);
-
       if (this.swiperRef && this.swiperRef.nativeElement) {
         const swiperEl = this.swiperRef.nativeElement;
 
         try {
-          // Verificar que Swiper esté disponible
           if (typeof Swiper === 'undefined') {
-            this.swiperError = 'Swiper undefined';
-            console.error('❌ Swiper no está definido globalmente');
+            console.error('Swiper no está definido globalmente');
             return;
           }
 
-          // Crear instancia de Swiper con configuración explícita
           this.swiper = new Swiper(swiperEl, {
             slidesPerView: 1,
             spaceBetween: 0,
@@ -287,41 +275,17 @@ export class AgendaMainPage implements OnInit {
             resistanceRatio: 0.85,
             on: {
               slideChange: () => {
-                // Llamar al método onSlideChange cuando cambia el slide
                 this.onSlideChange();
               }
             }
           });
 
-          console.log('✅ Swiper inicializado correctamente con API JavaScript');
-          this.swiperError = '';
           this.cdr.detectChanges();
         } catch (error) {
-          this.swiperError = String(error);
-          console.error('❌ Error inicializando Swiper:', error);
+          console.error('Error inicializando Swiper:', error);
         }
-      } else {
-        this.swiperError = `swiperRef ${this.swiperRef ? 'existe pero sin nativeElement' : 'es undefined'}`;
-        console.warn('⚠️ swiperRef no disponible:', {
-          swiperRef: this.swiperRef,
-          activeTab: this.activeTab,
-          terapeutasLength: this.terapeutas.length
-        });
       }
-    }, 500); // Aumentado a 500ms para dar tiempo a que el *ngIf renderice
-  }
-
-  /**
-   * DEBUG: Obtener estado de Swiper global
-   */
-  getSwiperStatus(): string {
-    if (typeof (window as any).Swiper !== 'undefined') {
-      return 'OK ✓';
-    }
-    if (typeof Swiper !== 'undefined') {
-      return 'VAR ✓';
-    }
-    return 'UNDEFINED ✗';
+    }, 500);
   }
 
   /**
@@ -436,40 +400,9 @@ export class AgendaMainPage implements OnInit {
         this.horarios = [];
       }
 
-      console.log('📊 Datos del carrusel cargados:');
-      console.log(`   - Terapeutas: ${this.terapeutas.length}`);
-      console.log(`   - Horarios: ${this.horarios.length}`);
-      console.log(`   - Citas: ${this.appointments.length}`);
-
-      // ==================== INICIALIZAR SWIPER ====================
-      // Llamar después de cargar datos y forzar detección de cambios
+      // Inicializar swiper después de cargar datos
       this.cdr.detectChanges();
-
-      // Inicializar swiper ahora que los datos están listos y el DOM debería estar renderizado
-      console.log('🎯 Llamando initializeSwiper() después de cargar datos...');
       this.initializeSwiper();
-
-      // Debug: Mostrar citas con sus duraciones
-      console.log('🔍🔍🔍 DETALLE DE CITAS 🔍🔍🔍');
-      this.appointments.forEach((cita, index) => {
-        console.log(`⏰ Cita ${index + 1}: ${cita.cliente}`);
-        console.log(`   📅 Hora: ${cita.hora} | Duración: ${cita.duracion} espacios = ${cita.duracion * 30} minutos`);
-        console.log(`   🎯 Status: ${cita.status} | Columna: ${cita.columna_ag} | ID: ${cita.id_agenda}`);
-        console.log(`   🛠️ Servicios: "${cita.servicios_agenda || cita.servicios_nombres || 'N/A'}"`);
-      });
-
-      // Debug: Mostrar matriz completa del primer terapeuta
-      if (this.arrMapa.length > 0 && this.terapeutas.length > 0) {
-        console.log('🗂️🗂️🗂️ MATRIZ DE SLOTS 🗂️🗂️🗂️');
-        const primerTerapeuta = this.terapeutas[0];
-        const columna0 = this.arrMapa[0] || [];
-
-        console.log(`📍 Mostrando slots de: ${primerTerapeuta.alias}`);
-        columna0.slice(0, 15).forEach((valor, fila) => {
-          const horario = this.horarios[fila] || `Fila ${fila}`;
-          console.log(`   ${horario}: [${valor === '' ? 'LIBRE' : valor}]`);
-        });
-      }
 
     } catch (error) {
       console.error('Error cargando citas:', error);
@@ -892,19 +825,8 @@ export class AgendaMainPage implements OnInit {
    */
   onSlideChange() {
     if (this.swiper) {
-      const newIndex = this.swiper.activeIndex;
-      console.log(`🔄 onSlideChange() - Índice anterior: ${this.currentTherapistIndex}, Nuevo: ${newIndex}`);
-
-      // Actualizar índice actual
-      this.currentTherapistIndex = newIndex;
-
-      // Forzar detección de cambios para actualizar la clase .active en los indicadores
+      this.currentTherapistIndex = this.swiper.activeIndex;
       this.cdr.detectChanges();
-
-      const terapeuta = this.terapeutas[this.currentTherapistIndex];
-      if (terapeuta) {
-        console.log(`📍 Mostrando agenda de: ${terapeuta.nombre}`);
-      }
     }
   }
 
@@ -912,24 +834,10 @@ export class AgendaMainPage implements OnInit {
    * Navegar a un terapeuta específico desde indicadores
    */
   goToTherapist(index: number) {
-    console.log(`🎯 goToTherapist(${index}) llamado`);
-    console.log(`   - currentTherapistIndex ANTES: ${this.currentTherapistIndex}`);
-    console.log(`   - Swiper existe: ${!!this.swiper}`);
-    console.log(`   - Índice válido: ${index >= 0 && index < this.terapeutas.length}`);
-    console.log(`   - Total terapeutas: ${this.terapeutas.length}`);
-
     if (this.swiper && index >= 0 && index < this.terapeutas.length) {
-      const terapeuta = this.terapeutas[index];
-      console.log(`   ✅ Navegando a: ${terapeuta.nombre}`);
-
-      // Actualizar el índice inmediatamente (el slidechange también lo hará, pero esto es para sincronizar más rápido)
       this.currentTherapistIndex = index;
       this.cdr.detectChanges();
-      console.log(`   - currentTherapistIndex DESPUÉS: ${this.currentTherapistIndex}`);
-
       this.swiper.slideTo(index);
-    } else {
-      console.warn(`   ❌ No se puede navegar - Swiper no disponible o índice inválido`);
     }
   }
 
