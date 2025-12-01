@@ -263,6 +263,9 @@ export class AgendaMainPage implements OnInit {
             return;
           }
 
+          // Crear una referencia al componente para usar dentro de los callbacks
+          const self = this;
+
           this.swiper = new Swiper(swiperEl, {
             slidesPerView: 1,
             spaceBetween: 0,
@@ -273,13 +276,27 @@ export class AgendaMainPage implements OnInit {
             simulateTouch: true,
             allowTouchMove: true,
             resistance: true,
-            resistanceRatio: 0.85
+            resistanceRatio: 0.85,
+            on: {
+              slideChange: function() {
+                console.log('🔄 slideChange disparado, activeIndex:', self.swiper.activeIndex);
+                self.ngZone.run(() => {
+                  self.currentTherapistIndex = self.swiper.activeIndex;
+                  console.log('  - Nuevo índice asignado:', self.currentTherapistIndex);
+                  self.cdr.detectChanges();
+                });
+              },
+              slideChangeTransitionEnd: function() {
+                console.log('✅ slideChangeTransitionEnd disparado, activeIndex:', self.swiper.activeIndex);
+                self.ngZone.run(() => {
+                  self.currentTherapistIndex = self.swiper.activeIndex;
+                  self.cdr.detectChanges();
+                });
+              }
+            }
           });
 
-          // Agregar listeners después de crear el swiper usando bind para mantener contexto en producción
-          this.swiper.on('slideChange', this.onSlideChange.bind(this));
-          this.swiper.on('slideChangeTransitionEnd', this.onSlideChange.bind(this));
-
+          console.log('✓ Swiper inicializado correctamente');
           this.cdr.detectChanges();
         } catch (error) {
           console.error('Error inicializando Swiper:', error);
