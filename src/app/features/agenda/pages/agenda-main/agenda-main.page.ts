@@ -354,7 +354,15 @@ export class AgendaMainPage implements OnInit {
         this.ngZone.run(() => {
           console.log('⚡ CAMBIO DETECTADO: ' + this.currentTherapistIndex + ' → ' + swiperActiveIndex);
           this.currentTherapistIndex = swiperActiveIndex;
+
+          // Forzar detección de cambios de múltiples formas
+          this.cdr.markForCheck();
           this.cdr.detectChanges();
+
+          // Forzar recalculación del template
+          setTimeout(() => {
+            this.cdr.detectChanges();
+          }, 0);
         });
       }
     }, 100);
