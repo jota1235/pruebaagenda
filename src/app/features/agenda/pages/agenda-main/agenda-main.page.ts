@@ -198,6 +198,9 @@ export class AgendaMainPage implements OnInit {
   // Índice del terapeuta actual visible
   currentTherapistIndex = 0;
 
+  // Intervalo para sincronizar el índice del swiper
+  private swiperSyncInterval?: any;
+
   constructor(
     private router: Router,
     private actionSheetController: ActionSheetController,
@@ -246,6 +249,11 @@ export class AgendaMainPage implements OnInit {
     // NO inicializar aquí porque el *ngIf="activeTab === 'appointments'"
     // puede no haber renderizado el contenido aún
     // La inicialización se hace después de cargar los datos
+  }
+
+  ngOnDestroy() {
+    // Limpiar intervalo de sincronización
+    this.stopSwiperSync();
   }
 
   /**
@@ -297,12 +305,47 @@ export class AgendaMainPage implements OnInit {
           });
 
           console.log('✓ Swiper inicializado correctamente');
+
+          // Iniciar sincronización manual como fallback
+          this.startSwiperSync();
+
           this.cdr.detectChanges();
         } catch (error) {
           console.error('Error inicializando Swiper:', error);
         }
       }
     }, 500);
+  }
+
+  /**
+   * Sincronizar manualmente el índice del swiper (fallback para producción)
+   */
+  private startSwiperSync() {
+    // Limpiar intervalo anterior si existe
+    if (this.swiperSyncInterval) {
+      clearInterval(this.swiperSyncInterval);
+    }
+
+    // Revisar cada 100ms si el activeIndex cambió
+    this.swiperSyncInterval = setInterval(() => {
+      if (this.swiper && this.swiper.activeIndex !== this.currentTherapistIndex) {
+        this.ngZone.run(() => {
+          console.log('⚡ Sync manual: cambió de', this.currentTherapistIndex, 'a', this.swiper.activeIndex);
+          this.currentTherapistIndex = this.swiper.activeIndex;
+          this.cdr.detectChanges();
+        });
+      }
+    }, 100);
+  }
+
+  /**
+   * Detener sincronización manual del swiper
+   */
+  private stopSwiperSync() {
+    if (this.swiperSyncInterval) {
+      clearInterval(this.swiperSyncInterval);
+      this.swiperSyncInterval = undefined;
+    }
   }
 
   /**
