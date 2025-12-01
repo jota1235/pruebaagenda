@@ -12,6 +12,14 @@
 <!-- Main Content -->
 <ion-content [fullscreen]="true" class="agenda-content" *ngIf="!isLoading" [class.show]="showContent">
 
+  <!-- DEBUG BANNER -->
+  <div *ngIf="activeTab === 'appointments'" style="background: #ff6b6b; color: white; padding: 8px; font-size: 11px; text-align: center; position: sticky; top: 0; z-index: 9999;">
+    <strong>DEBUG:</strong> Index: {{ currentTherapistIndex }} |
+    Swiper: {{ swiper ? 'OK ✓' : 'NO ✗' }} |
+    ActiveIndex: {{ swiper?.activeIndex }} |
+    Terapeutas: {{ terapeutas.length }}
+  </div>
+
   <!-- Banner Superior (solo en appointments) -->
   <div class="top-banner" *ngIf="activeTab === 'appointments'">
     <p class="banner-text">¿Listo para organizar tu día?</p>

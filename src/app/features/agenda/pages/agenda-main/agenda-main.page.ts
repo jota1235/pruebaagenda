@@ -824,9 +824,17 @@ export class AgendaMainPage implements OnInit {
    * Evento cuando cambia el slide del carrusel
    */
   onSlideChange() {
+    console.log('🔔 onSlideChange called');
+    console.log('  - swiper exists:', !!this.swiper);
+    console.log('  - swiper.activeIndex:', this.swiper?.activeIndex);
+    console.log('  - currentTherapistIndex antes:', this.currentTherapistIndex);
+
     if (this.swiper) {
       this.ngZone.run(() => {
+        const oldIndex = this.currentTherapistIndex;
         this.currentTherapistIndex = this.swiper.activeIndex;
+        console.log('  - currentTherapistIndex después:', this.currentTherapistIndex);
+        console.log('  - cambió de', oldIndex, 'a', this.currentTherapistIndex);
         this.cdr.detectChanges();
       });
     }
