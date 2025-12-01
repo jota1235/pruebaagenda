@@ -13,11 +13,9 @@
 <ion-content [fullscreen]="true" class="agenda-content" *ngIf="!isLoading" [class.show]="showContent">
 
   <!-- DEBUG BANNER -->
-  <div *ngIf="activeTab === 'appointments'" style="background: #ff6b6b; color: white; padding: 8px; font-size: 11px; text-align: center; position: sticky; top: 0; z-index: 9999;">
-    <strong>DEBUG:</strong> Index: {{ currentTherapistIndex }} |
-    Swiper: {{ swiper ? 'OK ✓' : 'NO ✗' }} |
-    ActiveIndex: {{ swiper?.activeIndex }} |
-    Terapeutas: {{ terapeutas.length }}
+  <div *ngIf="activeTab === 'appointments'" style="background: #ff6b6b; color: white; padding: 6px; font-size: 10px; text-align: center; position: sticky; top: 0; z-index: 9999; line-height: 1.3;">
+    <div><strong>DEBUG:</strong> Index: {{ currentTherapistIndex }} | ActiveIndex: {{ swiper?.activeIndex }}</div>
+    <div>Swiper: {{ swiper ? 'OK' : 'NO' }} | Slides: {{ swiper?.slides?.length }} | RealIndex: {{ swiper?.realIndex }} | Polling: {{ swiperSyncInterval ? 'ON' : 'OFF' }}</div>
   </div>
 
   <!-- Banner Superior (solo en appointments) -->

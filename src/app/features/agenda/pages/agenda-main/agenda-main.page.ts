@@ -199,7 +199,7 @@ export class AgendaMainPage implements OnInit {
   currentTherapistIndex = 0;
 
   // Intervalo para sincronizar el índice del swiper
-  private swiperSyncInterval?: any;
+  swiperSyncInterval?: any;
 
   constructor(
     private router: Router,
@@ -321,21 +321,45 @@ export class AgendaMainPage implements OnInit {
    * Sincronizar manualmente el índice del swiper (fallback para producción)
    */
   private startSwiperSync() {
+    console.log('🔄 Iniciando polling de swiper...');
+
     // Limpiar intervalo anterior si existe
     if (this.swiperSyncInterval) {
       clearInterval(this.swiperSyncInterval);
     }
 
+    let pollCount = 0;
+
     // Revisar cada 100ms si el activeIndex cambió
     this.swiperSyncInterval = setInterval(() => {
-      if (this.swiper && this.swiper.activeIndex !== this.currentTherapistIndex) {
+      pollCount++;
+
+      if (!this.swiper) {
+        if (pollCount % 10 === 0) {
+          console.log('⚠️ Polling #' + pollCount + ': swiper no existe');
+        }
+        return;
+      }
+
+      const swiperActiveIndex = this.swiper.activeIndex;
+      const swiperRealIndex = this.swiper.realIndex;
+
+      if (pollCount % 10 === 0) {
+        console.log('📊 Poll #' + pollCount + ': currentIndex=' + this.currentTherapistIndex +
+                    ', activeIndex=' + swiperActiveIndex +
+                    ', realIndex=' + swiperRealIndex);
+      }
+
+      if (swiperActiveIndex !== this.currentTherapistIndex) {
         this.ngZone.run(() => {
-          console.log('⚡ Sync manual: cambió de', this.currentTherapistIndex, 'a', this.swiper.activeIndex);
-          this.currentTherapistIndex = this.swiper.activeIndex;
+          console.log('⚡ CAMBIO DETECTADO: ' + this.currentTherapistIndex + ' → ' + swiperActiveIndex);
+          this.currentTherapistIndex = swiperActiveIndex;
           this.cdr.detectChanges();
         });
       }
     }, 100);
+
+    console.log('✅ Polling iniciado con ID:', this.swiperSyncInterval);
   }
 
   /**
