@@ -101,23 +101,23 @@
 }
 
 .menu-card ion-card-header {
-  padding: 1.5rem 1rem 1rem !important;
+  padding: 1.25rem 1.25rem 0.5rem !important;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
 
 .menu-card ion-card-title {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 600;
-  margin-top: 1.5rem !important;
+  margin-top: 0.75rem !important;
   margin-bottom: 0 !important;
 }
 
 .menu-card ion-card-content {
   font-size: 0.875rem;
   color: var(--ion-color-medium);
-  padding: 0.75rem 1rem 1.5rem !important;
+  padding: 0.5rem 1.25rem 1.25rem !important;
   margin-top: 0 !important;
 }
 
@@ -126,13 +126,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 60px;
-  height: 60px;
+  width: 52px;
+  height: 52px;
   border-radius: 12px;
   margin-bottom: 0 !important;
 
   ion-icon {
-    font-size: 2rem;
+    font-size: 1.75rem;
     color: white;
   }
 
@@ -269,7 +269,7 @@
 
   .menu-card {
     border-radius: 20px;
-    min-height: 220px;
+    min-height: 180px;
 
     &:hover {
       transform: translateY(-8px) scale(1.02);
@@ -278,26 +278,26 @@
   }
 
   .menu-card ion-card-header {
-    padding: 2rem 1.5rem 1rem !important;
+    padding: 1.5rem 1.5rem 0.75rem !important;
   }
 
   .menu-card ion-card-title {
-    font-size: 1.5rem;
-    margin-top: 1.75rem !important;
+    font-size: 1.375rem;
+    margin-top: 1rem !important;
   }
 
   .menu-card ion-card-content {
-    font-size: 1.125rem;
-    padding: 1rem 1.5rem 2rem !important;
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem 1.5rem !important;
   }
 
   .card-icon {
-    width: 80px;
-    height: 80px;
-    border-radius: 16px;
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
 
     ion-icon {
-      font-size: 2.75rem;
+      font-size: 2.25rem;
     }
   }
 
@@ -357,7 +357,7 @@
 
   .menu-card {
     border-radius: 24px;
-    min-height: 260px;
+    min-height: 200px;
 
     &:hover {
       transform: translateY(-10px) scale(1.03);
@@ -366,26 +366,26 @@
   }
 
   .menu-card ion-card-header {
-    padding: 2.5rem 2rem 1rem !important;
+    padding: 1.75rem 1.75rem 0.75rem !important;
   }
 
   .menu-card ion-card-title {
-    font-size: 1.75rem;
-    margin-top: 2rem !important;
+    font-size: 1.5rem;
+    margin-top: 1.25rem !important;
   }
 
   .menu-card ion-card-content {
-    font-size: 1.25rem;
-    padding: 1.25rem 2rem 2.5rem !important;
+    font-size: 1.125rem;
+    padding: 0.75rem 1.75rem 1.75rem !important;
   }
 
   .card-icon {
-    width: 90px;
-    height: 90px;
-    border-radius: 18px;
+    width: 72px;
+    height: 72px;
+    border-radius: 16px;
 
     ion-icon {
-      font-size: 3.25rem;
+      font-size: 2.5rem;
     }
   }
 
@@ -428,7 +428,7 @@
   }
 
   .menu-card {
-    min-height: 280px;
+    min-height: 220px;
   }
 }
 
