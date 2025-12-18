@@ -1221,8 +1221,8 @@ ion-item.today {
 // Indicadores de Terapeutas - Estilo igual a los días
 .therapist-indicators {
   display: flex;
-  gap: 12px;
-  padding: 16px;
+  gap: 10px;
+  padding: 12px 16px;
   background: var(--ion-background-color);
   border-bottom: 1px solid var(--ion-color-light-shade);
   overflow-x: auto;
@@ -1238,15 +1238,15 @@ ion-item.today {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 12px 20px;
-    border-radius: 14px;
+    padding: 10px 16px;
+    border-radius: 20px;
     background: white;
     border: none;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     white-space: nowrap;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    min-width: 80px;
+    min-width: 90px;
 
     &:hover {
       transform: translateY(-4px) scale(1.05);
@@ -1258,10 +1258,11 @@ ion-item.today {
     }
 
     .indicator-text {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
       color: #475569; // Gris medio oscuro visible en ambos modos
       text-transform: capitalize;
+      line-height: 1.2;
     }
 
     .indicator-badge {
