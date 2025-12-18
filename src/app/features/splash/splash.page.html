@@ -1,33 +1,40 @@
 <ion-content [fullscreen]="true" class="splash-content">
   <div class="splash-container" [class.show]="showContent">
 
-    <!-- Logo SyServ - Animación de flechas -->
+    <!-- Logo SyServ - Animación completa -->
     <div class="logo-animation">
-      <!-- Primera flecha (morada oscura) -->
-      <div class="arrow arrow-1" [class.click-effect]="clickEffect">
-        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <polygon points="0,50 50,0 50,25 25,50 50,75 50,100" fill="#5B2C91"/>
-        </svg>
-      </div>
 
-      <!-- Segunda flecha (morada clara) -->
-      <div class="arrow arrow-2" [class.click-effect]="clickEffect">
-        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <polygon points="0,50 50,0 50,25 25,50 50,75 50,100" fill="#9B7BB5"/>
-        </svg>
-      </div>
+      <!-- Grupo de flechas que forman el logo -->
+      <div class="arrows-group" [class.click-effect]="clickEffect">
 
-      <!-- Tercera flecha (azul) -->
-      <div class="arrow arrow-3" [class.click-effect]="clickEffect">
-        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <polygon points="0,50 50,0 50,25 25,50 50,75 50,100" fill="#6B8AC9"/>
-        </svg>
+        <!-- Flecha izquierda (morada oscura) - apunta a la izquierda -->
+        <div class="arrow arrow-left">
+          <svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="60,0 0,50 60,100 60,75 30,50 60,25" fill="#5B2C91"/>
+          </svg>
+        </div>
+
+        <!-- Diamante central (morada clara) -->
+        <div class="arrow arrow-center">
+          <svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="30,0 60,50 30,100 0,50" fill="#9B7BB5"/>
+          </svg>
+        </div>
+
+        <!-- Flecha derecha (azul) - apunta a la derecha -->
+        <div class="arrow arrow-right">
+          <svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="0,0 60,50 0,100 0,75 30,50 0,25" fill="#6B8AC9"/>
+          </svg>
+        </div>
+
       </div>
 
       <!-- Texto SyServ -->
       <div class="syserv-text" [class.show-text]="showText">
         <h1>SyServ</h1>
       </div>
+
     </div>
 
   </div>

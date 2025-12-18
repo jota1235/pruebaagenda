@@ -26,14 +26,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0;
   position: relative;
   height: 150px;
 }
 
+// Contenedor de flechas
+.arrows-group {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+}
+
 // Flechas base
 .arrow {
-  width: 100px;
+  width: 60px;
   height: 100px;
   opacity: 0;
   position: relative;
@@ -46,20 +53,20 @@
 }
 
 // ANIMACIÓN SECUENCIAL DE FLECHAS
-// Primera flecha - entra desde la derecha
-.arrow-1 {
+// Primera flecha (izquierda) - entra desde la derecha
+.arrow-left {
   animation: slideInFromRight 0.4s ease-out 0.3s forwards;
 }
 
-// Segunda flecha - entra desde la derecha después de la primera
-.arrow-2 {
-  margin-left: -20px; // Superposición ligera
+// Segunda flecha (centro) - entra desde la derecha después de la primera
+.arrow-center {
+  margin-left: -10px; // Superposición ligera
   animation: slideInFromRight 0.4s ease-out 0.6s forwards;
 }
 
-// Tercera flecha - entra desde la derecha después de la segunda
-.arrow-3 {
-  margin-left: -20px; // Superposición ligera
+// Tercera flecha (derecha) - entra desde la derecha después de la segunda
+.arrow-right {
+  margin-left: -10px; // Superposición ligera
   animation: slideInFromRight 0.4s ease-out 0.9s forwards;
 }
 
@@ -74,9 +81,9 @@
   }
 }
 
-// EFECTO DE CLIC - Mover flechas a la izquierda
-.arrow.click-effect {
-  animation: moveToLeft 0.3s ease-out 1.4s forwards;
+// EFECTO DE CLIC - Mover todo el grupo de flechas a la izquierda
+.arrows-group.click-effect {
+  animation: moveToLeft 0.3s ease-out forwards;
 }
 
 @keyframes moveToLeft {
@@ -93,12 +100,12 @@
 // ============================================
 .syserv-text {
   position: absolute;
-  right: -300px;
+  left: 50%;
   opacity: 0;
-  transition: all 0.5s ease-out;
+  white-space: nowrap;
 
   h1 {
-    font-size: 4rem;
+    font-size: 3.5rem;
     font-weight: 400;
     color: #4A4A4A;
     margin: 0;
@@ -107,18 +114,18 @@
   }
 
   &.show-text {
-    animation: slideInText 0.5s ease-out 1.7s forwards;
+    animation: slideInText 0.5s ease-out forwards;
   }
 }
 
 @keyframes slideInText {
   from {
     opacity: 0;
-    transform: translateX(0);
+    transform: translateX(100px);
   }
   to {
     opacity: 1;
-    transform: translateX(-220px);
+    transform: translateX(10px);
   }
 }
 
@@ -127,59 +134,59 @@
 // ============================================
 @media (max-width: 375px) {
   .arrow {
-    width: 70px;
-    height: 70px;
+    width: 45px;
+    height: 75px;
   }
 
-  .arrow-2,
-  .arrow-3 {
-    margin-left: -15px;
+  .arrow-center,
+  .arrow-right {
+    margin-left: -8px;
   }
 
   .syserv-text h1 {
-    font-size: 2.5rem;
+    font-size: 2.25rem;
   }
 
   @keyframes slideInText {
     to {
-      transform: translateX(-160px);
+      transform: translateX(5px);
     }
   }
 
-  .arrow.click-effect {
-    animation: moveToLeftMobile 0.3s ease-out 1.4s forwards;
+  .arrows-group.click-effect {
+    animation: moveToLeftMobile 0.3s ease-out forwards;
   }
 
   @keyframes moveToLeftMobile {
     to {
-      transform: translateX(-60px);
+      transform: translateX(-50px);
     }
   }
 }
 
 @media (min-width: 768px) {
   .arrow {
-    width: 130px;
+    width: 80px;
     height: 130px;
   }
 
-  .arrow-2,
-  .arrow-3 {
-    margin-left: -25px;
+  .arrow-center,
+  .arrow-right {
+    margin-left: -15px;
   }
 
   .syserv-text h1 {
-    font-size: 5rem;
+    font-size: 4.5rem;
   }
 
   @keyframes slideInText {
     to {
-      transform: translateX(-280px);
+      transform: translateX(15px);
     }
   }
 
-  .arrow.click-effect {
-    animation: moveToLeftTablet 0.3s ease-out 1.4s forwards;
+  .arrows-group.click-effect {
+    animation: moveToLeftTablet 0.3s ease-out forwards;
   }
 
   @keyframes moveToLeftTablet {
