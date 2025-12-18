@@ -1,5 +1,5 @@
 .splash-content {
-  --background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 50%, #7DD3FC 100%);
+  --background: #D3D3D3; // Fondo gris claro como en el video
   position: relative;
   overflow: hidden;
 }
@@ -12,258 +12,113 @@
   height: 100%;
   position: relative;
   opacity: 0;
-  transform: scale(0.9);
-  transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: opacity 0.3s ease-out;
 
   &.show {
     opacity: 1;
-    transform: scale(1);
   }
 }
 
 // ============================================
-// CÍRCULOS DECORATIVOS DE FONDO
+// LOGO ANIMATION - SyServ Flechas
 // ============================================
-.background-circles {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  z-index: 0;
-}
-
-.circle {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  animation: float 20s ease-in-out infinite;
-
-  &.circle-1 {
-    width: 300px;
-    height: 300px;
-    top: -150px;
-    left: -150px;
-    animation-delay: 0s;
-  }
-
-  &.circle-2 {
-    width: 200px;
-    height: 200px;
-    bottom: -100px;
-    right: -100px;
-    animation-delay: 2s;
-  }
-
-  &.circle-3 {
-    width: 150px;
-    height: 150px;
-    top: 50%;
-    right: -75px;
-    animation-delay: 4s;
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  33% {
-    transform: translateY(-30px) rotate(120deg);
-  }
-  66% {
-    transform: translateY(30px) rotate(240deg);
-  }
-}
-
-// ============================================
-// LOGO Y ANIMACIÓN PRINCIPAL
-// ============================================
-.logo-wrapper {
-  position: relative;
-  z-index: 1;
-  margin-bottom: 2rem;
-  animation: bounceIn 1s ease-out 0.3s both;
-}
-
-@keyframes bounceIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.3) rotate(-180deg);
-  }
-  50% {
-    transform: scale(1.05) rotate(10deg);
-  }
-  70% {
-    transform: scale(0.9) rotate(-5deg);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
-  }
-}
-
-.logo-circle {
-  width: 140px;
-  height: 140px;
-  background: white;
-  border-radius: 50%;
+.logo-animation {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  gap: 0;
   position: relative;
-  z-index: 2;
-  animation: rotate 3s ease-in-out infinite;
+  height: 150px;
 }
 
-@keyframes rotate {
-  0%, 100% {
-    transform: rotate(0deg);
-  }
-  50% {
-    transform: rotate(5deg);
-  }
-}
+// Flechas base
+.arrow {
+  width: 100px;
+  height: 100px;
+  opacity: 0;
+  position: relative;
 
-.logo-s {
-  font-size: 5rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 50%, #7DD3FC 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-  letter-spacing: -0.05em;
-  animation: iconPulse 2s ease-in-out infinite;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-shadow: 0 4px 20px rgba(14, 165, 233, 0.3);
-  filter: drop-shadow(0 4px 20px rgba(14, 165, 233, 0.3));
-}
-
-@keyframes iconPulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-}
-
-// Ondas de pulso
-.pulse-ring,
-.pulse-ring-2 {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  border: 3px solid rgba(255, 255, 255, 0.6);
-  animation: pulse 2s ease-out infinite;
-  z-index: 1;
-}
-
-.pulse-ring-2 {
-  animation-delay: 1s;
-}
-
-@keyframes pulse {
-  0% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(2);
-    opacity: 0;
-  }
-}
-
-// ============================================
-// TEXTO
-// ============================================
-.splash-text {
-  text-align: center;
-  z-index: 1;
-  margin-bottom: 3rem;
-}
-
-.app-name {
-  font-size: 3rem;
-  font-weight: 700;
-  color: white;
-  margin: 0;
-  letter-spacing: -0.02em;
-  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  animation: slideUp 0.8s ease-out 0.6s both;
-}
-
-.app-tagline {
-  font-size: 1.125rem;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0.5rem 0 0 0;
-  font-weight: 400;
-  letter-spacing: 0.02em;
-  animation: slideUp 0.8s ease-out 0.8s both;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-// ============================================
-// LOADER
-// ============================================
-.loader {
-  width: 200px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-  overflow: hidden;
-  z-index: 1;
-  animation: fadeIn 0.6s ease-out 1s both;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.loader-bar {
-  height: 100%;
-  background: white;
-  border-radius: 4px;
-  animation: loading 2s ease-in-out infinite;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-
-@keyframes loading {
-  0% {
-    width: 0;
-    margin-left: 0;
-  }
-  50% {
+  svg {
     width: 100%;
-    margin-left: 0;
+    height: 100%;
+    display: block;
   }
-  100% {
-    width: 0;
-    margin-left: 100%;
+}
+
+// ANIMACIÓN SECUENCIAL DE FLECHAS
+// Primera flecha - entra desde la derecha
+.arrow-1 {
+  animation: slideInFromRight 0.4s ease-out 0.3s forwards;
+}
+
+// Segunda flecha - entra desde la derecha después de la primera
+.arrow-2 {
+  margin-left: -20px; // Superposición ligera
+  animation: slideInFromRight 0.4s ease-out 0.6s forwards;
+}
+
+// Tercera flecha - entra desde la derecha después de la segunda
+.arrow-3 {
+  margin-left: -20px; // Superposición ligera
+  animation: slideInFromRight 0.4s ease-out 0.9s forwards;
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// EFECTO DE CLIC - Mover flechas a la izquierda
+.arrow.click-effect {
+  animation: moveToLeft 0.3s ease-out 1.4s forwards;
+}
+
+@keyframes moveToLeft {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-80px);
+  }
+}
+
+// ============================================
+// TEXTO SYSERV
+// ============================================
+.syserv-text {
+  position: absolute;
+  right: -300px;
+  opacity: 0;
+  transition: all 0.5s ease-out;
+
+  h1 {
+    font-size: 4rem;
+    font-weight: 400;
+    color: #4A4A4A;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  &.show-text {
+    animation: slideInText 0.5s ease-out 1.7s forwards;
+  }
+}
+
+@keyframes slideInText {
+  from {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-220px);
   }
 }
 
@@ -271,35 +126,65 @@
 // RESPONSIVE
 // ============================================
 @media (max-width: 375px) {
-  .logo-circle {
-    width: 120px;
-    height: 120px;
-  }
-
-  .logo-icon {
+  .arrow {
     width: 70px;
     height: 70px;
   }
 
-  .app-name {
+  .arrow-2,
+  .arrow-3 {
+    margin-left: -15px;
+  }
+
+  .syserv-text h1 {
     font-size: 2.5rem;
   }
 
-  .app-tagline {
-    font-size: 1rem;
+  @keyframes slideInText {
+    to {
+      transform: translateX(-160px);
+    }
   }
 
-  .loader {
-    width: 160px;
+  .arrow.click-effect {
+    animation: moveToLeftMobile 0.3s ease-out 1.4s forwards;
+  }
+
+  @keyframes moveToLeftMobile {
+    to {
+      transform: translateX(-60px);
+    }
   }
 }
 
-@media (min-height: 800px) {
-  .logo-wrapper {
-    margin-bottom: 3rem;
+@media (min-width: 768px) {
+  .arrow {
+    width: 130px;
+    height: 130px;
   }
 
-  .splash-text {
-    margin-bottom: 4rem;
+  .arrow-2,
+  .arrow-3 {
+    margin-left: -25px;
+  }
+
+  .syserv-text h1 {
+    font-size: 5rem;
+  }
+
+  @keyframes slideInText {
+    to {
+      transform: translateX(-280px);
+    }
+  }
+
+  .arrow.click-effect {
+    animation: moveToLeftTablet 0.3s ease-out 1.4s forwards;
+  }
+
+  @keyframes moveToLeftTablet {
+    to {
+      transform: translateX(-100px);
+    }
   }
 }

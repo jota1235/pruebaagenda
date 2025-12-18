@@ -1,33 +1,33 @@
 <ion-content [fullscreen]="true" class="splash-content">
   <div class="splash-container" [class.show]="showContent">
 
-    <!-- Círculos decorativos animados en el fondo -->
-    <div class="background-circles">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-      <div class="circle circle-3"></div>
-    </div>
-
-    <!-- Logo y animación principal -->
-    <div class="logo-wrapper">
-      <div class="logo-circle">
-        <div class="logo-s">S</div>
+    <!-- Logo SyServ - Animación de flechas -->
+    <div class="logo-animation">
+      <!-- Primera flecha (morada oscura) -->
+      <div class="arrow arrow-1" [class.click-effect]="clickEffect">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="0,50 50,0 50,25 25,50 50,75 50,100" fill="#5B2C91"/>
+        </svg>
       </div>
 
-      <!-- Onda de pulso -->
-      <div class="pulse-ring"></div>
-      <div class="pulse-ring-2"></div>
-    </div>
+      <!-- Segunda flecha (morada clara) -->
+      <div class="arrow arrow-2" [class.click-effect]="clickEffect">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="0,50 50,0 50,25 25,50 50,75 50,100" fill="#9B7BB5"/>
+        </svg>
+      </div>
 
-    <!-- Texto -->
-    <div class="splash-text">
-      <h1 class="app-name">Agenda</h1>
-      <p class="app-tagline">Tu agenda siempre contigo</p>
-    </div>
+      <!-- Tercera flecha (azul) -->
+      <div class="arrow arrow-3" [class.click-effect]="clickEffect">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="0,50 50,0 50,25 25,50 50,75 50,100" fill="#6B8AC9"/>
+        </svg>
+      </div>
 
-    <!-- Loader -->
-    <div class="loader">
-      <div class="loader-bar"></div>
+      <!-- Texto SyServ -->
+      <div class="syserv-text" [class.show-text]="showText">
+        <h1>SyServ</h1>
+      </div>
     </div>
 
   </div>

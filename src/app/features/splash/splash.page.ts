@@ -1,29 +1,42 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonContent } from '@ionic/angular/standalone';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-splash',
   templateUrl: './splash.page.html',
   styleUrls: ['./splash.page.scss'],
   standalone: true,
-  imports: [IonContent]
+  imports: [IonContent, CommonModule]
 })
 export class SplashPage implements OnInit {
   showContent = false;
+  clickEffect = false;
+  showText = false;
 
   constructor(private router: Router) {}
 
   ngOnInit() {
-    // Mostrar el contenido con animación
+    // Mostrar el contenedor
     setTimeout(() => {
       this.showContent = true;
     }, 100);
 
-    // Navegar al login después de 3 segundos
+    // Activar efecto de clic en las flechas (después de que entren todas)
+    setTimeout(() => {
+      this.clickEffect = true;
+    }, 1400);
+
+    // Mostrar texto SyServ
+    setTimeout(() => {
+      this.showText = true;
+    }, 1700);
+
+    // Navegar al login después de la animación completa
     setTimeout(() => {
       this.navigateToLogin();
-    }, 3000);
+    }, 2800);
   }
 
   /**
