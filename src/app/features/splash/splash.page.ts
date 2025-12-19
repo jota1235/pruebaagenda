@@ -23,20 +23,20 @@ export class SplashPage implements OnInit {
       this.showContent = true;
     }, 100);
 
-    // Activar efecto de clic en las flechas (después de que entren todas)
+    // Activar efecto de clic en las flechas (después de que entren todas las 4)
     setTimeout(() => {
       this.clickEffect = true;
-    }, 1400);
+    }, 1800);
 
     // Mostrar texto SyServ
     setTimeout(() => {
       this.showText = true;
-    }, 1700);
+    }, 2100);
 
     // Navegar al login después de la animación completa
     setTimeout(() => {
       this.navigateToLogin();
-    }, 2800);
+    }, 3200);
   }
 
   /**
