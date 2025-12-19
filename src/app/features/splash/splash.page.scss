@@ -40,7 +40,6 @@
 
 // Flechas base
 .arrow {
-  width: 60px;
   height: 100px;
   opacity: 0;
   position: relative;
@@ -52,6 +51,16 @@
   }
 }
 
+// Tamaños específicos por flecha
+.arrow-left,
+.arrow-right {
+  width: 70px;
+}
+
+.arrow-center {
+  width: 45px;
+}
+
 // ANIMACIÓN SECUENCIAL DE FLECHAS
 // Primera flecha (izquierda) - entra desde la derecha
 .arrow-left {
@@ -60,13 +69,13 @@
 
 // Segunda flecha (centro) - entra desde la derecha después de la primera
 .arrow-center {
-  margin-left: -10px; // Superposición ligera
+  margin-left: -15px; // Superposición ligera
   animation: slideInFromRight 0.4s ease-out 0.6s forwards;
 }
 
 // Tercera flecha (derecha) - entra desde la derecha después de la segunda
 .arrow-right {
-  margin-left: -10px; // Superposición ligera
+  margin-left: -15px; // Superposición ligera
   animation: slideInFromRight 0.4s ease-out 0.9s forwards;
 }
 
@@ -134,13 +143,21 @@
 // ============================================
 @media (max-width: 375px) {
   .arrow {
-    width: 45px;
     height: 75px;
   }
 
-  .arrow-center,
+  .arrow-left,
   .arrow-right {
-    margin-left: -8px;
+    width: 55px;
+  }
+
+  .arrow-center {
+    width: 35px;
+    margin-left: -12px;
+  }
+
+  .arrow-right {
+    margin-left: -12px;
   }
 
   .syserv-text h1 {
@@ -166,13 +183,21 @@
 
 @media (min-width: 768px) {
   .arrow {
-    width: 80px;
     height: 130px;
   }
 
-  .arrow-center,
+  .arrow-left,
   .arrow-right {
-    margin-left: -15px;
+    width: 95px;
+  }
+
+  .arrow-center {
+    width: 60px;
+    margin-left: -20px;
+  }
+
+  .arrow-right {
+    margin-left: -20px;
   }
 
   .syserv-text h1 {
