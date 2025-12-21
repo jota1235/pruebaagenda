@@ -21,7 +21,7 @@
 
   <!-- Fecha y Hora -->
   <ion-toolbar class="datetime-toolbar">
-    <div class="datetime-container" (click)="openDateTimePicker()">
+    <div class="datetime-container" (click)="openDateTimePicker()" role="button" tabindex="0">
       <ion-icon name="calendar-outline" class="datetime-icon"></ion-icon>
       <span class="datetime-text">{{ selectedDateTime }}</span>
     </div>
