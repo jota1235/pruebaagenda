@@ -145,8 +145,13 @@ export class AppointmentFormComponent implements OnInit {
   selectedDateTime: string = '';
   tempDateTime: string = '';
   minDate: string = '';
-  minuteValues: number[] = [0, 30]; // Solo 00 y 30 minutos
-  hourValues: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]; // Todas las horas en formato 12h
+  maxDate: string = ''; // Fecha máxima (1 año en el futuro)
+
+  // Selector de hora personalizado
+  availableHours: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  selectedHour: number = 9;
+  selectedMinute: number = 0;
+  selectedPeriod: 'AM' | 'PM' = 'AM';
 
   // Tab General
   clientSearchQuery = '';
@@ -206,6 +211,12 @@ export class AppointmentFormComponent implements OnInit {
     today.setHours(0, 0, 0, 0);
     this.minDate = today.toISOString();
 
+    // Configurar fecha máxima (1 año en el futuro)
+    const maxDate = new Date();
+    maxDate.setFullYear(maxDate.getFullYear() + 1);
+    maxDate.setHours(23, 59, 59, 999);
+    this.maxDate = maxDate.toISOString();
+
     // Redondear la fecha inicial a intervalos de 30 minutos
     const minutes = this.date.getMinutes();
     if (minutes !== 0 && minutes !== 30) {
@@ -215,6 +226,9 @@ export class AppointmentFormComponent implements OnInit {
         this.date.setHours(this.date.getHours() + 1);
       }
     }
+
+    // Inicializar selector de hora personalizado con la hora actual
+    this.initializeTimeSelector();
 
     // Formatear fecha y hora inicial
     this.selectedDateTime = this.formatDateTime(this.date);
@@ -389,11 +403,60 @@ export class AppointmentFormComponent implements OnInit {
   }
 
   /**
+   * Inicializar selector de hora con la hora actual
+   */
+  initializeTimeSelector() {
+    const hours = this.date.getHours();
+    const minutes = this.date.getMinutes();
+
+    // Determinar AM/PM
+    this.selectedPeriod = hours >= 12 ? 'PM' : 'AM';
+
+    // Convertir hora de 24h a 12h
+    let hour12 = hours % 12;
+    hour12 = hour12 === 0 ? 12 : hour12;
+    this.selectedHour = hour12;
+
+    // Redondear minutos a 00 o 30
+    this.selectedMinute = minutes < 30 ? 0 : 30;
+  }
+
+  /**
    * Abrir selector de fecha/hora
    */
   openDateTimePicker() {
     this.tempDateTime = this.date.toISOString();
+    this.initializeTimeSelector();
     this.showDateTimePicker = true;
+  }
+
+  /**
+   * Seleccionar hora
+   */
+  selectHour(hour: number) {
+    this.selectedHour = hour;
+  }
+
+  /**
+   * Seleccionar minuto
+   */
+  selectMinute(minute: number) {
+    this.selectedMinute = minute;
+  }
+
+  /**
+   * Seleccionar periodo (AM/PM)
+   */
+  selectPeriod(period: 'AM' | 'PM') {
+    this.selectedPeriod = period;
+  }
+
+  /**
+   * Obtener vista previa de la hora seleccionada
+   */
+  getSelectedTimePreview(): string {
+    const minutesFormatted = String(this.selectedMinute).padStart(2, '0');
+    return `${this.selectedHour}:${minutesFormatted} ${this.selectedPeriod}`;
   }
 
   /**
@@ -401,18 +464,22 @@ export class AppointmentFormComponent implements OnInit {
    */
   confirmDateTime() {
     if (this.tempDateTime) {
-      this.date = new Date(this.tempDateTime);
+      // Tomar la fecha del datetime picker
+      const selectedDate = new Date(this.tempDateTime);
 
-      // Asegurar que los minutos sean 0 o 30
-      const minutes = this.date.getMinutes();
-      if (minutes !== 0 && minutes !== 30) {
-        // Redondear al múltiplo de 30 más cercano
-        this.date.setMinutes(minutes < 15 ? 0 : (minutes < 45 ? 30 : 0));
-        if (minutes >= 45) {
-          this.date.setHours(this.date.getHours() + 1);
-        }
+      // Convertir hora de 12h a 24h
+      let hours24 = this.selectedHour;
+      if (this.selectedPeriod === 'PM' && this.selectedHour !== 12) {
+        hours24 += 12;
+      } else if (this.selectedPeriod === 'AM' && this.selectedHour === 12) {
+        hours24 = 0;
       }
 
+      // Aplicar la hora seleccionada a la fecha
+      selectedDate.setHours(hours24, this.selectedMinute, 0, 0);
+
+      // Actualizar la fecha del componente
+      this.date = selectedDate;
       this.selectedDateTime = this.formatDateTime(this.date);
     }
     this.showDateTimePicker = false;

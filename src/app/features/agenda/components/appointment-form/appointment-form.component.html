@@ -298,27 +298,98 @@
 </ion-footer>
 
 <!-- Modal de selector de fecha/hora -->
-<ion-modal [isOpen]="showDateTimePicker" (didDismiss)="closeDateTimePicker()" [backdropDismiss]="false">
+<ion-modal [isOpen]="showDateTimePicker" (didDismiss)="closeDateTimePicker()" [backdropDismiss]="false" class="datetime-modal">
   <ng-template>
     <ion-header>
       <ion-toolbar>
         <ion-title>Seleccionar Fecha y Hora</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeDateTimePicker()">
+            <ion-icon name="close-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content class="datetime-modal-content">
-      <ion-datetime
-        #datetime
-        [(ngModel)]="tempDateTime"
-        presentation="date-time"
-        [preferWheel]="false"
-        [min]="minDate"
-        [hourValues]="hourValues"
-        [minuteValues]="minuteValues"
-        [hourCycle]="'h12'"
-        locale="es-MX"
-        [showDefaultButtons]="false"
-        class="custom-datetime">
-      </ion-datetime>
+
+      <!-- Calendario -->
+      <div class="calendar-section">
+        <h3 class="section-title">Fecha</h3>
+        <ion-datetime
+          #datetime
+          [(ngModel)]="tempDateTime"
+          presentation="date"
+          [preferWheel]="false"
+          [min]="minDate"
+          [max]="maxDate"
+          locale="es-MX"
+          [showDefaultButtons]="false"
+          class="custom-datetime">
+        </ion-datetime>
+      </div>
+
+      <!-- Selector de Hora Moderno -->
+      <div class="time-section">
+        <h3 class="section-title">Hora</h3>
+
+        <!-- Selector de hora (1-12) -->
+        <div class="time-selector-group">
+          <label class="time-label">Hora:</label>
+          <div class="time-options">
+            <button
+              *ngFor="let hour of availableHours"
+              class="time-option"
+              [class.selected]="selectedHour === hour"
+              (click)="selectHour(hour)">
+              {{ hour }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Selector de minutos (00, 30) -->
+        <div class="time-selector-group">
+          <label class="time-label">Minutos:</label>
+          <div class="time-options">
+            <button
+              class="time-option"
+              [class.selected]="selectedMinute === 0"
+              (click)="selectMinute(0)">
+              00
+            </button>
+            <button
+              class="time-option"
+              [class.selected]="selectedMinute === 30"
+              (click)="selectMinute(30)">
+              30
+            </button>
+          </div>
+        </div>
+
+        <!-- Selector AM/PM -->
+        <div class="time-selector-group">
+          <label class="time-label">Periodo:</label>
+          <div class="time-options">
+            <button
+              class="time-option period-option"
+              [class.selected]="selectedPeriod === 'AM'"
+              (click)="selectPeriod('AM')">
+              AM
+            </button>
+            <button
+              class="time-option period-option"
+              [class.selected]="selectedPeriod === 'PM'"
+              (click)="selectPeriod('PM')">
+              PM
+            </button>
+          </div>
+        </div>
+
+        <!-- Vista previa de hora seleccionada -->
+        <div class="time-preview">
+          <ion-icon name="time-outline"></ion-icon>
+          <span>{{ getSelectedTimePreview() }}</span>
+        </div>
+      </div>
 
       <!-- Botones de confirmación -->
       <div class="datetime-buttons">
