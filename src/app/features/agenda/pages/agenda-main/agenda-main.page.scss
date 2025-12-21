@@ -65,7 +65,11 @@
 // ============================================
 .top-banner {
   background: linear-gradient(135deg, #A78BFA 0%, #7DD3FC 100%);
-  padding: 1rem 1.25rem;
+  // Padding superior aumentado para evitar superposición con barra del sistema
+  padding-top: max(env(safe-area-inset-top), 2.75rem);
+  padding-bottom: 1rem;
+  padding-left: max(env(safe-area-inset-left), 1.25rem);
+  padding-right: max(env(safe-area-inset-right), 1.25rem);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -90,6 +94,7 @@
   font-size: 0.875rem;
   font-weight: 600;
   height: auto;
+  flex-shrink: 0;
 }
 
 // ============================================
