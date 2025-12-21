@@ -352,6 +352,16 @@
 
       <!-- Selector de Hora tipo Wheel Picker -->
       <div class="time-section">
+
+        <!-- Campo compacto de hora (collapsed state) -->
+        <div class="time-display-compact" (click)="toggleTimePicker()">
+          <ion-icon name="time-outline" class="time-icon"></ion-icon>
+          <span class="time-text">{{ getSelectedTimePreview() }}</span>
+          <ion-icon [name]="isTimePickerExpanded ? 'chevron-up-outline' : 'chevron-down-outline'" class="chevron-icon"></ion-icon>
+        </div>
+
+        <!-- Wheel Picker expandible -->
+        <div class="time-picker-expandable" [class.expanded]="isTimePickerExpanded">
         <div class="time-picker-container">
           <!-- Columna de Horas -->
           <div class="time-column">
@@ -407,6 +417,9 @@
         <div class="time-preview">
           {{ getSelectedTimePreview() }}
         </div>
+        </div>
+        <!-- Fin del .time-picker-expandable -->
+
       </div>
 
       <!-- Botones de confirmación -->

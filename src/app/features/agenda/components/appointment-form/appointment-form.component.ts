@@ -40,7 +40,9 @@ import {
   searchOutline,
   chevronBackOutline,
   chevronForwardOutline,
-  documentTextOutline
+  documentTextOutline,
+  chevronDownOutline,
+  chevronUpOutline
 } from 'ionicons/icons';
 import { AgendaService } from '../../../../core/services/agenda.service';
 import { DatabaseService } from '../../../../core/services/database.service';
@@ -165,6 +167,7 @@ export class AppointmentFormComponent implements OnInit {
   selectedHour: number = 9;
   selectedMinute: number = 0;
   selectedPeriod: 'AM' | 'PM' = 'AM';
+  isTimePickerExpanded: boolean = false;
 
   // Calendario personalizado
   today: Date = new Date();
@@ -229,7 +232,9 @@ export class AppointmentFormComponent implements OnInit {
       searchOutline,
       chevronBackOutline,
       chevronForwardOutline,
-      documentTextOutline
+      documentTextOutline,
+      chevronDownOutline,
+      chevronUpOutline
     });
   }
 
@@ -719,6 +724,13 @@ export class AppointmentFormComponent implements OnInit {
   getSelectedTimePreview(): string {
     const minutesFormatted = String(this.selectedMinute).padStart(2, '0');
     return `${this.selectedHour}:${minutesFormatted} ${this.selectedPeriod}`;
+  }
+
+  /**
+   * Toggle para expandir/contraer el selector de hora
+   */
+  toggleTimePicker() {
+    this.isTimePickerExpanded = !this.isTimePickerExpanded;
   }
 
   /**

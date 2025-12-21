@@ -758,6 +758,69 @@ ion-footer {
 // ============================================
 // SELECTOR DE HORA TIPO WHEEL PICKER
 // ============================================
+
+// Campo compacto de hora (estado colapsado)
+.time-display-compact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.875rem 1.25rem;
+  background: white;
+  border-radius: 12px;
+  border: 2px solid #E0E7FF;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 1rem;
+
+  &:hover {
+    border-color: #A78BFA;
+    background: #F8FAFC;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(167, 139, 250, 0.15);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  .time-icon {
+    font-size: 1.25rem;
+    color: #A78BFA;
+  }
+
+  .time-text {
+    flex: 1;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1E40AF;
+    letter-spacing: 0.3px;
+  }
+
+  .chevron-icon {
+    font-size: 1.125rem;
+    color: #94A3B8;
+    transition: transform 0.3s ease;
+  }
+}
+
+// Contenedor expandible del wheel picker
+.time-picker-expandable {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.3s ease,
+              margin 0.3s ease;
+  opacity: 0;
+  margin-bottom: 0;
+
+  &.expanded {
+    max-height: 500px;
+    opacity: 1;
+    margin-bottom: 1rem;
+  }
+}
+
 .time-picker-container {
   display: flex;
   justify-content: center;
@@ -1091,6 +1154,26 @@ ion-footer {
       background: linear-gradient(135deg, #A78BFA 0%, #7DD3FC 100%);
       border-color: #A78BFA;
       color: white;
+    }
+  }
+
+  // Campo compacto de hora en dark mode
+  .time-display-compact {
+    background: #1F2937;
+    border-color: #374151;
+
+    &:hover {
+      border-color: #A78BFA;
+      background: #111827;
+      box-shadow: 0 4px 12px rgba(167, 139, 250, 0.25);
+    }
+
+    .time-text {
+      color: #C4B5FD;
+    }
+
+    .chevron-icon {
+      color: #6B7280;
     }
   }
 
