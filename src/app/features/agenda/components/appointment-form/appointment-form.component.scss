@@ -7,17 +7,18 @@ ion-header {
     --color: white;
     --border-width: 0;
     --min-height: 56px;
-    padding-top: calc(env(safe-area-inset-top) + 0.5rem);
+    // Más padding superior para evitar superposición con barra del sistema
+    padding-top: max(env(safe-area-inset-top), 2.5rem);
     padding-bottom: 0.75rem;
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
+    padding-left: max(env(safe-area-inset-left), 0.5rem);
+    padding-right: max(env(safe-area-inset-right), 0.5rem);
 
     ion-button {
       --color: white;
-      margin-top: 0.25rem;
+      margin-top: 0;
 
       ion-icon {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
       }
     }
 
@@ -31,13 +32,13 @@ ion-header {
 }
 
 ion-title {
-  font-size: 1.125rem;
+  font-size: 1.0625rem;
   font-weight: 800;
   text-align: center;
   color: white;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   letter-spacing: 0.3px;
-  padding-top: 0.25rem;
+  padding-top: 0;
 }
 
 // Toolbar de fecha/hora con gradiente
