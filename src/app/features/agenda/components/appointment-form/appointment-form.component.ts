@@ -605,6 +605,37 @@ export class AppointmentFormComponent implements OnInit {
   }
 
   /**
+   * Manejar scroll en columna de horas
+   */
+  onHourScroll(event: any) {
+    const container = event.target;
+    const items = container.querySelectorAll('.time-option-wheel');
+    const containerRect = container.getBoundingClientRect();
+    const centerY = containerRect.top + containerRect.height / 2;
+
+    let closestItem: any = null;
+    let closestDistance = Infinity;
+
+    items.forEach((item: any, index: number) => {
+      const itemRect = item.getBoundingClientRect();
+      const itemCenterY = itemRect.top + itemRect.height / 2;
+      const distance = Math.abs(centerY - itemCenterY);
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestItem = { element: item, index };
+      }
+    });
+
+    if (closestItem) {
+      const hour = this.availableHours[closestItem.index];
+      if (hour && this.selectedHour !== hour) {
+        this.selectedHour = hour;
+      }
+    }
+  }
+
+  /**
    * Seleccionar minuto
    */
   selectMinute(minute: number) {
@@ -612,10 +643,74 @@ export class AppointmentFormComponent implements OnInit {
   }
 
   /**
+   * Manejar scroll en columna de minutos
+   */
+  onMinuteScroll(event: any) {
+    const container = event.target;
+    const items = container.querySelectorAll('.time-option-wheel');
+    const containerRect = container.getBoundingClientRect();
+    const centerY = containerRect.top + containerRect.height / 2;
+
+    const minutes = [0, 30];
+    let closestItem: any = null;
+    let closestDistance = Infinity;
+
+    items.forEach((item: any, index: number) => {
+      const itemRect = item.getBoundingClientRect();
+      const itemCenterY = itemRect.top + itemRect.height / 2;
+      const distance = Math.abs(centerY - itemCenterY);
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestItem = { element: item, index };
+      }
+    });
+
+    if (closestItem) {
+      const minute = minutes[closestItem.index];
+      if (minute !== undefined && this.selectedMinute !== minute) {
+        this.selectedMinute = minute;
+      }
+    }
+  }
+
+  /**
    * Seleccionar periodo (AM/PM)
    */
   selectPeriod(period: 'AM' | 'PM') {
     this.selectedPeriod = period;
+  }
+
+  /**
+   * Manejar scroll en columna de periodo (AM/PM)
+   */
+  onPeriodScroll(event: any) {
+    const container = event.target;
+    const items = container.querySelectorAll('.time-option-wheel');
+    const containerRect = container.getBoundingClientRect();
+    const centerY = containerRect.top + containerRect.height / 2;
+
+    const periods: ('AM' | 'PM')[] = ['AM', 'PM'];
+    let closestItem: any = null;
+    let closestDistance = Infinity;
+
+    items.forEach((item: any, index: number) => {
+      const itemRect = item.getBoundingClientRect();
+      const itemCenterY = itemRect.top + itemRect.height / 2;
+      const distance = Math.abs(centerY - itemCenterY);
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestItem = { element: item, index };
+      }
+    });
+
+    if (closestItem) {
+      const period = periods[closestItem.index];
+      if (period && this.selectedPeriod !== period) {
+        this.selectedPeriod = period;
+      }
+    }
   }
 
   /**

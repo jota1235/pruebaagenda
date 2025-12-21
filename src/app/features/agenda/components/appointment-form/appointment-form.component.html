@@ -355,7 +355,7 @@
         <div class="time-picker-container">
           <!-- Columna de Horas -->
           <div class="time-column">
-            <div class="time-column-scroll">
+            <div class="time-column-scroll" (scroll)="onHourScroll($event)">
               <div
                 *ngFor="let hour of availableHours"
                 class="time-option-wheel"
@@ -368,7 +368,7 @@
 
           <!-- Columna de Minutos -->
           <div class="time-column">
-            <div class="time-column-scroll">
+            <div class="time-column-scroll" (scroll)="onMinuteScroll($event)">
               <div
                 class="time-option-wheel"
                 [class.selected]="selectedMinute === 0"
@@ -386,7 +386,7 @@
 
           <!-- Columna AM/PM -->
           <div class="time-column">
-            <div class="time-column-scroll">
+            <div class="time-column-scroll" (scroll)="onPeriodScroll($event)">
               <div
                 class="time-option-wheel"
                 [class.selected]="selectedPeriod === 'AM'"
