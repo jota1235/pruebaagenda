@@ -38,52 +38,45 @@
   position: relative;
 }
 
-// Flechas base
-.arrow {
-  width: 70px;
-  height: 100px;
+// Rombos base (cuadrados rotados 45°)
+.diamond {
+  width: 80px;
+  height: 80px;
+  border: 12px solid;
   opacity: 0;
   position: relative;
-
-  svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
+  transform: rotate(45deg);
 }
 
-// ANIMACIÓN SECUENCIAL DE FLECHAS
-// Primera flecha - entra desde la derecha
-.arrow-1 {
-  animation: slideInFromRight 0.4s ease-out 0.3s forwards;
+// ANIMACIÓN SECUENCIAL DE ROMBOS
+// Primer rombo (morado oscuro) - entra desde la izquierda
+.diamond-1 {
+  border-color: #3b1b5a;
+  animation: slideInDiamond 0.4s ease-out 0s forwards;
 }
 
-// Segunda flecha - entra desde la derecha después de la primera
-.arrow-2 {
-  margin-left: -15px; // Superposición reducida para evitar cruces
-  animation: slideInFromRight 0.4s ease-out 0.6s forwards;
+// Segundo rombo (azul/morado medio) - entra después del primero
+.diamond-2 {
+  border-color: #5b6fb0;
+  margin-left: -48px; // Superposición del 60% (80px * 0.6 = 48px)
+  animation: slideInDiamond 0.4s ease-out 0.15s forwards;
 }
 
-// Tercera flecha - entra desde la derecha después de la segunda
-.arrow-3 {
-  margin-left: -15px; // Superposición reducida para evitar cruces
-  animation: slideInFromRight 0.4s ease-out 0.9s forwards;
+// Tercer rombo (gris azulado claro) - entra después del segundo
+.diamond-3 {
+  border-color: #aab0c8;
+  margin-left: -48px; // Superposición del 60% (80px * 0.6 = 48px)
+  animation: slideInDiamond 0.4s ease-out 0.3s forwards;
 }
 
-// Cuarta flecha - entra desde la derecha después de la tercera
-.arrow-4 {
-  margin-left: -15px; // Superposición reducida para evitar cruces
-  animation: slideInFromRight 0.4s ease-out 1.2s forwards;
-}
-
-@keyframes slideInFromRight {
+@keyframes slideInDiamond {
   from {
     opacity: 0;
-    transform: translateX(100px);
+    transform: rotate(45deg) translateX(-20px);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: rotate(45deg) translateX(0);
   }
 }
 
@@ -139,15 +132,15 @@
 // RESPONSIVE
 // ============================================
 @media (max-width: 375px) {
-  .arrow {
-    width: 55px;
-    height: 80px;
+  .diamond {
+    width: 60px;
+    height: 60px;
+    border: 10px solid;
   }
 
-  .arrow-2,
-  .arrow-3,
-  .arrow-4 {
-    margin-left: -12px;
+  .diamond-2,
+  .diamond-3 {
+    margin-left: -36px; // 60% de 60px
   }
 
   .syserv-text h1 {
@@ -169,18 +162,29 @@
       transform: translateX(-50px);
     }
   }
+
+  @keyframes slideInDiamond {
+    from {
+      opacity: 0;
+      transform: rotate(45deg) translateX(-15px);
+    }
+    to {
+      opacity: 1;
+      transform: rotate(45deg) translateX(0);
+    }
+  }
 }
 
 @media (min-width: 768px) {
-  .arrow {
-    width: 90px;
-    height: 130px;
+  .diamond {
+    width: 100px;
+    height: 100px;
+    border: 14px solid;
   }
 
-  .arrow-2,
-  .arrow-3,
-  .arrow-4 {
-    margin-left: -20px;
+  .diamond-2,
+  .diamond-3 {
+    margin-left: -60px; // 60% de 100px
   }
 
   .syserv-text h1 {
@@ -200,6 +204,17 @@
   @keyframes moveToLeftTablet {
     to {
       transform: translateX(-100px);
+    }
+  }
+
+  @keyframes slideInDiamond {
+    from {
+      opacity: 0;
+      transform: rotate(45deg) translateX(-25px);
+    }
+    to {
+      opacity: 1;
+      transform: rotate(45deg) translateX(0);
     }
   }
 }
