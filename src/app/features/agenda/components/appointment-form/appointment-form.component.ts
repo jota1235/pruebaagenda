@@ -37,7 +37,10 @@ import {
   calendarOutline,
   timeOutline,
   personOutline,
-  searchOutline
+  searchOutline,
+  chevronBackOutline,
+  chevronForwardOutline,
+  documentTextOutline
 } from 'ionicons/icons';
 import { AgendaService } from '../../../../core/services/agenda.service';
 import { DatabaseService } from '../../../../core/services/database.service';
@@ -66,6 +69,17 @@ export interface AppointmentService {
   quantity: number;
   duration: number;
   price?: number;
+}
+
+/**
+ * Interface para día del calendario
+ */
+export interface CalendarDay {
+  date: Date;
+  dayNumber: number;
+  isToday: boolean;
+  isSelected: boolean;
+  isCurrentMonth: boolean;
 }
 
 /**
@@ -153,6 +167,18 @@ export class AppointmentFormComponent implements OnInit {
   selectedMinute: number = 0;
   selectedPeriod: 'AM' | 'PM' = 'AM';
 
+  // Calendario personalizado
+  today: Date = new Date();
+  displayMonth!: number;
+  displayYear!: number;
+  weekDays: string[] = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+  monthNames: string[] = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+  ];
+  calendarWeeks: CalendarDay[][] = [];
+  selectedCalendarDate: Date = new Date();
+
   // Tab General
   clientSearchQuery = '';
   clientResults: Client[] = [];
@@ -201,7 +227,10 @@ export class AppointmentFormComponent implements OnInit {
       calendarOutline,
       timeOutline,
       personOutline,
-      searchOutline
+      searchOutline,
+      chevronBackOutline,
+      chevronForwardOutline,
+      documentTextOutline
     });
   }
 
@@ -229,6 +258,12 @@ export class AppointmentFormComponent implements OnInit {
 
     // Inicializar selector de hora personalizado con la hora actual
     this.initializeTimeSelector();
+
+    // Inicializar calendario personalizado
+    this.displayMonth = this.date.getMonth();
+    this.displayYear = this.date.getFullYear();
+    this.selectedCalendarDate = new Date(this.date);
+    this.generateCalendar();
 
     // Formatear fecha y hora inicial
     this.selectedDateTime = this.formatDateTime(this.date);
@@ -427,7 +462,141 @@ export class AppointmentFormComponent implements OnInit {
   openDateTimePicker() {
     this.tempDateTime = this.date.toISOString();
     this.initializeTimeSelector();
+    // Resetear calendario al mes de la fecha actual
+    this.displayMonth = this.date.getMonth();
+    this.displayYear = this.date.getFullYear();
+    this.selectedCalendarDate = new Date(this.date);
+    this.generateCalendar();
     this.showDateTimePicker = true;
+  }
+
+  /**
+   * Generar el calendario del mes actual
+   */
+  generateCalendar() {
+    this.calendarWeeks = [];
+
+    // Primer día del mes
+    const firstDay = new Date(this.displayYear, this.displayMonth, 1);
+    const firstDayOfWeek = firstDay.getDay(); // 0 = Domingo, 6 = Sábado
+
+    // Último día del mes
+    const lastDay = new Date(this.displayYear, this.displayMonth + 1, 0);
+    const lastDayOfMonth = lastDay.getDate();
+
+    // Último día del mes anterior
+    const lastDayPrevMonth = new Date(this.displayYear, this.displayMonth, 0).getDate();
+
+    let week: CalendarDay[] = [];
+
+    // Días del mes anterior (para completar la primera semana)
+    for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+      const dayNum = lastDayPrevMonth - i;
+      const date = new Date(this.displayYear, this.displayMonth - 1, dayNum);
+      week.push(this.createCalendarDay(date, dayNum, false));
+    }
+
+    // Días del mes actual
+    for (let day = 1; day <= lastDayOfMonth; day++) {
+      const date = new Date(this.displayYear, this.displayMonth, day);
+      week.push(this.createCalendarDay(date, day, true));
+
+      // Si completamos una semana (7 días), agregamos a calendarWeeks y creamos nueva semana
+      if (week.length === 7) {
+        this.calendarWeeks.push(week);
+        week = [];
+      }
+    }
+
+    // Días del mes siguiente (para completar la última semana)
+    if (week.length > 0) {
+      let day = 1;
+      while (week.length < 7) {
+        const date = new Date(this.displayYear, this.displayMonth + 1, day);
+        week.push(this.createCalendarDay(date, day, false));
+        day++;
+      }
+      this.calendarWeeks.push(week);
+    }
+  }
+
+  /**
+   * Crear objeto CalendarDay
+   */
+  createCalendarDay(date: Date, dayNumber: number, isCurrentMonth: boolean): CalendarDay {
+    const dateStr = this.formatDateYMD(date);
+    const todayStr = this.formatDateYMD(this.today);
+    const selectedStr = this.formatDateYMD(this.selectedCalendarDate);
+
+    return {
+      date: date,
+      dayNumber: dayNumber,
+      isToday: dateStr === todayStr,
+      isSelected: dateStr === selectedStr,
+      isCurrentMonth: isCurrentMonth
+    };
+  }
+
+  /**
+   * Formatear fecha a string YYYY-MM-DD
+   */
+  formatDateYMD(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  /**
+   * Navegar al mes anterior
+   */
+  previousMonth() {
+    if (this.displayMonth === 0) {
+      this.displayMonth = 11;
+      this.displayYear--;
+    } else {
+      this.displayMonth--;
+    }
+    this.generateCalendar();
+  }
+
+  /**
+   * Navegar al mes siguiente
+   */
+  nextMonth() {
+    if (this.displayMonth === 11) {
+      this.displayMonth = 0;
+      this.displayYear++;
+    } else {
+      this.displayMonth++;
+    }
+    this.generateCalendar();
+  }
+
+  /**
+   * Seleccionar un día del calendario
+   */
+  selectCalendarDay(day: CalendarDay) {
+    // Solo permitir seleccionar días del mes actual
+    if (!day.isCurrentMonth) {
+      return;
+    }
+
+    this.selectedCalendarDate = new Date(day.date);
+
+    // Actualizar la fecha manteniendo la hora actual
+    this.date.setFullYear(day.date.getFullYear());
+    this.date.setMonth(day.date.getMonth());
+    this.date.setDate(day.date.getDate());
+
+    this.generateCalendar();
+  }
+
+  /**
+   * Obtener el título del mes/año
+   */
+  getMonthYearTitle(): string {
+    return `${this.monthNames[this.displayMonth]} ${this.displayYear}`;
   }
 
   /**

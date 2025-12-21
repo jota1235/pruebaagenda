@@ -623,13 +623,136 @@ ion-footer {
   }
 }
 
-// Calendario - estilos simplificados
-ion-datetime {
-  border-radius: 12px;
+// ============================================
+// CALENDARIO PERSONALIZADO
+// ============================================
+.calendar-section {
+  background: white;
+  border-radius: 16px;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
 
-  // Usar variables CSS de Ionic para personalizar colores
-  --ion-color-primary: #A78BFA;
-  --ion-color-primary-rgb: 167, 139, 250;
+.calendar-header-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
+  ion-button {
+    --color: #A78BFA;
+    margin: 0;
+
+    ion-icon {
+      font-size: 1.5rem;
+    }
+  }
+
+  .section-title {
+    margin: 0;
+    flex: 1;
+    text-align: center;
+  }
+}
+
+.calendar-grid {
+  padding: 0;
+}
+
+.weekdays-row {
+  margin-bottom: 0.75rem;
+  padding: 0;
+}
+
+.weekday-col {
+  padding: 0.5rem 0;
+  text-align: center;
+}
+
+.weekday-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #6B7280;
+  text-transform: uppercase;
+}
+
+.calendar-week {
+  margin-bottom: 0.5rem;
+}
+
+.calendar-day-col {
+  padding: 0.25rem;
+  aspect-ratio: 1;
+  position: relative;
+
+  .day-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #ffffff;
+    position: relative;
+    border: 2px solid transparent;
+  }
+
+  .day-number {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #1F2937;
+  }
+
+  // Días del mes anterior/siguiente (grises)
+  &.not-current-month {
+    .day-content {
+      background: #F9FAFB;
+      cursor: default;
+    }
+
+    .day-number {
+      color: #D1D5DB;
+      font-weight: 400;
+    }
+
+    &:hover .day-content {
+      background: #F9FAFB;
+      transform: none;
+    }
+  }
+
+  // Hover en días del mes actual
+  &:not(.not-current-month):hover .day-content {
+    background: rgba(167, 139, 250, 0.1);
+    transform: scale(1.05);
+  }
+
+  // Día actual (HOY)
+  &.is-today .day-content {
+    background: linear-gradient(135deg, #A78BFA 0%, #7DD3FC 100%);
+    border-color: #A78BFA;
+    box-shadow: 0 4px 12px rgba(167, 139, 250, 0.3);
+
+    .day-number {
+      color: #ffffff;
+      font-weight: 700;
+    }
+  }
+
+  // Día seleccionado
+  &.is-selected:not(.is-today) .day-content {
+    border-color: #A78BFA;
+    background: #EFF6FF;
+
+    .day-number {
+      color: #6366F1;
+      font-weight: 700;
+    }
+  }
 }
 
 // Selector de hora moderno

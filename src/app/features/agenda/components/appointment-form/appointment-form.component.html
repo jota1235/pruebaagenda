@@ -314,16 +314,40 @@
 
       <!-- Calendario -->
       <div class="calendar-section">
-        <h3 class="section-title">Fecha</h3>
-        <ion-datetime
-          #datetime
-          [(ngModel)]="tempDateTime"
-          presentation="date"
-          [min]="minDate"
-          [max]="maxDate"
-          locale="es-MX"
-          [showDefaultButtons]="false">
-        </ion-datetime>
+        <div class="calendar-header-controls">
+          <ion-button fill="clear" size="small" (click)="previousMonth()">
+            <ion-icon name="chevron-back-outline"></ion-icon>
+          </ion-button>
+          <h3 class="section-title">{{ getMonthYearTitle() }}</h3>
+          <ion-button fill="clear" size="small" (click)="nextMonth()">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </ion-button>
+        </div>
+
+        <!-- Días de la semana -->
+        <ion-grid class="calendar-grid">
+          <ion-row class="weekdays-row">
+            <ion-col *ngFor="let day of weekDays" class="weekday-col">
+              <span class="weekday-label">{{ day }}</span>
+            </ion-col>
+          </ion-row>
+
+          <!-- Semanas del mes -->
+          <ion-row *ngFor="let week of calendarWeeks" class="calendar-week">
+            <ion-col
+              *ngFor="let day of week"
+              class="calendar-day-col"
+              [class.not-current-month]="!day.isCurrentMonth"
+              [class.is-today]="day.isToday"
+              [class.is-selected]="day.isSelected"
+              (click)="selectCalendarDay(day)"
+            >
+              <div class="day-content">
+                <span class="day-number">{{ day.dayNumber }}</span>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
       </div>
 
       <!-- Selector de Hora Moderno -->
