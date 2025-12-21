@@ -1,31 +1,20 @@
+// ============================================
+// PALETA DE COLORES SYSERV
+// ============================================
+$syserv-purple-dark: #3b1b5a;   // Morado oscuro (rombo 1)
+$syserv-blue: #5b6fb0;           // Azul/morado medio (rombo 2)
+$syserv-blue-light: #aab0c8;    // Gris azulado claro (rombo 3)
+
+$white: #ffffff;
+$background-light: #f8f9fc;      // Fondo suave casi blanco
+$text-primary: #1e293b;          // Texto principal
+$text-secondary: #64748b;        // Texto secundario
+$border-light: #e2e8f0;          // Bordes suaves
+
 .login-content {
-  --background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 50%, #7DD3FC 100%);
+  --background: #ffffff;
   position: relative;
   overflow: hidden;
-
-  // Partículas flotantes de fondo
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background-image:
-      radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-    background-size: 50px 50px;
-    animation: particlesFloat 20s linear infinite;
-    z-index: 0;
-  }
-}
-
-@keyframes particlesFloat {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(50px, 50px);
-  }
 }
 
 .login-container {
@@ -67,87 +56,67 @@
   width: 80px;
   height: 80px;
   background: white;
-  border-radius: 20px;
+  border-radius: 16px;
   margin-bottom: 1.5rem;
-  box-shadow:
-    0 10px 25px -5px rgba(0, 0, 0, 0.15),
-    0 0 0 0 rgba(255, 255, 255, 0.4);
-  animation: logoAppear 1s ease-out 0.2s both, logoPulse 3s ease-in-out 1.2s infinite;
+  box-shadow: 0 4px 20px rgba(59, 27, 90, 0.12);
+  animation: logoAppear 1s ease-out 0.2s both;
   position: relative;
+  border: 1px solid $border-light;
+}
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: -5px;
-    left: -5px;
-    right: -5px;
-    bottom: -5px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1));
-    border-radius: 25px;
-    opacity: 0;
-    animation: ringPulse 3s ease-in-out 1.2s infinite;
-  }
+// Logo con rombos SyServ
+.logo-diamonds {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  transform: scale(0.35); // Escalar para que quepa en el contenedor de 80x80px
+}
+
+.logo-container .diamond {
+  width: 45px;
+  height: 45px;
+  border: 6px solid;
+  transform: rotate(45deg);
+  position: relative;
+}
+
+.logo-container .diamond-1 {
+  border-color: $syserv-purple-dark;
+}
+
+.logo-container .diamond-2 {
+  border-color: $syserv-blue;
+  margin-left: -27px; // 60% de 45px
+}
+
+.logo-container .diamond-3 {
+  border-color: $syserv-blue-light;
+  margin-left: -27px; // 60% de 45px
 }
 
 @keyframes logoAppear {
   from {
     opacity: 0;
-    transform: scale(0.5) rotate(-180deg);
+    transform: scale(0.8);
   }
   to {
     opacity: 1;
-    transform: scale(1) rotate(0deg);
-  }
-}
-
-@keyframes logoPulse {
-  0%, 100% {
     transform: scale(1);
   }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-@keyframes ringPulse {
-  0%, 100% {
-    opacity: 0;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.1);
-  }
-}
-
-.logo-s {
-  font-size: 3.5rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 50%, #7DD3FC 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-  letter-spacing: -0.05em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  filter: drop-shadow(0 4px 12px rgba(14, 165, 233, 0.3));
 }
 
 .login-title {
-  font-size: 1.875rem;
+  font-size: 2rem;
   font-weight: 700;
-  color: white;
+  color: $syserv-purple-dark;
   margin: 0 0 0.5rem 0;
   letter-spacing: -0.02em;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   animation: titleSlide 0.8s ease-out 0.4s both;
 }
 
 .login-subtitle {
   font-size: 1rem;
-  color: rgba(255, 255, 255, 0.95);
+  color: $text-secondary;
   margin: 0;
   font-weight: 400;
   animation: subtitleSlide 0.8s ease-out 0.6s both;
@@ -181,13 +150,11 @@
 .login-form {
   background: white;
   padding: 2rem;
-  border-radius: 24px;
-  box-shadow:
-    0 20px 50px -12px rgba(0, 0, 0, 0.25),
-    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  border-radius: 20px;
+  border: 1px solid $border-light;
+  box-shadow: 0 4px 20px rgba(59, 27, 90, 0.08);
   margin-bottom: 1.5rem;
   animation: formSlideUp 0.8s ease-out 0.8s both;
-  backdrop-filter: blur(10px);
   position: relative;
   overflow: hidden;
 
@@ -198,9 +165,8 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, #0EA5E9, #3B82F6, #7DD3FC);
-    background-size: 200% 100%;
-    animation: gradientMove 3s ease infinite;
+    background: linear-gradient(90deg, $syserv-purple-dark 0%, $syserv-blue 50%, $syserv-blue-light 100%);
+    border-radius: 20px 20px 0 0;
   }
 }
 
@@ -215,15 +181,6 @@
   }
 }
 
-@keyframes gradientMove {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
 .form-group {
   margin-bottom: 1.25rem;
 }
@@ -232,31 +189,32 @@
   display: block;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--ion-text-color);
+  color: $text-primary;
   margin-bottom: 0.5rem;
 }
 
 .custom-input {
-  --background: #F8FAFC;
-  --border-color: #E2E8F0;
-  --border-radius: 14px;
+  --background: #{$background-light};
+  --border-color: #{$border-light};
+  --border-radius: 12px;
   --border-style: solid;
   --border-width: 2px;
   --padding-start: 1.125rem;
   --padding-end: 1.125rem;
   --padding-top: 1rem;
   --padding-bottom: 1rem;
-  --placeholder-color: #94A3B8;
-  --placeholder-opacity: 1;
+  --placeholder-color: #{$text-secondary};
+  --placeholder-opacity: 0.7;
+  --color: #{$text-primary};
   font-size: 1rem;
   height: auto;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:focus-within {
-    --border-color: var(--ion-color-primary);
+    --border-color: #{$syserv-blue};
     --background: white;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
+    box-shadow: 0 0 0 4px rgba(91, 111, 176, 0.1);
   }
 
   &:hover:not(:focus-within) {
@@ -275,13 +233,14 @@
   top: 50%;
   transform: translateY(-50%);
   font-size: 1.25rem;
-  color: var(--ion-color-medium);
+  color: $text-secondary;
   cursor: pointer;
   z-index: 10;
   padding: 0.5rem;
+  transition: color 0.2s ease;
 
   &:hover {
-    color: var(--ion-color-primary);
+    color: $syserv-blue;
   }
 }
 
@@ -300,12 +259,12 @@
 
 // Login button
 .login-button {
-  --background: linear-gradient(135deg, #0EA5E9, #3B82F6);
-  --background-hover: linear-gradient(135deg, #0284C7, #2563EB);
-  --border-radius: 14px;
+  --background: linear-gradient(135deg, #{$syserv-purple-dark} 0%, #{$syserv-blue} 100%);
+  --background-hover: linear-gradient(135deg, #2e1648, #4a5a99);
+  --border-radius: 12px;
   --padding-top: 1.125rem;
   --padding-bottom: 1.125rem;
-  --box-shadow: 0 8px 20px 0 rgba(14, 165, 233, 0.35);
+  --box-shadow: 0 8px 20px 0 rgba(59, 27, 90, 0.3);
   font-size: 1.0625rem;
   font-weight: 600;
   margin-top: 1.5rem;
@@ -330,7 +289,7 @@
 
   &:hover:not([disabled]) {
     transform: translateY(-2px);
-    --box-shadow: 0 12px 28px 0 rgba(14, 165, 233, 0.45);
+    --box-shadow: 0 12px 28px 0 rgba(59, 27, 90, 0.4);
   }
 
   &:active:not([disabled])::before {
@@ -364,7 +323,7 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: rgba(255, 255, 255, 0.25);
+    background: $border-light;
   }
 }
 
@@ -372,8 +331,8 @@
   position: relative;
   display: inline-block;
   padding: 0 1.25rem;
-  background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 50%, #7DD3FC 100%);
-  color: white;
+  background: white;
+  color: $text-secondary;
   font-size: 0.8125rem;
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -412,15 +371,27 @@
 
 // Nota: Estilos adicionales para botones sociales mejorados
 ion-button.btn-social {
+  --border-color: #{$border-light};
+  --border-width: 2px;
+  --color: #{$text-primary};
+  --border-radius: 12px;
+  --padding-top: 1rem;
+  --padding-bottom: 1rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover:not([disabled]) {
     transform: translateY(-2px);
-    --box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    --border-color: #{$syserv-blue};
+    --background: rgba(91, 111, 176, 0.05);
+    --box-shadow: 0 4px 12px rgba(59, 27, 90, 0.1);
   }
 
   &:active:not([disabled]) {
     transform: translateY(0);
+  }
+
+  ion-icon {
+    color: $text-primary;
   }
 }
 
@@ -444,23 +415,22 @@ ion-button.btn-social {
 }
 
 .footer-text {
-  color: white;
+  color: $text-secondary;
   font-size: 0.875rem;
   margin: 0;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .footer-link {
-  color: white;
+  color: $syserv-blue;
   font-weight: 600;
   text-decoration: none;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.4);
+  border-bottom: 2px solid transparent;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   padding-bottom: 2px;
 
   &:hover {
-    border-bottom-color: white;
-    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    color: $syserv-purple-dark;
+    border-bottom-color: $syserv-purple-dark;
   }
 }
 
@@ -519,41 +489,79 @@ ion-button.btn-social {
 // ============================================
 // Sobrescribir los estilos globales de dark mode para que el login siempre se vea en modo claro
 :host-context(body.dark) {
+  .login-content {
+    --background: #ffffff !important;
+  }
+
   // Forzar labels oscuras (sobrescribir el color blanco del global)
   .form-label {
-    color: #0F172A !important;
+    color: #{$text-primary} !important;
+  }
+
+  .login-title {
+    color: #{$syserv-purple-dark} !important;
+  }
+
+  .login-subtitle {
+    color: #{$text-secondary} !important;
   }
 
   // Forzar inputs con texto oscuro
   ion-input {
-    --color: #0F172A !important;
-    --background: #F8FAFC !important;
-    --placeholder-color: #94A3B8 !important;
+    --color: #{$text-primary} !important;
+    --background: #{$background-light} !important;
+    --placeholder-color: #{$text-secondary} !important;
   }
 
   // Forzar botones sociales con texto oscuro
   ion-button.btn-social {
-    --color: #0F172A !important;
+    --color: #{$text-primary} !important;
     --background: white !important;
+    --border-color: #{$border-light} !important;
 
     ion-icon {
-      color: #0F172A !important;
+      color: #{$text-primary} !important;
     }
   }
 
   // Forzar labels de Ionic con texto oscuro (sobrescribir el !important del global)
   ion-label {
-    color: #0F172A !important;
+    color: #{$text-primary} !important;
 
     p {
-      color: #64748B !important;
+      color: #{$text-secondary} !important;
     }
   }
 
   // Asegurar que los textos dentro de botones sean visibles
   ion-button {
     ion-label {
-      color: #0F172A !important;
+      color: white !important;
+    }
+  }
+
+  .footer-text {
+    color: #{$text-secondary} !important;
+  }
+
+  .footer-link {
+    color: #{$syserv-blue} !important;
+
+    &:hover {
+      color: #{$syserv-purple-dark} !important;
+    }
+  }
+
+  .divider-text {
+    color: #{$text-secondary} !important;
+    background: white !important;
+  }
+
+  .password-toggle {
+    color: #{$text-secondary} !important;
+
+    &:hover {
+      color: #{$syserv-blue} !important;
     }
   }
 }
