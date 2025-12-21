@@ -63,7 +63,7 @@
     <!-- Cliente -->
     <div class="form-section">
       <ion-item class="form-item">
-        <ion-label position="stacked" class="required-label">*Cliente:</ion-label>
+        <ion-label position="stacked" class="required-label">Cliente:</ion-label>
         <ion-searchbar
           [(ngModel)]="clientSearchQuery"
           (ionInput)="searchClients($event)"
@@ -96,7 +96,7 @@
     <!-- Personal -->
     <div class="form-section">
       <ion-item class="form-item">
-        <ion-label position="stacked" class="required-label">*Personal:</ion-label>
+        <ion-label position="stacked" class="required-label">Personal:</ion-label>
         <ion-select
           [(ngModel)]="selectedStaffId"
           placeholder="Seleccione personal"
@@ -305,22 +305,24 @@
         <ion-title>Seleccionar Fecha y Hora</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content class="ion-padding">
+    <ion-content class="datetime-modal-content">
       <ion-datetime
         #datetime
         [(ngModel)]="tempDateTime"
+        presentation="date-time"
         [preferWheel]="false"
         [min]="minDate"
         [hourValues]="hourValues"
         [minuteValues]="minuteValues"
         [hourCycle]="'h12'"
         locale="es-MX"
-        size="cover">
+        [showDefaultButtons]="false"
+        class="custom-datetime">
       </ion-datetime>
 
       <!-- Botones de confirmación -->
       <div class="datetime-buttons">
-        <ion-button expand="block" color="medium" (click)="cancelDateTime()">
+        <ion-button expand="block" fill="outline" color="medium" (click)="cancelDateTime()">
           Cancelar
         </ion-button>
         <ion-button expand="block" color="primary" (click)="confirmDateTime()">

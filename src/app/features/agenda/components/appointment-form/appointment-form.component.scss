@@ -553,21 +553,70 @@ ion-footer {
 }
 
 // ============================================
+// MODAL DE FECHA/HORA - ESTILO MODERNO
+// ============================================
+.datetime-modal-content {
+  --background: #ffffff;
+  --padding-top: 1rem;
+  --padding-bottom: 1.5rem;
+  --padding-start: 1rem;
+  --padding-end: 1rem;
+}
+
+.custom-datetime {
+  --background: #ffffff;
+  --background-rgb: 255, 255, 255;
+
+  // Colores del calendario
+  --ion-color-primary: #A78BFA;
+  --ion-color-primary-rgb: 167, 139, 250;
+  --ion-color-primary-contrast: #ffffff;
+
+  // Botones del selector
+  --ion-color-step-300: #e2e8f0;
+  --ion-color-step-500: #94a3b8;
+  --ion-color-step-700: #475569;
+
+  border-radius: 16px;
+  box-shadow: none;
+}
+
+// ============================================
 // DATETIME MODAL BUTTONS
 // ============================================
 .datetime-buttons {
-  display: flex;
-  gap: 1rem;
-  padding: 1rem 0;
-  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding: 0 1rem;
 
   ion-button {
-    flex: 1;
-    --border-radius: 10px;
-    --padding-top: 1rem;
-    --padding-bottom: 1rem;
+    height: 48px;
     font-weight: 600;
+    letter-spacing: 0.02em;
+    --border-radius: 12px;
     text-transform: none;
+
+    &[color="medium"] {
+      --border-width: 2px;
+      --border-color: #cbd5e1;
+      --color: #475569;
+
+      &:hover {
+        --background: #f1f5f9;
+      }
+    }
+
+    &[color="primary"] {
+      --background: linear-gradient(135deg, #A78BFA 0%, #7DD3FC 100%);
+      --box-shadow: 0 4px 12px rgba(167, 139, 250, 0.3);
+
+      &:hover {
+        --box-shadow: 0 6px 16px rgba(167, 139, 250, 0.4);
+        transform: translateY(-1px);
+      }
+    }
   }
 }
 
@@ -718,6 +767,44 @@ ion-footer {
     ion-toolbar {
       --background: #1F2937;
       --border-color: #374151;
+    }
+  }
+
+  // DateTime picker en dark mode
+  .datetime-modal-content {
+    --background: #1F2937;
+  }
+
+  .custom-datetime {
+    --background: #1F2937;
+    --background-rgb: 31, 41, 55;
+
+    ::part(calendar-day) {
+      color: #F3F4F6;
+    }
+
+    ::part(calendar-day):hover {
+      background: rgba(167, 139, 250, 0.2);
+    }
+
+    ::part(time-button) {
+      background: #374151;
+      color: #F3F4F6;
+
+      &:hover {
+        background: #4B5563;
+      }
+    }
+  }
+
+  .datetime-buttons {
+    ion-button[color="medium"] {
+      --border-color: #4B5563;
+      --color: #F3F4F6;
+
+      &:hover {
+        --background: #374151;
+      }
     }
   }
 }
