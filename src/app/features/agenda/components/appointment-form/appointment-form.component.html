@@ -350,66 +350,62 @@
         </ion-grid>
       </div>
 
-      <!-- Selector de Hora Moderno -->
+      <!-- Selector de Hora tipo Wheel Picker -->
       <div class="time-section">
-        <h3 class="section-title">Hora</h3>
-
-        <!-- Selector de hora (1-12) -->
-        <div class="time-selector-group">
-          <label class="time-label">Hora:</label>
-          <div class="time-options">
-            <button
-              *ngFor="let hour of availableHours"
-              class="time-option"
-              [class.selected]="selectedHour === hour"
-              (click)="selectHour(hour)">
-              {{ hour }}
-            </button>
+        <div class="time-picker-container">
+          <!-- Columna de Horas -->
+          <div class="time-column">
+            <div class="time-column-scroll">
+              <div
+                *ngFor="let hour of availableHours"
+                class="time-option-wheel"
+                [class.selected]="selectedHour === hour"
+                (click)="selectHour(hour)">
+                {{ hour }}
+              </div>
+            </div>
           </div>
-        </div>
 
-        <!-- Selector de minutos (00, 30) -->
-        <div class="time-selector-group">
-          <label class="time-label">Minutos:</label>
-          <div class="time-options">
-            <button
-              class="time-option"
-              [class.selected]="selectedMinute === 0"
-              (click)="selectMinute(0)">
-              00
-            </button>
-            <button
-              class="time-option"
-              [class.selected]="selectedMinute === 30"
-              (click)="selectMinute(30)">
-              30
-            </button>
+          <!-- Columna de Minutos -->
+          <div class="time-column">
+            <div class="time-column-scroll">
+              <div
+                class="time-option-wheel"
+                [class.selected]="selectedMinute === 0"
+                (click)="selectMinute(0)">
+                00
+              </div>
+              <div
+                class="time-option-wheel"
+                [class.selected]="selectedMinute === 30"
+                (click)="selectMinute(30)">
+                30
+              </div>
+            </div>
           </div>
-        </div>
 
-        <!-- Selector AM/PM -->
-        <div class="time-selector-group">
-          <label class="time-label">Periodo:</label>
-          <div class="time-options">
-            <button
-              class="time-option period-option"
-              [class.selected]="selectedPeriod === 'AM'"
-              (click)="selectPeriod('AM')">
-              AM
-            </button>
-            <button
-              class="time-option period-option"
-              [class.selected]="selectedPeriod === 'PM'"
-              (click)="selectPeriod('PM')">
-              PM
-            </button>
+          <!-- Columna AM/PM -->
+          <div class="time-column">
+            <div class="time-column-scroll">
+              <div
+                class="time-option-wheel"
+                [class.selected]="selectedPeriod === 'AM'"
+                (click)="selectPeriod('AM')">
+                AM
+              </div>
+              <div
+                class="time-option-wheel"
+                [class.selected]="selectedPeriod === 'PM'"
+                (click)="selectPeriod('PM')">
+                PM
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- Vista previa de hora seleccionada -->
         <div class="time-preview">
-          <ion-icon name="time-outline"></ion-icon>
-          <span>{{ getSelectedTimePreview() }}</span>
+          {{ getSelectedTimePreview() }}
         </div>
       </div>
 
