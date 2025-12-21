@@ -623,72 +623,13 @@ ion-footer {
   }
 }
 
-// Calendario
-.custom-datetime {
-  --background: #ffffff;
-  --background-rgb: 255, 255, 255;
+// Calendario - estilos simplificados
+ion-datetime {
+  border-radius: 12px;
 
-  // Colores del calendario
+  // Usar variables CSS de Ionic para personalizar colores
   --ion-color-primary: #A78BFA;
   --ion-color-primary-rgb: 167, 139, 250;
-  --ion-color-primary-contrast: #ffffff;
-
-  // Colores de los días
-  --ion-color-step-50: #fafbfc;
-  --ion-color-step-100: #f1f3f5;
-  --ion-color-step-150: #e8ecef;
-  --ion-color-step-200: #dfe4e9;
-  --ion-color-step-250: #d6dde3;
-  --ion-color-step-300: #cdd6dd;
-  --ion-color-step-350: #c4ced7;
-  --ion-color-step-400: #bbc7d1;
-  --ion-color-step-450: #b2c0cb;
-  --ion-color-step-500: #94a3b8;
-  --ion-color-step-550: #8a99ae;
-  --ion-color-step-600: #7e8fa4;
-  --ion-color-step-650: #73869a;
-  --ion-color-step-700: #475569;
-  --ion-color-step-750: #3f4b5b;
-  --ion-color-step-800: #37414d;
-  --ion-color-step-850: #2f373f;
-  --ion-color-step-900: #272d31;
-  --ion-color-step-950: #1f2326;
-
-  border-radius: 12px;
-  box-shadow: none;
-
-  // Días del mes
-  button[aria-label*="Choose"] {
-    font-weight: 600;
-    font-size: 0.9375rem;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-
-    &:hover {
-      background: rgba(167, 139, 250, 0.1);
-      transform: scale(1.05);
-    }
-
-    &[aria-selected="true"] {
-      background: linear-gradient(135deg, #A78BFA 0%, #7DD3FC 100%);
-      color: white;
-      font-weight: 700;
-      box-shadow: 0 2px 8px rgba(167, 139, 250, 0.3);
-    }
-  }
-
-  // Cabecera del calendario (mes/año)
-  .calendar-header {
-    font-weight: 700;
-    color: #334155;
-  }
-
-  // Días de la semana
-  .calendar-day-of-week {
-    color: #64748b;
-    font-weight: 600;
-    font-size: 0.8125rem;
-  }
 }
 
 // Selector de hora moderno
@@ -1002,31 +943,10 @@ ion-footer {
     }
   }
 
-  .custom-datetime {
-    --background: #1F2937;
-    --background-rgb: 31, 41, 55;
-
-    // Días del mes en dark mode
-    button[aria-label*="Choose"] {
-      color: #F3F4F6;
-
-      &:hover {
-        background: rgba(167, 139, 250, 0.2);
-      }
-
-      &[aria-selected="true"] {
-        background: linear-gradient(135deg, #A78BFA 0%, #7DD3FC 100%);
-        color: white;
-      }
-    }
-
-    .calendar-header {
-      color: #F3F4F6;
-    }
-
-    .calendar-day-of-week {
-      color: #9CA3AF;
-    }
+  // Datetime en dark mode
+  ion-datetime {
+    --ion-color-primary: #A78BFA;
+    --ion-color-primary-rgb: 167, 139, 250;
   }
 
   .time-label {

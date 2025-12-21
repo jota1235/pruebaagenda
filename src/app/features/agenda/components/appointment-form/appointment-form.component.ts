@@ -425,13 +425,9 @@ export class AppointmentFormComponent implements OnInit {
    * Abrir selector de fecha/hora
    */
   openDateTimePicker() {
-    console.log('🔵 openDateTimePicker() llamado');
-    console.log('🔵 showDateTimePicker ANTES:', this.showDateTimePicker);
     this.tempDateTime = this.date.toISOString();
     this.initializeTimeSelector();
     this.showDateTimePicker = true;
-    console.log('🔵 showDateTimePicker DESPUÉS:', this.showDateTimePicker);
-    console.log('🔵 tempDateTime:', this.tempDateTime);
   }
 
   /**
