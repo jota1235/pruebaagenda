@@ -1218,4 +1218,163 @@ ion-footer {
       }
     }
   }
+
+  // Modal de fecha/hora en dark mode
+  ion-modal {
+    ion-header {
+      ion-toolbar {
+        --background: #1F2937 !important;
+        --color: #F3F4F6 !important;
+
+        ion-title {
+          color: #F3F4F6 !important;
+        }
+
+        ion-button {
+          --color: #F3F4F6 !important;
+
+          ion-icon {
+            color: #F3F4F6 !important;
+          }
+        }
+      }
+    }
+
+    ion-content {
+      --background: #111827 !important;
+    }
+  }
+
+  .datetime-modal-content {
+    --background: #111827 !important;
+  }
+
+  // Sección del calendario en dark mode
+  .calendar-section {
+    background: #1F2937;
+
+    .section-title {
+      color: #F3F4F6;
+    }
+  }
+
+  .calendar-header-controls {
+    h3 {
+      color: #F3F4F6;
+    }
+  }
+
+  // Días de la semana en dark mode
+  .weekdays-row {
+    .weekday-label {
+      color: #9CA3AF;
+    }
+  }
+
+  // Calendario en dark mode
+  .calendar-day-col {
+    .day-content {
+      background: #374151;
+      border-color: #4B5563;
+
+      .day-number {
+        color: #D1D5DB;
+      }
+    }
+
+    // Día no del mes actual
+    &.not-current-month .day-content {
+      background: #1F2937;
+
+      .day-number {
+        color: #6B7280;
+      }
+    }
+
+    // Día actual (HOY) en dark mode
+    &.is-today .day-content {
+      background: linear-gradient(135deg, #7C3AED 0%, #60A5FA 100%) !important;
+      border-color: #7C3AED !important;
+
+      .day-number {
+        color: #FFFFFF !important;
+      }
+    }
+
+    // Día seleccionado en dark mode
+    &.is-selected:not(.is-today) .day-content {
+      border-color: #A78BFA !important;
+      background: #4B5563 !important;
+
+      .day-number {
+        color: #C4B5FD !important;
+      }
+    }
+  }
+
+  // Sección de hora en dark mode
+  .time-section {
+    .time-display-compact {
+      background: #374151;
+      border-color: #4B5563;
+
+      .time-text {
+        color: #F3F4F6;
+      }
+
+      ion-icon {
+        color: #9CA3AF;
+      }
+
+      &:hover {
+        background: #4B5563;
+        border-color: #A78BFA;
+      }
+    }
+  }
+
+  // Time picker en dark mode
+  .time-picker-container {
+    background: #1F2937;
+  }
+
+  .time-column-scroll {
+    background: #374151;
+  }
+
+  .time-option-wheel {
+    color: #9CA3AF;
+
+    &.selected {
+      color: #C4B5FD;
+      background: rgba(167, 139, 250, 0.15);
+      border-color: #A78BFA;
+    }
+
+    &:hover {
+      background: rgba(167, 139, 250, 0.1);
+      color: #D8B4FE;
+    }
+  }
+
+  .time-preview {
+    color: #F3F4F6;
+    background: #374151;
+  }
+
+  // Botones de confirmación en dark mode
+  .datetime-buttons {
+    ion-button {
+      &[color="medium"] {
+        --background: #374151;
+        --color: #F3F4F6;
+        --border-color: #4B5563;
+      }
+
+      &[color="primary"] {
+        --background: linear-gradient(135deg, #7C3AED 0%, #60A5FA 100%);
+        --color: #FFFFFF;
+      }
+    }
+  }
 }
