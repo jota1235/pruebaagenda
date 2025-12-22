@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -26,7 +26,8 @@ import {
   IonDatetime,
   IonModal,
   ModalController,
-  AlertController
+  AlertController,
+  Platform
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -146,7 +147,7 @@ export interface Service {
     IonModal
   ]
 })
-export class AppointmentFormComponent implements OnInit {
+export class AppointmentFormComponent implements OnInit, OnDestroy {
   // Inputs del componente
   @Input() date: Date = new Date();
   @Input() mode: 'create' | 'edit' = 'create';
@@ -214,11 +215,15 @@ export class AppointmentFormComponent implements OnInit {
     { value: 120, label: '02:00 m' }
   ];
 
+  // Suscripción del hardware back button
+  private backButtonSubscription: any;
+
   constructor(
     private modalController: ModalController,
     private agendaService: AgendaService,
     private databaseService: DatabaseService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private platform: Platform
   ) {
     // Registrar iconos
     addIcons({
@@ -284,6 +289,34 @@ export class AppointmentFormComponent implements OnInit {
     if (this.mode === 'create' && this.preselectedStaff) {
       this.selectedStaffId = this.preselectedStaff;
     }
+
+    // Configurar el hardware back button
+    this.setupBackButtonHandler();
+  }
+
+  /**
+   * Cleanup al destruir el componente
+   */
+  ngOnDestroy() {
+    // Desuscribirse del hardware back button
+    if (this.backButtonSubscription) {
+      this.backButtonSubscription.unsubscribe();
+    }
+  }
+
+  /**
+   * Configurar el manejador del botón de hardware de atrás
+   */
+  private setupBackButtonHandler() {
+    this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(100, () => {
+      // Si el modal del calendario está abierto, cerrarlo primero
+      if (this.showDateTimePicker) {
+        this.closeDateTimePicker();
+      } else {
+        // Si no hay modal de calendario abierto, cerrar el formulario completo
+        this.closeModal();
+      }
+    });
   }
 
   /**
