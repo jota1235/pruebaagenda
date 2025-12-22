@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 // Swiper se carga como script global desde angular.json
 declare var Swiper: any;
 import {
@@ -27,6 +28,7 @@ import {
   ModalController
 } from '@ionic/angular/standalone';
 import { CalendarModalComponent, CalendarModalResult } from '../../components/calendar-modal/calendar-modal.component';
+import { CalendarInlineComponent } from '../../components/calendar-inline/calendar-inline.component';
 import { AppointmentFormComponent, AppointmentFormData } from '../../components/appointment-form/appointment-form.component';
 import { AppointmentDetailComponent } from '../../components/appointment-detail/appointment-detail.component';
 import { AgendaService } from '../../../../core/services/agenda.service';
@@ -106,7 +108,28 @@ interface DayOption {
     IonGrid,
     IonRow,
     IonCol,
-    IonChip
+    IonChip,
+    CalendarInlineComponent
+  ],
+  animations: [
+    trigger('slideDown', [
+      state('closed', style({
+        height: '0',
+        opacity: '0',
+        overflow: 'hidden'
+      })),
+      state('open', style({
+        height: '*',
+        opacity: '1',
+        overflow: 'visible'
+      })),
+      transition('closed => open', [
+        animate('400ms cubic-bezier(0.4, 0, 0.2, 1)')
+      ]),
+      transition('open => closed', [
+        animate('300ms cubic-bezier(0.4, 0, 0.2, 1)')
+      ])
+    ])
   ]
 })
 export class AgendaMainPage implements OnInit {
@@ -116,6 +139,9 @@ export class AgendaMainPage implements OnInit {
 
   // Notificaciones
   notificationCount = 1;
+
+  // Estado del calendario inline
+  showCalendar = false;
 
   // Horario
   currentDay = 'Hoy';
@@ -641,7 +667,28 @@ export class AgendaMainPage implements OnInit {
   }
 
   /**
-   * Abrir modal de calendario
+   * Toggle del calendario inline (nuevo)
+   */
+  toggleCalendar() {
+    this.showCalendar = !this.showCalendar;
+  }
+
+  /**
+   * Manejar selección de fecha desde el calendario inline
+   */
+  async onDateSelected(date: Date) {
+    console.log('Fecha seleccionada desde calendario inline:', date);
+
+    // Actualizar la fecha seleccionada
+    this.selectedDate = date;
+    await this.updateViewForSelectedDate(date);
+
+    // Cerrar el calendario después de seleccionar
+    this.showCalendar = false;
+  }
+
+  /**
+   * Abrir modal de calendario (método antiguo - mantener por compatibilidad)
    */
   async openCalendar() {
     const modal = await this.modalController.create({

@@ -23,7 +23,7 @@
   <!-- Header con Today y Notificaciones (solo en appointments) -->
   <div class="agenda-header" *ngIf="activeTab === 'appointments'">
     <div class="header-left">
-      <div class="notification-badge" (click)="openCalendar()">
+      <div class="notification-badge" (click)="toggleCalendar()">
         <ion-icon name="calendar-outline" class="calendar-icon"></ion-icon>
         <ion-badge color="danger" *ngIf="notificationCount > 0">{{ notificationCount }}</ion-badge>
       </div>
@@ -43,6 +43,18 @@
         <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
       </ion-button>
     </div>
+  </div>
+
+  <!-- Calendario Inline Expandible (solo en appointments) -->
+  <div class="calendar-inline-container"
+       *ngIf="activeTab === 'appointments'"
+       [class.expanded]="showCalendar"
+       [@slideDown]="showCalendar ? 'open' : 'closed'">
+    <app-calendar-inline
+      *ngIf="showCalendar"
+      (dateSelected)="onDateSelected($event)"
+      (close)="toggleCalendar()">
+    </app-calendar-inline>
   </div>
 
   <!-- Carrusel de Días del Mes (solo en appointments) -->

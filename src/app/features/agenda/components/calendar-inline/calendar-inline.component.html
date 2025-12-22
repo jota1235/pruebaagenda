@@ -1,0 +1,74 @@
+<!-- Header del calendario -->
+<div class="calendar-header">
+  <!-- Botón cerrar -->
+  <ion-button fill="clear" size="small" (click)="closeCalendar()" class="close-button">
+    <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+  </ion-button>
+
+  <!-- Navegación de mes -->
+  <div class="month-navigation">
+    <ion-button fill="clear" size="small" (click)="previousMonth()" class="nav-button">
+      <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+    </ion-button>
+
+    <h3 class="month-title">{{ getMonthYearTitle() }}</h3>
+
+    <ion-button fill="clear" size="small" (click)="nextMonth()" class="nav-button">
+      <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+    </ion-button>
+  </div>
+
+  <!-- Botón "Hoy" -->
+  <ion-button fill="outline" size="small" (click)="goToToday()" class="today-button">
+    <ion-icon slot="start" name="today-outline"></ion-icon>
+    Hoy
+  </ion-button>
+</div>
+
+<!-- Días de la semana -->
+<ion-grid class="calendar-grid">
+  <ion-row class="weekdays-row">
+    <ion-col *ngFor="let day of weekDays" class="weekday-col">
+      <span class="weekday-label">{{ day }}</span>
+    </ion-col>
+  </ion-row>
+
+  <!-- Semanas del mes -->
+  <ion-row *ngFor="let week of weeks" class="calendar-week">
+    <ion-col
+      *ngFor="let day of week"
+      class="calendar-day-col"
+      [class.not-current-month]="!day.isCurrentMonth"
+      [class.is-today]="day.isToday"
+      [class.is-selected]="day.isSelected"
+      [class.has-appointments]="day.hasAppointments"
+      (click)="selectDay(day)"
+    >
+      <div class="day-content">
+        <!-- Número del día -->
+        <span class="day-number">{{ day.dayNumber }}</span>
+
+        <!-- Indicador de citas -->
+        <div class="appointment-indicator" *ngIf="day.hasAppointments && day.isCurrentMonth">
+          <span class="dot"></span>
+        </div>
+      </div>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+
+<!-- Leyenda -->
+<div class="calendar-legend">
+  <div class="legend-item">
+    <span class="legend-dot today-dot"></span>
+    <span class="legend-text">Hoy</span>
+  </div>
+  <div class="legend-item">
+    <span class="legend-dot selected-dot"></span>
+    <span class="legend-text">Seleccionado</span>
+  </div>
+  <div class="legend-item">
+    <span class="legend-dot appointment-dot"></span>
+    <span class="legend-text">Con citas</span>
+  </div>
+</div>
