@@ -51,7 +51,7 @@ ion-card-header {
 
     ion-icon {
       font-size: 1.25rem;
-      color: var(--ion-color-primary);
+      color: #6B7280; // Gris minimalista en modo claro
     }
   }
 }
@@ -154,8 +154,9 @@ ion-card-content {
 // CARD DE INFORMACIÓN
 // ============================================
 .info-card {
-  background: linear-gradient(135deg, var(--ion-color-primary-tint) 0%, var(--ion-color-secondary-tint) 100%);
-  border: none;
+  background: #F9FAFB; // Fondo gris claro en modo claro
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 
   ion-card-content {
     padding: 1.5rem;
@@ -170,7 +171,7 @@ ion-card-content {
 
   ion-icon {
     font-size: 3rem;
-    color: var(--ion-color-primary);
+    color: #0891B2; // Cyan en modo claro
     flex-shrink: 0;
   }
 
@@ -180,18 +181,19 @@ ion-card-content {
     h3 {
       font-size: 1.25rem;
       font-weight: 700;
-      color: var(--ion-text-color);
+      color: #1F2937; // Gris oscuro para buen contraste
       margin: 0 0 0.25rem 0;
     }
 
     p {
       font-size: 0.875rem;
-      color: var(--ion-color-medium);
+      color: #6B7280; // Gris medio
       margin: 0.125rem 0;
 
       &.copyright {
         font-size: 0.75rem;
         margin-top: 0.5rem;
+        color: #9CA3AF; // Gris más claro para copyright
       }
     }
   }
@@ -200,7 +202,8 @@ ion-card-content {
 .info-button {
   --border-radius: 12px;
   --border-width: 2px;
-  --border-color: var(--ion-color-primary);
+  --border-color: #0891B2;
+  --color: #0891B2;
   height: auto;
   --padding-top: 0.875rem;
   --padding-bottom: 0.875rem;
@@ -209,6 +212,7 @@ ion-card-content {
 
   &:hover {
     transform: translateY(-2px);
+    --background: rgba(8, 145, 178, 0.05);
   }
 
   &:active {
@@ -224,6 +228,14 @@ ion-toggle {
   --handle-height: 26px;
   --handle-spacing: 4px;
 
+  // Colores personalizados - Cyan cuando está activo
+  --background-checked: #0891B2;
+  --handle-background-checked: #FFFFFF;
+
+  // Gris cuando está inactivo
+  --background: #94A3B8;
+  --handle-background: #FFFFFF;
+
   &::part(track) {
     height: 32px;
     width: 56px;
@@ -234,13 +246,60 @@ ion-toggle {
 // DARK MODE (adicional al global)
 // ============================================
 :host-context(body.dark) {
+  // Card de información en dark mode
   .info-card {
-    background: linear-gradient(135deg, #1e3a8a 0%, #4c1d95 100%) !important;
+    background: #1F2937 !important;
+    border-color: #374151 !important;
+  }
+
+  // Estilos del app-info en dark mode
+  .app-info {
+    ion-icon {
+      color: #22D3EE !important; // Cyan más brillante en modo oscuro
+    }
+
+    .info-text {
+      h3 {
+        color: #F3F4F6 !important;
+      }
+
+      p {
+        color: #9CA3AF !important;
+
+        &.copyright {
+          color: #6B7280 !important;
+        }
+      }
+    }
+  }
+
+  // Botón de información en dark mode
+  .info-button {
+    --border-color: #22D3EE !important;
+    --color: #22D3EE !important;
+
+    &:hover {
+      --background: rgba(34, 211, 238, 0.1) !important;
+    }
+  }
+
+  // Iconos de headers de cards en modo oscuro
+  ion-card-title ion-icon {
+    color: #0891B2 !important;
   }
 
   // Iconos con colores cyan/azul en modo oscuro
   .setting-item .setting-icon {
     color: #0891B2;
+  }
+
+  // Toggles en dark mode
+  ion-toggle {
+    // Cyan más brillante cuando está activo en dark mode
+    --background-checked: #22D3EE;
+
+    // Gris oscuro cuando está inactivo en dark mode
+    --background: #6B7280;
   }
 }
 
