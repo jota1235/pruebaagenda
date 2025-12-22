@@ -143,16 +143,22 @@
     <!-- Horarios -->
     <ion-card class="hours-card">
       <ion-card-header>
-        <ion-card-title>
-          <ion-icon name="calendar-outline"></ion-icon>
-          Horario de Atención
-        </ion-card-title>
+        <div class="hours-header">
+          <ion-card-title>
+            <ion-icon name="calendar-outline"></ion-icon>
+            Horarios de Atención
+          </ion-card-title>
+          <span class="updated-label">Actualizado recientemente</span>
+        </div>
       </ion-card-header>
       <ion-card-content>
-        <ion-list>
+        <ion-list class="hours-list">
           <ion-item *ngFor="let schedule of businessHours" [class.today]="schedule.isToday" lines="none">
             <ion-label>
-              <h3>{{ schedule.day }}</h3>
+              <div class="day-name-container">
+                <h3>{{ schedule.day }}</h3>
+                <ion-badge *ngIf="schedule.isToday" class="today-badge">HOY</ion-badge>
+              </div>
             </ion-label>
             <span class="hours-label">{{ schedule.hours }}</span>
           </ion-item>

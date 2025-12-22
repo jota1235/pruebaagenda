@@ -150,13 +150,13 @@ export class AgendaMainPage implements OnInit {
   ];
 
   businessHours = [
-    { day: 'Lunes', hours: '9:00 a.m. - 8:00 p.m.', isToday: false },
-    { day: 'Martes', hours: '9:00 a.m. - 8:00 p.m.', isToday: false },
-    { day: 'Miércoles', hours: '9:00 a.m. - 8:00 p.m.', isToday: false },
-    { day: 'Jueves', hours: '9:00 a.m. - 8:00 p.m.', isToday: false },
-    { day: 'Viernes', hours: '9:00 a.m. - 8:00 p.m.', isToday: true },
-    { day: 'Sábado', hours: '10:00 a.m. - 6:00 p.m.', isToday: false },
-    { day: 'Domingo', hours: 'Cerrado', isToday: false }
+    { day: 'Lunes', dayIndex: 1, hours: '9:00 AM - 8:00 PM', isToday: false },
+    { day: 'Martes', dayIndex: 2, hours: '9:00 AM - 8:00 PM', isToday: false },
+    { day: 'Miércoles', dayIndex: 3, hours: '9:00 AM - 8:00 PM', isToday: false },
+    { day: 'Jueves', dayIndex: 4, hours: '9:00 AM - 8:00 PM', isToday: false },
+    { day: 'Viernes', dayIndex: 5, hours: '9:00 AM - 8:00 PM', isToday: false },
+    { day: 'Sábado', dayIndex: 6, hours: '10:00 AM - 6:00 PM', isToday: false },
+    { day: 'Domingo', dayIndex: 0, hours: 'Cerrado', isToday: false }
   ];
 
   services = [
@@ -241,8 +241,24 @@ export class AgendaMainPage implements OnInit {
   }
 
   ngOnInit() {
+    // Detectar y marcar el día actual
+    this.markTodayInBusinessHours();
+
     // Simular carga inicial
     this.initializeAgenda();
+  }
+
+  /**
+   * Detectar automáticamente el día actual y marcarlo en businessHours
+   */
+  markTodayInBusinessHours() {
+    const today = new Date();
+    const currentDayIndex = today.getDay(); // 0 = Domingo, 1 = Lunes, etc.
+
+    // Marcar isToday en el día correspondiente
+    this.businessHours.forEach(schedule => {
+      schedule.isToday = schedule.dayIndex === currentDayIndex;
+    });
   }
 
   ngAfterViewInit() {
