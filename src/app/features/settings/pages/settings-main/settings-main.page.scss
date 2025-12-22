@@ -89,6 +89,11 @@ ion-card-content {
     margin-right: 1rem;
   }
 
+  // Iconos con colores minimalistas (light mode)
+  .setting-icon {
+    color: #6B7280;
+  }
+
   ion-label {
     h2 {
       font-size: 1rem;
@@ -231,6 +236,11 @@ ion-toggle {
 :host-context(body.dark) {
   .info-card {
     background: linear-gradient(135deg, #1e3a8a 0%, #4c1d95 100%) !important;
+  }
+
+  // Iconos con colores cyan/azul en modo oscuro
+  .setting-item .setting-icon {
+    color: #0891B2;
   }
 }
 
