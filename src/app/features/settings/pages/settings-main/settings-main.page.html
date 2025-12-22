@@ -34,8 +34,7 @@
             <ion-toggle
               slot="end"
               [(ngModel)]="isDarkMode"
-              (ionChange)="toggleDarkMode($event)"
-              color="primary">
+              (ionChange)="toggleDarkMode($event)">
             </ion-toggle>
           </ion-item>
 
@@ -64,8 +63,7 @@
             <ion-toggle
               slot="end"
               [(ngModel)]="notificationSettings.push"
-              (ionChange)="togglePushNotifications($event)"
-              color="secondary">
+              (ionChange)="togglePushNotifications($event)">
             </ion-toggle>
           </ion-item>
 
@@ -79,8 +77,7 @@
             <ion-toggle
               slot="end"
               [(ngModel)]="notificationSettings.email"
-              (ionChange)="toggleEmailNotifications($event)"
-              color="tertiary">
+              (ionChange)="toggleEmailNotifications($event)">
             </ion-toggle>
           </ion-item>
 
@@ -94,8 +91,7 @@
             <ion-toggle
               slot="end"
               [(ngModel)]="notificationSettings.sms"
-              (ionChange)="toggleSmsNotifications($event)"
-              color="success">
+              (ionChange)="toggleSmsNotifications($event)">
             </ion-toggle>
           </ion-item>
 
@@ -109,8 +105,7 @@
             <ion-toggle
               slot="end"
               [(ngModel)]="notificationSettings.reminders"
-              (ionChange)="toggleReminders($event)"
-              color="warning">
+              (ionChange)="toggleReminders($event)">
             </ion-toggle>
           </ion-item>
 
@@ -129,8 +124,7 @@
               min="0"
               max="100"
               step="5"
-              pin="true"
-              color="primary">
+              pin="true">
             </ion-range>
           </div>
 

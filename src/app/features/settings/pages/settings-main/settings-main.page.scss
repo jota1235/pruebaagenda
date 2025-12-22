@@ -141,11 +141,11 @@ ion-card-content {
   ion-range {
     --bar-height: 6px;
     --bar-background: var(--ion-color-light);
-    --bar-background-active: var(--ion-color-primary);
+    --bar-background-active: #0891B2;
     --knob-size: 22px;
-    --knob-background: var(--ion-color-primary);
+    --knob-background: #0891B2;
     --knob-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    --pin-background: var(--ion-color-primary);
+    --pin-background: #0891B2;
     padding: 0.5rem 0;
   }
 }
@@ -300,6 +300,13 @@ ion-toggle {
 
     // Gris oscuro cuando está inactivo en dark mode
     --background: #6B7280;
+  }
+
+  // Range slider en dark mode
+  .volume-slider ion-range {
+    --bar-background-active: #22D3EE;
+    --knob-background: #22D3EE;
+    --pin-background: #22D3EE;
   }
 }
 
