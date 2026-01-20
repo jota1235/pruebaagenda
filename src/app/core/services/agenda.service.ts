@@ -2209,9 +2209,9 @@ export class AgendaService {
         return clientes
           .map(c => ({
             id: c.id,
-            nombre: `${c.nombre || ''} ${c.apaterno || ''} ${c.amaterno || ''}`.trim(),
-            telefono: c.tel1 || '',
-            email: c.email1 || '',
+            nombre: `${c.nombre || ''} ${c.apellido || ''}`.trim(),
+            telefono: c.telefono || '',
+            email: c.email || '',
             activo: 'SI'
           }))
           .sort((a, b) => a.nombre.localeCompare(b.nombre));
@@ -2273,11 +2273,12 @@ export class AgendaService {
       try {
         const personal = await this.dbService.getPersonal();
 
-        // Mapear a formato esperado
+        // Mapear a formato esperado - Solo incluir personal activo
         return personal
+          .filter(p => p.activo === 1)
           .map(p => ({
             id: p.id,
-            nombre: p.apellidos ? `${p.nombre} ${p.apellidos}` : p.nombre,
+            nombre: `${p.nombre || ''} ${p.apellido || ''}`.trim(),
             activo: 'SI'
           }))
           .sort((a, b) => a.nombre.localeCompare(b.nombre));
@@ -2342,7 +2343,7 @@ export class AgendaService {
             id: s.id,
             codigo: s.codigo || '',
             nombre: s.nombre,
-            duracion: (s.n_duracion || 0) * 30, // Convertir a minutos
+            duracion: s.duracion * 15, // Convertir espacios a minutos (1 espacio = 15 min)
             precio: s.precio || 0,
             activo: 'SI'
           }))
