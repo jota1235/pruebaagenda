@@ -53,6 +53,13 @@ export class HomePage {
   }
 
   /**
+   * Navegar a clientes
+   */
+  goToClientes() {
+    this.router.navigate(['/clientes']);
+  }
+
+  /**
    * Navegar a configuración
    */
   goToSettings() {

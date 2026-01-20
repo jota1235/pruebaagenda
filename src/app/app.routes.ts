@@ -37,6 +37,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/settings/pages/settings-main/settings-main.page').then((m) => m.SettingsMainPage),
   },
 
+  // Clientes
+  {
+    path: 'clientes',
+    loadChildren: () => import('./features/clientes/clientes.routes').then((m) => m.CLIENTES_ROUTES),
+  },
+
   // Alias para home (mantener compatibilidad)
   {
     path: 'home',
