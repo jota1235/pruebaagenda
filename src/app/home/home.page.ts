@@ -82,6 +82,13 @@ export class HomePage {
   }
 
   /**
+   * Navegar a personal
+   */
+  goToPersonal() {
+    this.router.navigate(['/personal']);
+  }
+
+  /**
    * TEST: Navegar a páginas de prueba localStorage
    */
   goToTestClientes() {

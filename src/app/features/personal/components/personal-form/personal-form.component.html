@@ -1,0 +1,129 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/personal"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ isEditMode ? 'Editar Empleado' : 'Nuevo Empleado' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="form-container">
+    <form [formGroup]="personalForm" (ngSubmit)="onSubmit()">
+      <ion-list class="form-list">
+
+        <!-- Nombre -->
+        <ion-item [class.ion-invalid]="personalForm.get('nombre')?.invalid && personalForm.get('nombre')?.touched">
+          <ion-label position="stacked">Nombre *</ion-label>
+          <ion-input
+            formControlName="nombre"
+            type="text"
+            placeholder="Ingresa el nombre"
+            [clearInput]="true"
+          ></ion-input>
+          <div class="error-message" *ngIf="getErrorMessage('nombre')">
+            {{ getErrorMessage('nombre') }}
+          </div>
+        </ion-item>
+
+        <!-- Apellido -->
+        <ion-item [class.ion-invalid]="personalForm.get('apellido')?.invalid && personalForm.get('apellido')?.touched">
+          <ion-label position="stacked">Apellido *</ion-label>
+          <ion-input
+            formControlName="apellido"
+            type="text"
+            placeholder="Ingresa el apellido"
+            [clearInput]="true"
+          ></ion-input>
+          <div class="error-message" *ngIf="getErrorMessage('apellido')">
+            {{ getErrorMessage('apellido') }}
+          </div>
+        </ion-item>
+
+        <!-- Teléfono -->
+        <ion-item [class.ion-invalid]="personalForm.get('telefono')?.invalid && personalForm.get('telefono')?.touched">
+          <ion-label position="stacked">Teléfono *</ion-label>
+          <ion-input
+            formControlName="telefono"
+            type="tel"
+            placeholder="1234567890"
+            maxlength="10"
+            [clearInput]="true"
+          ></ion-input>
+          <div class="error-message" *ngIf="getErrorMessage('telefono')">
+            {{ getErrorMessage('telefono') }}
+          </div>
+        </ion-item>
+
+        <!-- Email -->
+        <ion-item [class.ion-invalid]="personalForm.get('email')?.invalid && personalForm.get('email')?.touched">
+          <ion-label position="stacked">Email</ion-label>
+          <ion-input
+            formControlName="email"
+            type="email"
+            placeholder="ejemplo@correo.com"
+            [clearInput]="true"
+          ></ion-input>
+          <div class="error-message" *ngIf="getErrorMessage('email')">
+            {{ getErrorMessage('email') }}
+          </div>
+        </ion-item>
+
+        <!-- Especialidad -->
+        <ion-item [class.ion-invalid]="personalForm.get('especialidad')?.invalid && personalForm.get('especialidad')?.touched">
+          <ion-label position="stacked">Especialidad *</ion-label>
+          <ion-select formControlName="especialidad" placeholder="Selecciona una especialidad">
+            <ion-select-option *ngFor="let esp of especialidadesOpciones" [value]="esp">
+              {{ esp }}
+            </ion-select-option>
+          </ion-select>
+          <div class="error-message" *ngIf="getErrorMessage('especialidad')">
+            {{ getErrorMessage('especialidad') }}
+          </div>
+        </ion-item>
+
+        <!-- Fecha de contratación -->
+        <ion-item>
+          <ion-label position="stacked">Fecha de contratación</ion-label>
+          <ion-input
+            formControlName="fecha_contratacion"
+            type="date"
+          ></ion-input>
+        </ion-item>
+
+        <!-- Estado activo -->
+        <ion-item>
+          <ion-label>Estado</ion-label>
+          <ion-toggle formControlName="activo" slot="end">
+            {{ personalForm.get('activo')?.value ? 'Activo' : 'Inactivo' }}
+          </ion-toggle>
+        </ion-item>
+
+      </ion-list>
+
+      <!-- Botones de acción -->
+      <div class="action-buttons">
+        <ion-button
+          expand="block"
+          type="submit"
+          color="primary"
+          [disabled]="isSubmitting"
+        >
+          <ion-icon slot="start" name="save-outline"></ion-icon>
+          {{ isEditMode ? 'Guardar Cambios' : 'Crear Empleado' }}
+        </ion-button>
+
+        <ion-button
+          expand="block"
+          fill="outline"
+          color="medium"
+          (click)="onCancel()"
+          [disabled]="isSubmitting"
+        >
+          <ion-icon slot="start" name="close-outline"></ion-icon>
+          Cancelar
+        </ion-button>
+      </div>
+    </form>
+  </div>
+</ion-content>

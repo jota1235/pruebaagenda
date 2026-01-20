@@ -1,0 +1,111 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/personal"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalle del Empleado</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="goToEdit()" *ngIf="personal">
+        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+      </ion-button>
+      <ion-button color="danger" (click)="confirmDelete()" *ngIf="personal">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando información...</p>
+  </div>
+
+  <!-- Personal detail -->
+  <div *ngIf="!isLoading && personal" class="personal-detail">
+    <!-- Header con avatar e información principal -->
+    <div class="personal-header">
+      <ion-avatar [style.background]="getAvatarColor(personal.id)" class="personal-avatar">
+        <div class="avatar-text">{{ getAvatarInitials(personal.nombre, personal.apellido) }}</div>
+      </ion-avatar>
+
+      <h1 class="personal-name">{{ personal.nombre }} {{ personal.apellido }}</h1>
+
+      <ion-badge [color]="personal.activo ? 'success' : 'medium'" class="status-badge">
+        <ion-icon [name]="personal.activo ? 'checkmark-circle-outline' : 'close-circle-outline'"></ion-icon>
+        {{ personal.activo ? 'Activo' : 'Inactivo' }}
+      </ion-badge>
+    </div>
+
+    <!-- Información de contacto -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="person-outline"></ion-icon>
+          Información de Contacto
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item button (click)="callPhone()" *ngIf="personal.telefono">
+            <ion-icon name="call-outline" slot="start" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Teléfono</h3>
+              <p>{{ personal.telefono }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item button (click)="sendEmail()" *ngIf="personal.email">
+            <ion-icon name="mail-outline" slot="start" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Email</h3>
+              <p>{{ personal.email }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Información profesional -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="briefcase-outline"></ion-icon>
+          Información Profesional
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item>
+            <ion-icon name="briefcase-outline" slot="start" color="success"></ion-icon>
+            <ion-label>
+              <h3>Especialidad</h3>
+              <p>{{ personal.especialidad }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item *ngIf="personal.fecha_contratacion">
+            <ion-icon name="calendar-outline" slot="start" color="success"></ion-icon>
+            <ion-label>
+              <h3>Fecha de contratación</h3>
+              <p>{{ formatFecha(personal.fecha_contratacion) }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Botones de acción -->
+    <div class="quick-actions">
+      <ion-button expand="block" color="primary" (click)="goToEdit()">
+        <ion-icon slot="start" name="create-outline"></ion-icon>
+        Editar Información
+      </ion-button>
+      <ion-button expand="block" fill="outline" color="danger" (click)="confirmDelete()">
+        <ion-icon slot="start" name="trash-outline"></ion-icon>
+        Eliminar Empleado
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

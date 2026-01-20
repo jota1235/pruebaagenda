@@ -1,0 +1,111 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Personal</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Personal</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- Barra de búsqueda -->
+  <div class="search-container">
+    <ion-searchbar
+      [(ngModel)]="searchTerm"
+      (ionInput)="handleSearch($event)"
+      placeholder="Buscar por nombre, teléfono o especialidad"
+      [debounce]="300"
+      animated="true"
+    ></ion-searchbar>
+  </div>
+
+  <!-- Pull to refresh -->
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando personal...</p>
+  </div>
+
+  <!-- Lista de personal -->
+  <ion-list *ngIf="!isLoading && filteredPersonal.length > 0" class="personal-list">
+    <ion-item
+      *ngFor="let p of filteredPersonal"
+      button
+      (click)="goToDetail(p.id)"
+      class="personal-item"
+    >
+      <!-- Avatar con iniciales -->
+      <ion-avatar slot="start" [style.background]="getAvatarColor(p.id)">
+        <div class="avatar-text">{{ getAvatarInitials(p.nombre, p.apellido) }}</div>
+      </ion-avatar>
+
+      <!-- Información principal -->
+      <ion-label>
+        <h2 class="personal-name">{{ p.nombre }} {{ p.apellido }}</h2>
+        <p class="personal-info">
+          <ion-icon name="briefcase-outline"></ion-icon>
+          {{ p.especialidad }}
+        </p>
+        <p class="personal-info" *ngIf="p.telefono">
+          <ion-icon name="call-outline"></ion-icon>
+          {{ p.telefono }}
+        </p>
+      </ion-label>
+
+      <!-- Badge de estado -->
+      <ion-badge slot="end" [color]="p.activo ? 'success' : 'medium'">
+        {{ p.activo ? 'Activo' : 'Inactivo' }}
+      </ion-badge>
+
+      <!-- Botones de acción -->
+      <div slot="end" class="action-buttons">
+        <ion-button
+          fill="clear"
+          color="primary"
+          (click)="goToEdit(p.id, $event)"
+        >
+          <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+        </ion-button>
+        <ion-button
+          fill="clear"
+          color="danger"
+          (click)="confirmDelete(p.id, p.nombre, p.apellido, $event)"
+        >
+          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </ion-item>
+  </ion-list>
+
+  <!-- Empty state - no hay personal -->
+  <div *ngIf="!isLoading && personal.length === 0" class="empty-state">
+    <ion-icon name="person-outline"></ion-icon>
+    <h2>No hay empleados registrados</h2>
+    <p>Agrega tu primer empleado para comenzar</p>
+    <ion-button (click)="goToCreate()" color="primary">
+      <ion-icon slot="start" name="add-outline"></ion-icon>
+      Agregar Empleado
+    </ion-button>
+  </div>
+
+  <!-- Empty state - búsqueda sin resultados -->
+  <div *ngIf="!isLoading && personal.length > 0 && filteredPersonal.length === 0" class="empty-state">
+    <ion-icon name="search-outline"></ion-icon>
+    <h2>No se encontraron resultados</h2>
+    <p>Intenta con otros términos de búsqueda</p>
+  </div>
+
+  <!-- FAB button para agregar -->
+  <ion-fab *ngIf="!isLoading && personal.length > 0" vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="goToCreate()" color="primary">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
