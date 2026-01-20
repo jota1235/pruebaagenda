@@ -13,7 +13,7 @@ import {
   IonCardContent
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { calendarOutline, personOutline, settingsOutline, logOutOutline, peopleOutline, listOutline } from 'ionicons/icons';
+import { calendarOutline, personOutline, settingsOutline, logOutOutline, peopleOutline, listOutline, cutOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-home',
@@ -35,7 +35,7 @@ import { calendarOutline, personOutline, settingsOutline, logOutOutline, peopleO
 export class HomePage {
   constructor(private router: Router) {
     // Registrar iconos
-    addIcons({ calendarOutline, personOutline, settingsOutline, logOutOutline, peopleOutline, listOutline });
+    addIcons({ calendarOutline, personOutline, settingsOutline, logOutOutline, peopleOutline, listOutline, cutOutline });
   }
 
   /**
@@ -72,6 +72,13 @@ export class HomePage {
   logout() {
     // TODO: Limpiar sesión con authService
     this.router.navigate(['/login']);
+  }
+
+  /**
+   * Navegar a servicios
+   */
+  goToServicios() {
+    this.router.navigate(['/servicios']);
   }
 
   /**

@@ -1,0 +1,87 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Detalle del Servicio</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="editServicio()">
+        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="deleteServicio()" color="danger">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Loading -->
+  <div class="loading-container" *ngIf="isLoading">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando información...</p>
+  </div>
+
+  <!-- Contenido del servicio -->
+  <div class="servicio-detail" *ngIf="!isLoading && servicio">
+    <!-- Header -->
+    <div class="servicio-header">
+      <div class="servicio-icon">
+        <ion-icon name="cut-outline"></ion-icon>
+      </div>
+      <h1 class="servicio-name">{{ servicio.nombre }}</h1>
+      <ion-badge color="success" *ngIf="servicio.activo">Activo</ion-badge>
+      <ion-chip *ngIf="servicio.categoria" color="primary">
+        <ion-icon name="list-outline"></ion-icon>
+        <ion-label>{{ servicio.categoria }}</ion-label>
+      </ion-chip>
+    </div>
+
+    <!-- Información del servicio -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="document-text-outline"></ion-icon>
+          Información del Servicio
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item>
+            <ion-icon name="cash-outline" slot="start" color="success"></ion-icon>
+            <ion-label>
+              <h3>Precio</h3>
+              <p class="precio-value">{{ formatPrecio(servicio.precio) }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item>
+            <ion-icon name="time-outline" slot="start" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Duración</h3>
+              <p>{{ formatDuracion(servicio.duracion) }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item *ngIf="servicio.descripcion">
+            <ion-icon name="document-text-outline" slot="start" color="secondary"></ion-icon>
+            <ion-label>
+              <h3>Descripción</h3>
+              <p class="descripcion-text">{{ servicio.descripcion }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Acciones rápidas -->
+    <div class="quick-actions">
+      <ion-button expand="block" (click)="editServicio()">
+        <ion-icon slot="start" name="create-outline"></ion-icon>
+        Editar Servicio
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

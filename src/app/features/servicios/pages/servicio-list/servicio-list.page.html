@@ -1,0 +1,112 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Servicios</ion-title>
+  </ion-toolbar>
+
+  <!-- Barra de búsqueda -->
+  <ion-toolbar>
+    <ion-searchbar
+      [(ngModel)]="searchTerm"
+      (ionInput)="handleSearch($event)"
+      placeholder="Buscar servicios..."
+      animated="true"
+      debounce="300">
+    </ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Refresher -->
+  <ion-refresher slot="fixed" (ionRefresh)="loadServicios($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Loading -->
+  <div class="loading-container" *ngIf="isLoading">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando servicios...</p>
+  </div>
+
+  <!-- Lista de servicios -->
+  <ion-list *ngIf="!isLoading && serviciosFiltrados.length > 0">
+    <ion-item
+      *ngFor="let servicio of serviciosFiltrados"
+      button
+      (click)="viewServicio(servicio)"
+      class="servicio-item">
+
+      <!-- Icono del servicio -->
+      <div slot="start" class="servicio-icon" [attr.data-color]="getIconColor(servicio)">
+        <ion-icon name="cut-outline"></ion-icon>
+      </div>
+
+      <!-- Información del servicio -->
+      <ion-label>
+        <h2 class="servicio-nombre">{{ servicio.nombre }}</h2>
+
+        <p class="servicio-descripcion" *ngIf="servicio.descripcion">
+          {{ servicio.descripcion }}
+        </p>
+
+        <div class="servicio-meta">
+          <ion-chip class="meta-chip">
+            <ion-icon name="time-outline"></ion-icon>
+            <ion-label>{{ formatDuracion(servicio.duracion) }}</ion-label>
+          </ion-chip>
+
+          <ion-chip class="meta-chip price">
+            <ion-icon name="cash-outline"></ion-icon>
+            <ion-label>{{ formatPrecio(servicio.precio) }}</ion-label>
+          </ion-chip>
+        </div>
+
+        <ion-note class="servicio-categoria" *ngIf="servicio.categoria">
+          {{ servicio.categoria }}
+        </ion-note>
+      </ion-label>
+
+      <!-- Botones de acción -->
+      <div slot="end" class="action-buttons">
+        <ion-button fill="clear" size="small" (click)="editServicio($event, servicio)">
+          <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+        </ion-button>
+        <ion-button fill="clear" size="small" color="danger" (click)="deleteServicio($event, servicio)">
+          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </ion-item>
+  </ion-list>
+
+  <!-- Estado vacío - Sin resultados -->
+  <div class="empty-state" *ngIf="!isLoading && serviciosFiltrados.length === 0 && searchTerm">
+    <ion-icon name="search-outline" class="empty-icon"></ion-icon>
+    <h3>No se encontraron resultados</h3>
+    <p>No hay servicios que coincidan con "{{ searchTerm }}"</p>
+    <ion-button fill="clear" (click)="searchTerm = ''; handleSearch({target: {value: ''}})">
+      Limpiar búsqueda
+    </ion-button>
+  </div>
+
+  <!-- Estado vacío - Sin servicios -->
+  <div class="empty-state" *ngIf="!isLoading && servicios.length === 0">
+    <ion-icon name="cut-outline" class="empty-icon"></ion-icon>
+    <h3>No hay servicios registrados</h3>
+    <p>Comienza agregando tu primer servicio</p>
+    <ion-button (click)="goToCreate()">
+      <ion-icon slot="start" name="add-outline"></ion-icon>
+      Agregar Servicio
+    </ion-button>
+  </div>
+
+  <!-- Botón flotante para agregar -->
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" *ngIf="!isLoading && servicios.length > 0">
+    <ion-fab-button (click)="goToCreate()">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

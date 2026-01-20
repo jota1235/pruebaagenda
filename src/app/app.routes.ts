@@ -43,6 +43,12 @@ export const routes: Routes = [
     loadChildren: () => import('./features/clientes/clientes.routes').then((m) => m.CLIENTES_ROUTES),
   },
 
+  // Servicios
+  {
+    path: 'servicios',
+    loadChildren: () => import('./features/servicios/servicios.routes').then((m) => m.SERVICIOS_ROUTES),
+  },
+
   // Alias para home (mantener compatibilidad)
   {
     path: 'home',

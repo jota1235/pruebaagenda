@@ -1,0 +1,181 @@
+// Reutilizar estilos similares a cliente-detail
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  gap: 1rem;
+
+  ion-spinner {
+    --color: #3B82F6;
+    transform: scale(1.5);
+  }
+
+  p {
+    color: #6B7280;
+    font-size: 0.9375rem;
+  }
+}
+
+.servicio-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1.5rem;
+  background: linear-gradient(135deg, #10B981 0%, #14B8A6 100%);
+  color: white;
+  text-align: center;
+
+  .servicio-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+
+    ion-icon {
+      font-size: 3rem;
+      color: white;
+    }
+  }
+
+  .servicio-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 0.75rem 0;
+  }
+
+  ion-badge,
+  ion-chip {
+    margin-top: 0.5rem;
+  }
+}
+
+.servicio-detail {
+  padding-bottom: 2rem;
+}
+
+ion-card {
+  margin: 1rem;
+  border-radius: 16px;
+
+  ion-card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1F2937;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    ion-icon {
+      font-size: 1.25rem;
+      color: #3B82F6;
+    }
+  }
+}
+
+ion-list {
+  background: transparent;
+  padding: 0;
+}
+
+ion-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  --background: transparent;
+  margin-bottom: 0.75rem;
+
+  ion-icon[slot="start"] {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+  }
+
+  ion-label {
+    h3 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #6B7280;
+      margin-bottom: 0.25rem;
+    }
+
+    p {
+      font-size: 1rem;
+      color: #1F2937;
+      font-weight: 500;
+
+      &.precio-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #059669;
+      }
+
+      &.descripcion-text {
+        line-height: 1.6;
+        white-space: pre-wrap;
+      }
+    }
+  }
+}
+
+.quick-actions {
+  padding: 1.5rem 1rem;
+
+  ion-button {
+    --border-radius: 12px;
+    --padding-top: 1rem;
+    --padding-bottom: 1rem;
+    font-weight: 600;
+  }
+}
+
+// Modo oscuro
+:host-context(body.dark) {
+  .loading-container p {
+    color: #9CA3AF;
+  }
+
+  .servicio-header {
+    background: linear-gradient(135deg, #047857 0%, #0F766E 100%);
+  }
+
+  ion-card {
+    background: #1F2937;
+
+    ion-card-title {
+      color: #F9FAFB;
+    }
+  }
+
+  ion-item {
+    ion-label {
+      h3 {
+        color: #9CA3AF;
+      }
+
+      p {
+        color: #F9FAFB;
+
+        &.precio-value {
+          color: #34D399;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .servicio-detail {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .quick-actions {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}

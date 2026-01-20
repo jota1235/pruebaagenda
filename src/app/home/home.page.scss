@@ -83,6 +83,10 @@
     animation-delay: 0.4s;
   }
 
+  &:nth-child(5) {
+    animation-delay: 0.5s;
+  }
+
   &:hover {
     transform: translateY(-6px);
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
@@ -154,6 +158,10 @@
 
   &.success {
     background: linear-gradient(135deg, var(--ion-color-success), var(--ion-color-success-tint));
+  }
+
+  &.warning {
+    background: linear-gradient(135deg, var(--ion-color-warning), var(--ion-color-warning-tint));
   }
 }
 

@@ -1,0 +1,135 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="confirmCancel()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ pageTitle }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="saveServicio()" [disabled]="servicioForm.invalid">
+        <ion-icon slot="icon-only" name="save-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="servicioForm" class="servicio-form">
+    <ion-list>
+      <!-- Nombre -->
+      <ion-item [class.ion-invalid]="hasError('nombre')" [class.ion-touched]="servicioForm.get('nombre')?.touched">
+        <ion-label position="stacked">
+          <ion-icon name="cut-outline" class="field-icon"></ion-icon>
+          Nombre del Servicio *
+        </ion-label>
+        <ion-input
+          formControlName="nombre"
+          type="text"
+          placeholder="Ej: Corte de Cabello"
+          autocapitalize="words">
+        </ion-input>
+        <ion-note slot="error" *ngIf="hasError('nombre')">
+          {{ getErrorMessage('nombre') }}
+        </ion-note>
+      </ion-item>
+
+      <!-- Descripción -->
+      <ion-item>
+        <ion-label position="stacked">
+          <ion-icon name="document-text-outline" class="field-icon"></ion-icon>
+          Descripción
+        </ion-label>
+        <ion-textarea
+          formControlName="descripcion"
+          placeholder="Descripción breve del servicio"
+          rows="3"
+          autocapitalize="sentences">
+        </ion-textarea>
+      </ion-item>
+
+      <!-- Precio -->
+      <ion-item [class.ion-invalid]="hasError('precio')" [class.ion-touched]="servicioForm.get('precio')?.touched">
+        <ion-label position="stacked">
+          <ion-icon name="cash-outline" class="field-icon"></ion-icon>
+          Precio *
+        </ion-label>
+        <ion-input
+          formControlName="precio"
+          type="number"
+          placeholder="0.00"
+          inputmode="decimal"
+          min="0"
+          step="0.01">
+        </ion-input>
+        <ion-note slot="helper">Precio en pesos mexicanos (MXN)</ion-note>
+        <ion-note slot="error" *ngIf="hasError('precio')">
+          {{ getErrorMessage('precio') }}
+        </ion-note>
+      </ion-item>
+
+      <!-- Duración -->
+      <ion-item [class.ion-invalid]="hasError('duracion')" [class.ion-touched]="servicioForm.get('duracion')?.touched">
+        <ion-label position="stacked">
+          <ion-icon name="time-outline" class="field-icon"></ion-icon>
+          Duración *
+        </ion-label>
+        <ion-select
+          formControlName="duracion"
+          placeholder="Selecciona duración"
+          interface="action-sheet">
+          <ion-select-option *ngFor="let opcion of duracionOpciones" [value]="opcion.value">
+            {{ opcion.label }}
+          </ion-select-option>
+        </ion-select>
+        <ion-note slot="helper" *ngIf="servicioForm.get('duracion')?.value">
+          Duración seleccionada: {{ getDuracionLabel() }}
+        </ion-note>
+        <ion-note slot="error" *ngIf="hasError('duracion')">
+          {{ getErrorMessage('duracion') }}
+        </ion-note>
+      </ion-item>
+
+      <!-- Categoría -->
+      <ion-item>
+        <ion-label position="stacked">
+          <ion-icon name="list-outline" class="field-icon"></ion-icon>
+          Categoría
+        </ion-label>
+        <ion-select
+          formControlName="categoria"
+          placeholder="Selecciona categoría (opcional)"
+          interface="popover">
+          <ion-select-option *ngFor="let cat of categorias" [value]="cat">
+            {{ cat }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+
+    <!-- Botón guardar (móvil) -->
+    <div class="form-actions">
+      <ion-button
+        expand="block"
+        (click)="saveServicio()"
+        [disabled]="servicioForm.invalid"
+        class="save-button">
+        <ion-icon slot="start" name="save-outline"></ion-icon>
+        {{ isEditMode ? 'Actualizar Servicio' : 'Guardar Servicio' }}
+      </ion-button>
+
+      <ion-button
+        expand="block"
+        fill="outline"
+        (click)="confirmCancel()"
+        class="cancel-button">
+        Cancelar
+      </ion-button>
+    </div>
+
+    <!-- Nota de campos obligatorios -->
+    <div class="required-note">
+      <ion-note>* Campos obligatorios</ion-note>
+    </div>
+  </form>
+</ion-content>
